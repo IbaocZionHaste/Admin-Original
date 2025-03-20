@@ -244,14 +244,10 @@ window.toggleAccommodationSection = toggleAccommodationSection;
 
 
 
-
-  
-
-
   
   
   // Global variables for pagination and data
-  const pageSize = 10;
+  const pageSize = 20;
   let currentPage = 1;
   let filteredBookings = [];
   
@@ -271,11 +267,12 @@ window.toggleAccommodationSection = toggleAccommodationSection;
       day: dateObj.getDate()
     };
   }
-  // Fetch booking review data from Firebase under all users' MyHistory node.
-  function fetchBookingsFromFirebase() {
-    const usersRef = ref(db, "users");
-    console.log("Fetching data from all users...");
-    get(usersRef).then(snapshot => {
+ // Fetch booking data from Firebase under all users' MyHistory node.
+function fetchBookingsFromFirebase() {
+  const usersRef = ref(db, "users");
+  console.log("Fetching data from all users...");
+  get(usersRef)
+    .then(snapshot => {
       if (snapshot.exists()) {
         let bookings = [];
         snapshot.forEach(userSnapshot => {
@@ -288,34 +285,20 @@ window.toggleAccommodationSection = toggleAccommodationSection;
             for (let bookingId in userData.MyHistory) {
               if (userData.MyHistory.hasOwnProperty(bookingId)) {
                 const record = userData.MyHistory[bookingId];
-                if (record && record.bookingReview) {
-                  const review = record.bookingReview;
-                  console.log("Review data:", review);
-                  const parsedDate = parseBookingDate(review.bookingDate || "");
-                  if (!parsedDate) {
-                    console.warn("Failed to parse date for booking:", review.bookingDate);
-                    continue;
-                  }
-                  // Attempt to fetch the paymentTransaction from review,
-                  // fallback to record.paymentTransaction if not present in review.
-                  let paymentTransaction = review.paymentTransaction || record.paymentTransaction;
-                  let refNo = "N/A";
-                  if (paymentTransaction && paymentTransaction.refNo) {
-                    refNo = paymentTransaction.refNo;
-                  } else {
-                    console.warn("Payment transaction refNo not found for review:", review);
-                  }
+                // Directly fetch the paymentTransaction from the record
+                if (record && record.paymentTransaction) {
+                  const transaction = record.paymentTransaction;
+                  console.log("Payment Transaction Data:", transaction);
+                  
+                  // Build booking object with the required fields only
                   bookings.push({
-                    name: review.name || accountName || "N/A",
-                    bookingDate: parsedDate.formatted,
-                    statusReview: review.statusReview || "N/A",
-                    refNo: refNo,
-                    parsedYear: parsedDate.year,
-                    parsedMonth: parsedDate.month,
-                    parsedDay: parsedDate.day
+                    name: transaction.name || accountName || "N/A",
+                    downPayment: transaction.downPayment || 0,
+                    amount: transaction.amount || 0,
+                    paymentStatus: transaction.paymentStatus || "N/A"
                   });
                 } else {
-                  console.warn("No bookingReview found for record:", bookingId);
+                  console.warn("No paymentTransaction found for record:", bookingId);
                 }
               }
             }
@@ -330,10 +313,12 @@ window.toggleAccommodationSection = toggleAccommodationSection;
       } else {
         console.warn("No data available under 'users'");
       }
-    }).catch(error => {
+    })
+    .catch(error => {
       console.error("Error fetching data:", error);
     });
-  }
+}
+
   
   
   // Update the Day dropdown based on the selected Year and Month.
@@ -358,26 +343,30 @@ window.toggleAccommodationSection = toggleAccommodationSection;
     }
   }
   
-  // Render table rows for the current page.
-  function renderPage(page) {
-    const tableBody = document.getElementById("accommodation-list");
-    tableBody.innerHTML = "";
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    const pageData = filteredBookings.slice(start, end);
-    pageData.forEach((booking) => {
-      const formattedStatusReview = booking.statusReview.charAt(0).toUpperCase() + booking.statusReview.slice(1).toLowerCase();
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${booking.name}</td>
-        <td>${booking.bookingDate}</td>
-        <td>${formattedStatusReview}</td>
-        <td>${booking.refNo}</td>
-      `;
-      tableBody.appendChild(row);
-    });
-  }
   
+// Render table rows for the current page.
+function renderPage(page) {
+  const tableBody = document.getElementById("accommodation-list");
+  tableBody.innerHTML = "";
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const pageData = filteredBookings.slice(start, end);
+  
+  pageData.forEach((booking) => {
+    // Format paymentStatus nicely
+    const formattedStatusPayment = booking.paymentStatus.charAt(0).toUpperCase() + booking.paymentStatus.slice(1).toLowerCase();
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${booking.name}</td>
+      <td>₱${booking.downPayment}</td>
+      <td>₱${booking.amount}</td>
+      <td>${formattedStatusPayment}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+
   // Render pagination controls.
   function renderPagination() {
     const paginationDiv = document.getElementById("pagination");
@@ -446,10 +435,43 @@ window.toggleAccommodationSection = toggleAccommodationSection;
   window.filterTable = filterTable;
   window.printTable = printTable;
   
-  // Print only the table.
-  function printTable() {
-    window.print();
-  }
+  //Print Function
+function printTable() {
+  // Get the HTML of the table; adjust the selector as needed.
+  const tableHTML = document.getElementById("table-print").outerHTML;
+  
+  // Open a new window.
+  const printWindow = window.open("", "PrintWindow", "width=800,height=600");
+  
+  // Write a basic HTML document to the new window.
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Payment Report</title>
+        <style>
+          /* Optional: Add your print-specific styles here */
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          table, th, td {
+            border: 1px solid black;
+          }
+        </style>
+      </head>
+      <body>
+        ${tableHTML}
+      </body>
+    </html>
+  `);
+  // Ensure the document is fully loaded before printing.
+  printWindow.document.close();
+  printWindow.focus();
+  // Trigger the print dialog.
+  printWindow.print();
+  // Optionally close the print window after printing.
+  printWindow.close();
+}
   
   // Set default filters to the current date and update the Day dropdown.
   function setDefaultDateFilters() {

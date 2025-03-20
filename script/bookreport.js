@@ -241,7 +241,7 @@ history.replaceState({}, document.title, "" + '?key=' + randomKey);
 
 
 // Global variables for pagination and data
-const pageSize = 10;
+const pageSize = 20;
 let currentPage = 1;
 let filteredBookings = [];
 
@@ -436,10 +436,44 @@ function filterTable() {
 window.filterTable = filterTable;
 window.printTable = printTable;
 
-// Print only the table.
+  //Print Function
 function printTable() {
-  window.print();
+  // Get the HTML of the table; adjust the selector as needed.
+  const tableHTML = document.getElementById("table-print").outerHTML;
+  
+  // Open a new window.
+  const printWindow = window.open("", "PrintWindow", "width=800,height=600");
+  
+  // Write a basic HTML document to the new window.
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Booking Report</title>
+        <style>
+          /* Optional: Add your print-specific styles here */
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          table, th, td {
+            border: 1px solid black;
+          }
+        </style>
+      </head>
+      <body>
+        ${tableHTML}
+      </body>
+    </html>
+  `);
+  // Ensure the document is fully loaded before printing.
+  printWindow.document.close();
+  printWindow.focus();
+  // Trigger the print dialog.
+  printWindow.print();
+  // Optionally close the print window after printing.
+  printWindow.close();
 }
+
 
 // Set default filters to the current date and update the Day dropdown.
 function setDefaultDateFilters() {
