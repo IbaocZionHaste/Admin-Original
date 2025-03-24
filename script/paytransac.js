@@ -342,6 +342,7 @@ function fetchPaymentTransactions() {
               var refNo = payment.refNo || "N/A";
               var amount = payment.amount || "N/A";
               var status = (payment.paymentStatus || "pending").toLowerCase();
+            
               
               // Create a new table row for this payment transaction.
               var row = document.createElement("tr");
@@ -393,6 +394,7 @@ function viewPaymentTransactionModal(userId, bookingId) {
           modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${payment.amount || "N/A"}</p>`;
           modalContent.innerHTML += `<p class="payment-detail"><strong>Down Payment:</strong> ${payment.downPayment || "N/A"}</p>`;
           modalContent.innerHTML += `<p class="payment-detail"><strong>Payment Status:</strong> <span class="status ${(payment.paymentStatus || 'pending').toLowerCase()}">${(payment.paymentStatus || 'PENDING').toUpperCase()}</span></p>`;
+          modalContent.innerHTML += `<p class="payment-detail"><strong>Final Approved Status:</strong> <span class="status ${(payment.finalStatus || 'pending').toLowerCase()}">${(payment.finalStatus || 'PENDING').toUpperCase()}</span></p>`;
         } else {
           modalContent.innerHTML += "<p>No payment transaction details found.</p>";
         }
@@ -466,6 +468,13 @@ function viewPaymentTransactionEdit(userId, bookingId) {
               <option value="refund" ${(payment.paymentStatus || '').toLowerCase() === 'refund' ? 'selected' : ''}>REFUND</option>
             </select>
           </p>`;
+          // Editable dropdown for payment status
+          modalContent.innerHTML += `<p class="payment-detail"><strong>Final Status:</strong> 
+          <select id="finalStatusDropdown">
+            <option value="pending" ${(payment.finalStatus || 'pending').toLowerCase() === 'pending' ? 'selected' : ''}>PENDING</option>
+            <option value="approved" ${(payment.finalStatus || '').toLowerCase() === 'approved' ? 'selected' : ''}>APPROVED</option>
+          </select>
+        </p>`;
         } else {
           modalContent.innerHTML += "<p>No payment transaction details found.</p>";
         }
@@ -485,6 +494,13 @@ function viewPaymentTransactionEdit(userId, bookingId) {
           updatePaymentStatus(userId, bookingId, newStatus);
         });
       }
+      var statusDropdown = document.getElementById("finalStatusDropdown");
+      if (statusDropdown) {
+        statusDropdown.addEventListener("change", function(e) {
+          var newStatus = e.target.value;
+          updateFinalStatus(userId, bookingId, newStatus);
+        });
+      }
     })
     .catch(function(error) {
       console.error("Error fetching payment transaction details (edit view):", error);
@@ -497,7 +513,10 @@ function viewPaymentTransactionEdit(userId, bookingId) {
  */
 function updatePaymentStatus(userId, bookingId, newStatus) {
   var paymentRef = firebase.database().ref("users/" + userId + "/MyBooking/" + bookingId + "/paymentTransaction");
-  paymentRef.update({ paymentStatus: newStatus })
+  paymentRef.update({
+    paymentStatus: newStatus
+
+  })
     .then(() => {
       alert("Payment status updated to " + newStatus.toUpperCase());
       // Refresh the transactions list to reflect the updated status.
@@ -508,6 +527,27 @@ function updatePaymentStatus(userId, bookingId, newStatus) {
       alert("Error updating payment status: " + error.message);
     });
 }
+
+/**
+ * Function to update the payment status in Firebase.
+ */
+function updateFinalStatus(userId, bookingId, newStatus) {
+  var paymentRef = firebase.database().ref("users/" + userId + "/MyBooking/" + bookingId + "/paymentTransaction");
+  paymentRef.update({
+    finalStatus: newStatus
+    // finalStatus update removed; final approval will be handled separately.
+  })
+    .then(() => {
+      alert("Final status updated to " + newStatus.toUpperCase());
+      // Refresh the transactions list to reflect the updated status.
+      fetchPaymentTransactions();
+    })
+    .catch(error => {
+      console.error("Error updating Final status:", error);
+      alert("Error updating final status: " + error.message);
+    });
+}
+
 
 // Modal close functionality.
 document.getElementById("modalClose").addEventListener("click", function() {

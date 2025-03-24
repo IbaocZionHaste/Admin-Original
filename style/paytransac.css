@@ -1181,18 +1181,36 @@ h1 {
     outline: none;
     cursor: pointer;
   }
-  #paymentStatusDropdown:hover,
-  #paymentStatusDropdown:focus {
+
+  #finalStatusDropdown:hover,
+  #finalStatusDropdown:focus {
+    border-color: lightblue;
+  }
+  #finalStatusDropdown option {
+    padding: 8px 12px;
+  }
+
+  #finalStatusDropdown {
+    background-color: #f7f7f7;
+    border: 3px solid #ccc;
+    border-radius: 4px;
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    color: #333;
+    transition: border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+  }
+  #finalStatusDropdown:hover,
+  #finalStatusDropdown:focus {
     border-color: lightblue;
   }
   #paymentStatusDropdown option {
     padding: 8px 12px;
   }
-  
-
-  
   .payment-detail {
-    font-size: 1rem;  /* Increase font size to 1rem (adjust as needed) */
+    font-size: 1rem;  
     margin: 10px 0;
   }
   
