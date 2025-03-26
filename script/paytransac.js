@@ -464,7 +464,6 @@ function viewPaymentTransactionEdit(userId, bookingId) {
             <select id="paymentStatusDropdown">
               <option value="pending" ${(payment.paymentStatus || 'pending').toLowerCase() === 'pending' ? 'selected' : ''}>PENDING</option>
               <option value="approved" ${(payment.paymentStatus || '').toLowerCase() === 'approved' ? 'selected' : ''}>APPROVED</option>
-              <option value="declined" ${(payment.paymentStatus || '').toLowerCase() === 'declined' ? 'selected' : ''}>DECLINED</option>
               <option value="refund" ${(payment.paymentStatus || '').toLowerCase() === 'refund' ? 'selected' : ''}>REFUND</option>
             </select>
           </p>`;

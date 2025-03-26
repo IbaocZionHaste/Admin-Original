@@ -1055,3 +1055,15 @@ body {
         width: 100%;
     }
 }
+
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.totalpayment {
+    color: var(--dark); /* Change to any color you prefer */
+    font-weight: bold; /* Optional: to make it stand out */
+}

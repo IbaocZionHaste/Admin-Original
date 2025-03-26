@@ -217,67 +217,74 @@
             <div class="container">
                 <!-- Filter Bar: Year, Month, and Day -->
                 <div class="filter-bar">
-                  
-                  <label for="month">Month:</label>
-                  <select id="month" onchange="updateDayOptions()">
-                    <option value="">All</option>
-                    <option value="1">January</option>
-                    <option value="2">February</option>
-                    <option value="3">March</option>
-                    <option value="4">April</option>
-                    <option value="5">May</option>
-                    <option value="6">June</option>
-                    <option value="7">July</option>
-                    <option value="8">August</option>
-                    <option value="9">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
-                  </select>
-                  
-                  <label for="day">Day:</label>
-                  <select id="day">
-                    <!-- Day options will be populated dynamically -->
-                  </select>
 
-                  <label for="year">Year:</label>
-                  <select id="year" onchange="updateDayOptions()">
-                    <option value="">All</option>
-                    <option value="2025">2025</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                  </select>
-                  
-                  <button onclick="filterTable()">Search</button>
+                    <label for="month">Month:</label>
+                    <select id="month" onchange="updateDayOptions()">
+                        <option value="">All</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+
+                    <label for="day">Day:</label>
+                    <select id="day">
+                        <!-- Day options will be populated dynamically -->
+                    </select>
+
+                    <label for="year">Year:</label>
+                    <select id="year" onchange="updateDayOptions()">
+                        <option value="">All</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                    </select>
+
+                    <button onclick="filterTable()">Search</button>
                 </div>
-                
+
                 <!-- Table Data -->
                 <div class="table-data">
-                  <div class="order">
-                    <div class="head">
-                      <h3>Payment Transaction</h3>
-                      <div class="action-buttons">
-                        <button onclick="printTable()">Print</button>
-                      </div>
+                    <div class="order">
+                        <div class="head">
+                            <h3>Payment Transaction</h3>
+                            <div class="action-buttons">
+                                <button onclick="printTable()">Print</button>
+                            </div>
+                        </div>
+                        <table id="table-print">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Down Payment</th>
+                                    <th>Total Payment</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accommodation-list">
+                                <!-- Data rows will be inserted here -->
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination Bar -->
+                        <div class="pagination-container">
+                            <div id="total" class="totalpayment"></div>
+                            <div id="pagination" class="pagination"></div>
+                        </div>
+
+                        <!-- <div id="pagination" class="pagination"></div> -->
+
                     </div>
-                    <table id="table-print">
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Down Payment</th>
-                          <th>Total Payment</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody id="accommodation-list">
-                        <!-- Data rows will be inserted here -->
-                      </tbody>
-                    </table>
-                    <!-- Pagination Bar -->
-                    <div id="pagination" class="pagination"></div>
-                  </div>
                 </div>
-              </div>
+            </div>
         </main>
         <!-- MAIN -->
     </section>
@@ -286,4 +293,5 @@
     <script type="module" src="../script/incomreport.js"></script>
     <!-- script -->
 </body>
+
 </html>
