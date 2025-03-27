@@ -321,6 +321,15 @@ function jsonToHtmlByCategory(orderItems) {
   return html;
 }
 
+/**
+ * Helper function to format a value into Philippine Peso currency.
+ */
+function formatPHP(value) {
+  var number = parseFloat(value);
+  if (isNaN(number)) return value;
+  return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(number);
+}
+
 // Helper function to check if today is the last day of the month.
 function isMonthEnd() {
   const now = new Date();
@@ -359,14 +368,16 @@ function fetchPaymentTransactions() {
               var payment = booking.paymentTransaction;
               var name = payment.name || "N/A";
               var refNo = payment.refNo || "N/A";
+              // Format the amount using the helper function.
               var amount = payment.amount || "N/A";
+              var formattedAmount = (amount !== "N/A") ? formatPHP(amount) : amount;
               var status = (payment.paymentStatus || "pending").toLowerCase();
               
               var row = document.createElement("tr");
               row.innerHTML = `
                 <td>${name}</td>
                 <td>${refNo}</td>
-                <td>${amount}</td>
+                <td>${formattedAmount}</td>
                 <td><span class="status ${status}">${status.toUpperCase()}</span></td>
                 <td>
                   <div class="actions">
@@ -390,14 +401,16 @@ function fetchPaymentTransactions() {
               var payment = booking.paymentTransaction;
               var name = payment.name || "N/A";
               var refNo = payment.refNo || "N/A";
+              // Format the amount using the helper function.
               var amount = payment.amount || "N/A";
+              var formattedAmount = (amount !== "N/A") ? formatPHP(amount) : amount;
               var status = (payment.paymentStatus || "pending").toLowerCase();
               
               var row = document.createElement("tr");
               row.innerHTML = `
                 <td>${name}</td>
                 <td>${refNo}</td>
-                <td>${amount}</td>
+                <td>${formattedAmount}</td>
                 <td><span class="status ${status}">${status.toUpperCase()}</span></td>
                 <td>
                   <div class="actions">
@@ -448,8 +461,8 @@ function viewPaymentTransactionModal(userId, bookingId, type = 'MyBooking') {
           var payment = bookingData.paymentTransaction;
           modalContent.innerHTML += `<p class="payment-detail"><strong>Name:</strong> ${payment.name || "N/A"}</p>`;
           modalContent.innerHTML += `<p class="payment-detail"><strong>Book Ref No:</strong> ${payment.refNo || "N/A"}</p>`;
-          modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${payment.amount || "N/A"}</p>`;
-          modalContent.innerHTML += `<p class="payment-detail"><strong>Down Payment:</strong> ${payment.downPayment || "N/A"}</p>`;
+          modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${formatPHP(payment.amount || "N/A")}</p>`;
+          modalContent.innerHTML += `<p class="payment-detail"><strong>Down Payment:</strong> ${formatPHP(payment.downPayment || "N/A")}</p>`;
           modalContent.innerHTML += `<p class="payment-detail"><strong>Payment Status:</strong> <span class="status ${(payment.paymentStatus || 'pending').toLowerCase()}">${(payment.paymentStatus || 'PENDING').toUpperCase()}</span></p>`;
           modalContent.innerHTML += `<p class="payment-detail"><strong>Final Approved Status:</strong> <span class="status ${(payment.finalStatus || 'pending').toLowerCase()}">${(payment.finalStatus || 'PENDING').toUpperCase()}</span></p>`;
         } else {
@@ -465,7 +478,7 @@ function viewPaymentTransactionModal(userId, bookingId, type = 'MyBooking') {
           modalContent.innerHTML += `<p class="payment-detail"><strong>Firstname:</strong> ${paymentMethod.Firstname || "N/A"}</p>`;
           modalContent.innerHTML += `<p class="payment-detail"><strong>Lastname:</strong> ${paymentMethod.Lastname || "N/A"}</p>`;
           modalContent.innerHTML += `<p class="payment-detail"><strong>Phone:</strong> ${paymentMethod.Phone || "N/A"}</p>`;
-          modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${paymentMethod.Amount || "N/A"}</p>`;
+          modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${formatPHP(paymentMethod.Amount || "N/A")}</p>`;
         } else {
           modalContent.innerHTML += "<p>No payment method details found.</p>";
         }
@@ -492,7 +505,6 @@ function centerModalContent(modalId) {
   }
 }
 
-
 /**
  * Function to view (and edit) payment transaction details via the pencil icon.
  * (Note: The date field is removed as requested.)
@@ -514,8 +526,8 @@ function viewPaymentTransactionEdit(userId, bookingId) {
           var payment = bookingData.paymentTransaction;
           modalContent.innerHTML += `<p class="payment-detail"><strong>Name:</strong> ${payment.name || "N/A"}</p>`;
           modalContent.innerHTML += `<p class="payment-detail"><strong>Reference No:</strong> ${payment.refNo || "N/A"}</p>`;
-          modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${payment.amount || "N/A"}</p>`;
-          modalContent.innerHTML += `<p class="payment-detail"><strong>Down Payment:</strong> ${payment.downPayment || "N/A"}</p>`;
+          modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${formatPHP(payment.amount || "N/A")}</p>`;
+          modalContent.innerHTML += `<p class="payment-detail"><strong>Down Payment:</strong> ${formatPHP(payment.downPayment || "N/A")}</p>`;
           
           // Editable dropdown for payment status.
           modalContent.innerHTML += `<p class="payment-detail"><strong>Payment Status:</strong> 
@@ -610,6 +622,291 @@ document.getElementById("modalClose").addEventListener("click", function() {
 
 // Call the fetch function when the page loads.
 fetchPaymentTransactions();
+
+
+//This code no format peso
+// /**
+//  * Function to fetch payment transactions from all users and update the table.
+//  * It checks both MyBooking and MyHistory nodes.
+//  * - MyBooking rows are shown normally.
+//  * - MyHistory rows are now always shown.
+//  *   When displayed, the MyHistory edit icon is disabled.
+//  */
+// function fetchPaymentTransactions() {
+//   var usersRef = firebase.database().ref("users");
+//   usersRef.on("value", function(snapshot) {
+//     var tableBody = document.getElementById("accommodation-list");
+//     tableBody.innerHTML = ""; // Clear any existing rows.
+    
+//     // Arrays to store rows separately for MyBooking and MyHistory.
+//     var bookingRows = [];
+//     var historyRows = [];
+    
+//     snapshot.forEach(function(userSnapshot) {
+//       var userId = userSnapshot.key;
+//       var userData = userSnapshot.val();
+      
+//       // Process MyBooking: show payment transaction details normally.
+//       if (userData["MyBooking"]) {
+//         for (var bookingId in userData["MyBooking"]) {
+//           if (userData["MyBooking"].hasOwnProperty(bookingId)) {
+//             var booking = userData["MyBooking"][bookingId];
+//             // Check if a payment transaction exists.
+//             if (booking.paymentTransaction) {
+//               var payment = booking.paymentTransaction;
+//               var name = payment.name || "N/A";
+//               var refNo = payment.refNo || "N/A";
+//               var amount = payment.amount || "N/A";
+//               var status = (payment.paymentStatus || "pending").toLowerCase();
+              
+//               var row = document.createElement("tr");
+//               row.innerHTML = `
+//                 <td>${name}</td>
+//                 <td>${refNo}</td>
+//                 <td>${amount}</td>
+//                 <td><span class="status ${status}">${status.toUpperCase()}</span></td>
+//                 <td>
+//                   <div class="actions">
+//                     <i class="bx bx-pencil" onclick="viewPaymentTransactionEdit('${userId}', '${bookingId}', 'MyBooking')"></i>
+//                     <i class="bx bx-detail" onclick="viewPaymentTransactionModal('${userId}', '${bookingId}', 'MyBooking')"></i>
+//                   </div>
+//                 </td>
+//               `;
+//               bookingRows.push(row);
+//             }
+//           }
+//         }
+//       }
+      
+//       // Process MyHistory: display payment transaction details (always visible now).
+//       if (userData["MyHistory"]) {
+//         for (var bookingId in userData["MyHistory"]) {
+//           if (userData["MyHistory"].hasOwnProperty(bookingId)) {
+//             var booking = userData["MyHistory"][bookingId];
+//             if (booking.paymentTransaction) {
+//               var payment = booking.paymentTransaction;
+//               var name = payment.name || "N/A";
+//               var refNo = payment.refNo || "N/A";
+//               var amount = payment.amount || "N/A";
+//               var status = (payment.paymentStatus || "pending").toLowerCase();
+              
+//               var row = document.createElement("tr");
+//               row.innerHTML = `
+//                 <td>${name}</td>
+//                 <td>${refNo}</td>
+//                 <td>${amount}</td>
+//                 <td><span class="status ${status}">${status.toUpperCase()}</span></td>
+//                 <td>
+//                   <div class="actions">
+//                     <!-- Edit icon disabled for MyHistory -->
+//                     <i class="bx bx-pencil disabled" style="opacity:0.5; cursor:not-allowed;"></i>
+//                     <i class="bx bx-detail" onclick="viewPaymentTransactionModal('${userId}', '${bookingId}', 'MyHistory')"></i>
+//                   </div>
+//                 </td>
+//               `;
+//               historyRows.push(row);
+//             }
+//           }
+//         }
+//       }
+//     });
+    
+//     // Append MyBooking rows first, then MyHistory rows.
+//     bookingRows.forEach(function(row) {
+//       tableBody.appendChild(row);
+//     });
+//     historyRows.forEach(function(row) {
+//       tableBody.appendChild(row);
+//     });
+//   }, function(error) {
+//     console.error("Error fetching users:", error);
+//   });
+// }
+
+// /**
+//  * Function to view payment transaction details in a modal (read-only view).
+//  * It dynamically fetches details from either MyBooking or MyHistory based on the provided type.
+//  */
+// function viewPaymentTransactionModal(userId, bookingId, type = 'MyBooking') {
+//   // Build the Firebase path dynamically using the 'type' parameter.
+//   var path = "users/" + userId + "/" + type + "/" + bookingId;
+//   console.log("Fetching read-only modal details from path:", path);
+  
+//   firebase.database().ref(path).once("value")
+//     .then(function(snapshot) {
+//       var bookingData = snapshot.val();
+//       console.log("Fetched booking data (detail view):", bookingData);
+//       var modalContent = document.getElementById("paymentModalContent");
+//       modalContent.innerHTML = ""; // Clear previous details
+
+//       if (bookingData) {
+//         // Payment Transaction Details
+//         if (bookingData.paymentTransaction) {
+//           var payment = bookingData.paymentTransaction;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Name:</strong> ${payment.name || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Book Ref No:</strong> ${payment.refNo || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${payment.amount || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Down Payment:</strong> ${payment.downPayment || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Payment Status:</strong> <span class="status ${(payment.paymentStatus || 'pending').toLowerCase()}">${(payment.paymentStatus || 'PENDING').toUpperCase()}</span></p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Final Approved Status:</strong> <span class="status ${(payment.finalStatus || 'pending').toLowerCase()}">${(payment.finalStatus || 'PENDING').toUpperCase()}</span></p>`;
+//         } else {
+//           modalContent.innerHTML += "<p>No payment transaction details found.</p>";
+//         }
+        
+//         // Payment Method Details
+//         if (bookingData.paymentMethod) {
+//           var paymentMethod = bookingData.paymentMethod;
+//           modalContent.innerHTML += `<hr><h3>Payment Details</h3>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Payment Method:</strong> ${paymentMethod.Payment || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Pay Ref No:</strong> ${paymentMethod.Reference || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Firstname:</strong> ${paymentMethod.Firstname || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Lastname:</strong> ${paymentMethod.Lastname || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Phone:</strong> ${paymentMethod.Phone || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${paymentMethod.Amount || "N/A"}</p>`;
+//         } else {
+//           modalContent.innerHTML += "<p>No payment method details found.</p>";
+//         }
+//       } else {
+//         modalContent.innerHTML = "<p>No booking details found.</p>";
+//       }
+      
+//       // Display the modal
+//       document.getElementById("paymentModal").style.display = "block";
+//     })
+//     .catch(function(error) {
+//       console.error("Error fetching payment transaction details (detail view):", error);
+//       alert("Error fetching payment transaction details: " + error.message);
+//     });
+// }
+
+// // Helper function to center modal content.
+// function centerModalContent(modalId) {
+//   var modal = document.getElementById(modalId);
+//   if (modal) {
+//     modal.style.display = "flex"; // Use flex to center content
+//     modal.style.justifyContent = "center";
+//     modal.style.alignItems = "center";
+//   }
+// }
+
+
+// /**
+//  * Function to view (and edit) payment transaction details via the pencil icon.
+//  * (Note: The date field is removed as requested.)
+//  */
+// function viewPaymentTransactionEdit(userId, bookingId) {
+//   var path = "users/" + userId + "/MyBooking/" + bookingId;
+//   console.log("Fetching edit modal details from path:", path);
+  
+//   firebase.database().ref(path).once("value")
+//     .then(function(snapshot) {
+//       var bookingData = snapshot.val();
+//       console.log("Fetched booking data (edit view):", bookingData);
+//       var modalContent = document.getElementById("paymentModalContent");
+//       modalContent.innerHTML = ""; // Clear previous details
+
+//       if (bookingData) {
+//         // Payment Transaction Details with an editable dropdown for payment status.
+//         if (bookingData.paymentTransaction) {
+//           var payment = bookingData.paymentTransaction;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Name:</strong> ${payment.name || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Reference No:</strong> ${payment.refNo || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${payment.amount || "N/A"}</p>`;
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Down Payment:</strong> ${payment.downPayment || "N/A"}</p>`;
+          
+//           // Editable dropdown for payment status.
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Payment Status:</strong> 
+//             <select id="paymentStatusDropdown">
+//               <option value="pending" ${(payment.paymentStatus || 'pending').toLowerCase() === 'pending' ? 'selected' : ''}>PENDING</option>
+//               <option value="approved" ${(payment.paymentStatus || '').toLowerCase() === 'approved' ? 'selected' : ''}>APPROVED</option>
+//               <option value="refund" ${(payment.paymentStatus || '').toLowerCase() === 'refund' ? 'selected' : ''}>REFUND</option>
+//             </select>
+//           </p>`;
+//           // Editable dropdown for final status.
+//           modalContent.innerHTML += `<p class="payment-detail"><strong>Final Status:</strong> 
+//           <select id="finalStatusDropdown">
+//             <option value="pending" ${(payment.finalStatus || 'pending').toLowerCase() === 'pending' ? 'selected' : ''}>PENDING</option>
+//             <option value="approved" ${(payment.finalStatus || '').toLowerCase() === 'approved' ? 'selected' : ''}>APPROVED</option>
+//           </select>
+//         </p>`;
+//         } else {
+//           modalContent.innerHTML += "<p>No payment transaction details found.</p>";
+//         }
+//       } else {
+//         modalContent.innerHTML = "<p>No booking details found.</p>";
+//       }
+      
+//       // Display the modal (without centering)
+//       document.getElementById("paymentModal").style.display = "block";
+//       centerModalContent("paymentModal");
+      
+//       // Attach event listener to the payment status dropdown.
+//       var statusDropdown = document.getElementById("paymentStatusDropdown");
+//       if (statusDropdown) {
+//         statusDropdown.addEventListener("change", function(e) {
+//           var newStatus = e.target.value;
+//           updatePaymentStatus(userId, bookingId, newStatus);
+//         });
+//       }
+//       var finalDropdown = document.getElementById("finalStatusDropdown");
+//       if (finalDropdown) {
+//         finalDropdown.addEventListener("change", function(e) {
+//           var newStatus = e.target.value;
+//           updateFinalStatus(userId, bookingId, newStatus);
+//         });
+//       }
+//     })
+//     .catch(function(error) {
+//       console.error("Error fetching payment transaction details (edit view):", error);
+//       alert("Error fetching payment transaction details: " + error.message);
+//     });
+// }
+
+// /**
+//  * Function to update the payment status in Firebase.
+//  */
+// function updatePaymentStatus(userId, bookingId, newStatus) {
+//   var paymentRef = firebase.database().ref("users/" + userId + "/MyBooking/" + bookingId + "/paymentTransaction");
+//   paymentRef.update({
+//     paymentStatus: newStatus
+//   })
+//     .then(() => {
+//       alert("Payment status updated to " + newStatus.toUpperCase());
+//       // Refresh the transactions list to reflect the updated status.
+//       fetchPaymentTransactions();
+//     })
+//     .catch(error => {
+//       console.error("Error updating payment status:", error);
+//       alert("Error updating payment status: " + error.message);
+//     });
+// }
+
+// /**
+//  * Function to update the final status in Firebase.
+//  */
+// function updateFinalStatus(userId, bookingId, newStatus) {
+//   var paymentRef = firebase.database().ref("users/" + userId + "/MyBooking/" + bookingId + "/paymentTransaction");
+//   paymentRef.update({
+//     finalStatus: newStatus
+//   })
+//     .then(() => {
+//       alert("Final status updated to " + newStatus.toUpperCase());
+//       // Refresh the transactions list to reflect the updated status.
+//       fetchPaymentTransactions();
+//     })
+//     .catch(error => {
+//       console.error("Error updating final status:", error);
+//       alert("Error updating final status: " + error.message);
+//     });
+// }
+
+// // Modal close functionality.
+// document.getElementById("modalClose").addEventListener("click", function() {
+//   document.getElementById("paymentModal").style.display = "none";
+// });
+
+// // Call the fetch function when the page loads.
+// fetchPaymentTransactions();
 
 
 
