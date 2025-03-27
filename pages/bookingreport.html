@@ -45,19 +45,19 @@
             <div class="accommodation-section" style="display: none;">
                 <li>
                     <a href="accommodation.html" class="arrowsss-link">
-                        <i class='bx bxs-wallet-alt'></i>
+                        <i class='bx bxs-home-smile'></i>
                         <p class="income-text">Acommodation</p>
                     </a>
                 </li>
                 <li>
                     <a href="foodbeverage.html" class="arrowsss-link">
-                        <i class='bx bxs-calendar-exclamation'></i>
+                        <i class='bx bx-food-tag'></i>
                         <p class="booking-text ">Food/Beverage</p>
                     </a>
                 </li>
                 <li>
                     <a href="package.html" class="arrowsss-link">
-                        <i class='bx bxs-like'></i>
+                        <i class='bx bxs-package'></i>
                         <p class="booking-text ">Package</p>
                     </a>
                 </li>
@@ -255,6 +255,16 @@
                         <option value="2026">2026</option>
                         <option value="2027">2027</option>
                       </select>
+
+                      <label for="Status">Status:</label>
+                    <select id="Status" onchange="updateStatusOptions()">
+                        <option value="">All</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="Refund">Refund</option>
+                        <option value="Declined">Declined</option>
+                    </select>
+
                       <button onclick="filterTable()">Search</button>
                     </div>
                     

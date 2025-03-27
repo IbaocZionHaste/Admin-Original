@@ -433,6 +433,7 @@ function renderPagination() {
   paginationDiv.appendChild(nextBtn);
 }
 
+
 // Filter the bookings based on the selected Year, Month, Day, and Status.
 function filterTable() {
   const yearFilter = document.getElementById("year").value;

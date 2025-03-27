@@ -413,6 +413,8 @@ function filterTable() {
   const yearFilter = document.getElementById("year").value;
   const monthFilter = document.getElementById("month").value;
   const dayFilter = document.getElementById("day").value;
+  const statusFilter = document.getElementById("Status").value; // New status filter
+
   console.log("Filters selected:", { yearFilter, monthFilter, dayFilter });
   filteredBookings = window.initialBookings.filter(b => {
     let valid = true;
@@ -425,8 +427,13 @@ function filterTable() {
     if (dayFilter !== "" && b.parsedDay !== parseInt(dayFilter)) {
       valid = false;
     }
-    return valid;
-  });
+   // If a status is selected, compare (case-insensitive)
+   if (statusFilter !== "" && b.statusReview.toLowerCase() !== statusFilter.toLowerCase()) {
+    valid = false;
+  }
+  return valid;
+});
+
   console.log("Filtered bookings:", filteredBookings);
   currentPage = 1;
   renderPage(currentPage);

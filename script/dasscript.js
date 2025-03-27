@@ -1,4 +1,3 @@
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -384,7 +383,6 @@ function toggleAccommodationSection(event) {
 window.toggleAccommodationSection = toggleAccommodationSection;
 
 
-
 //REPORT FUNCTION
 
 function toggleReportSection(event) {
@@ -407,7 +405,6 @@ function toggleReportSection(event) {
     }
 }
 window.toggleReportSection = toggleReportSection;
-
 
 
 //TRANSACTION FUNCTION
@@ -441,6 +438,7 @@ window.onload = function () {
 
 // THIS IS THE ALERT BOX OF THE PROFILE INCLUDE SETTING AND LOGOUT                      This not use profile
 
+
 // const profileMenu = document.getElementById('profileMenu');
 // const profileModal = document.getElementById('profileModal');
 // const closeBtn = document.querySelector('.close-btn');
@@ -472,6 +470,8 @@ window.onload = function () {
 
 
 // Generate a random alphanumeric string (e.g., 8 characters long)
+
+
 function generateRandomKey(length = 8) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -487,112 +487,633 @@ history.replaceState({}, document.title, "" + '?key=' + randomKey);
 
 
 
-// Automatically select the current month in the dropdown
-function setCurrentMonth() {
-    const monthDropdown = document.getElementById("monthDropdown");
-    const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-    ];
-    const currentMonth = months[new Date().getMonth()];
-    for (const option of monthDropdown.options) {
-        if (option.value === currentMonth) {
-            option.selected = true;
-            break;
-        }
-    }
-}
 
-function setCurrentMonth2() {
-    const monthDropdown = document.getElementById("monthDropdown2");
-    const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-    ];
-    const currentMonth = months[new Date().getMonth()];
-    for (const option of monthDropdown.options) {
-        if (option.value === currentMonth) {
-            option.selected = true;
-            break;
-        }
-    }
-}
+
+// Automatically select the current month in the dropdown
+// function setCurrentMonth() {
+//     const monthDropdown = document.getElementById("monthDropdown");
+//     const months = [
+//         "January",
+//         "February",
+//         "March",
+//         "April",
+//         "May",
+//         "June",
+//         "July",
+//         "August",
+//         "September",
+//         "October",
+//         "November",
+//         "December"
+//     ];
+//     const currentMonth = months[new Date().getMonth()];
+//     for (const option of monthDropdown.options) {
+//         if (option.value === currentMonth) {
+//             option.selected = true;
+//             break;
+//         }
+//     }
+// }
+
+// function setCurrentMonth2() {
+//     const monthDropdown = document.getElementById("monthDropdown2");
+//     const months = [
+//         "January",
+//         "February",
+//         "March",
+//         "April",
+//         "May",
+//         "June",
+//         "July",
+//         "August",
+//         "September",
+//         "October",
+//         "November",
+//         "December"
+//     ];
+//     const currentMonth = months[new Date().getMonth()];
+//     for (const option of monthDropdown.options) {
+//         if (option.value === currentMonth) {
+//             option.selected = true;
+//             break;
+//         }
+//     }
+// }
 
 // Run the function on page load
-document.addEventListener("DOMContentLoaded", setCurrentMonth);
-document.addEventListener("DOMContentLoaded", setCurrentMonth2);
+// document.addEventListener("DOMContentLoaded", setCurrentMonth);
+// document.addEventListener("DOMContentLoaded", setCurrentMonth2);
+
+
+
+
+function countVacancies() {
+    const ref = firebase.database().ref("products");
+
+    // Query for products with status exactly "Unavailable"
+    const queryUpper = ref.orderByChild("status").equalTo("Unavailable");
+    // Query for products with status exactly "unavailable"
+    const queryLower = ref.orderByChild("status").equalTo("unavailable");
+
+    let countUpper = 0;
+    let countLower = 0;
+
+    // First query: "Unavailable"
+    queryUpper.once("value")
+        .then(snapshot => {
+            countUpper = snapshot.numChildren();
+            // Second query: "unavailable"
+            return queryLower.once("value");
+        })
+        .then(snapshot => {
+            countLower = snapshot.numChildren();
+            const vacancyCount = countUpper + countLower;
+            // Update the HTML element with the vacancy count
+            document.getElementById("vacancyCount").innerText = vacancyCount;
+            console.log("Vacancy count:", vacancyCount);
+        })
+        .catch(error => {
+            console.error("Error counting vacancies:", error);
+        });
+}
 
 
 // Count total approved sales from all users' payment transactions
 function fetchTotalApprovedSales() {
     firebase.database().ref("users").once("value")
-      .then(snapshot => {
-        let totalSales = 0;
-        snapshot.forEach(userSnapshot => {
-          const userData = userSnapshot.val();
-          if (userData.MyHistory) {
-            Object.values(userData.MyHistory).forEach(booking => {
-              if (booking.paymentTransaction && booking.paymentTransaction.paymentStatus) {
-                if (booking.paymentTransaction.paymentStatus.toLowerCase() === "approved") {
-                  totalSales += parseFloat(booking.paymentTransaction.amount) || 0;
+        .then(snapshot => {
+            let totalSales = 0;
+            snapshot.forEach(userSnapshot => {
+                const userData = userSnapshot.val();
+                if (userData.MyHistory) {
+                    Object.values(userData.MyHistory).forEach(booking => {
+                        if (booking.paymentTransaction && booking.paymentTransaction.paymentStatus) {
+                            if (booking.paymentTransaction.paymentStatus.toLowerCase() === "approved") {
+                                totalSales += parseFloat(booking.paymentTransaction.amount) || 0;
+                            }
+                        }
+                    });
                 }
-              }
             });
-          }
+            // Update the Total Sales element using its ID with the Philippine peso sign and no decimals
+            document.getElementById("totalSalesAmount").innerText = "₱" + Math.round(totalSales);
+        })
+        .catch(error => {
+            console.error("Error fetching total approved sales:", error);
         });
-        // Update the Total Sales element using its ID with the Philippine peso sign and no decimals
-        document.getElementById("totalSalesAmount").innerText = "₱" + Math.round(totalSales);
-      })
-      .catch(error => {
-        console.error("Error fetching total approved sales:", error);
-      });
-  }
-  
+}
 
 
 //Count al pending booking
 function fetchPendingBookingCount() {
     firebase.database().ref("users").once("value")
-      .then(snapshot => {
-        let pendingCount = 0;
-        snapshot.forEach(userSnapshot => {
-          const userData = userSnapshot.val();
-          if (userData.MyBooking) {
-            Object.values(userData.MyBooking).forEach(booking => {
-              const status = (booking.bookingReview?.statusReview || "").toLowerCase();
-              if (status === "pending") {
-                pendingCount++;
-              }
+        .then(snapshot => {
+            let pendingCount = 0;
+            snapshot.forEach(userSnapshot => {
+                const userData = userSnapshot.val();
+                if (userData.MyBooking) {
+                    Object.values(userData.MyBooking).forEach(booking => {
+                        const status = (booking.bookingReview?.statusReview || "").toLowerCase();
+                        if (status === "pending") {
+                            pendingCount++;
+                        }
+                    });
+                }
             });
-          }
+            document.querySelector("li span.text h3").innerText = pendingCount;
+        })
+        .catch(error => {
+            console.error("Error fetching booking count:", error);
         });
-        document.querySelector("li span.text h3").innerText = pendingCount;
-      })
-      .catch(error => {
-        console.error("Error fetching booking count:", error);
-      });
-  }
-  
-  fetchPendingBookingCount();
-  fetchTotalApprovedSales();
-  
+}
+
+
+
+
+
+
+//COUN ALL ITEM IN PRODUCT
+
+let pieChart;
+
+// Initialize the pie chart with default data.
+function initializePieChart() {
+    const ctx = document.getElementById('pieChart').getContext('2d');
+
+    const data = {
+        labels: ['Accommodation', 'Food and Dessert', 'Beverage and Alcohol', 'Package'],
+        datasets: [{
+            label: 'Product Percentage',
+            data: [0, 0, 0, 0],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.8)',   // Red for Accommodation
+                'rgba(54, 162, 235, 0.8)',    // Blue for Food and Dessert
+                'rgba(255, 206, 86, 0.8)',    // Yellow for Beverage and Alcohol
+                'rgba(75, 192, 192, 0.8)'     // Green for Package
+            ],
+            borderWidth: 1,
+            borderColor: '#fff'
+        }]
+    };
+
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        let value = context.raw;
+                        return `${context.label}: ${value}%`;
+                    }
+                }
+            },
+            legend: {
+                display: true,
+                position: 'right',
+                labels: {
+                    font: { family: 'Arial', size: 14, weight: 'bold' },
+                    color: 'grey'
+                }
+            },
+            datalabels: {
+                color: '#fff',
+                font: { family: 'Arial', size: 14, weight: 'bold' },
+                formatter: function (value) {
+                    return `${value}%`;
+                }
+            }
+        }
+    };
+
+    pieChart = new Chart(ctx, {
+        type: 'pie',
+        data: data,
+        options: options,
+        plugins: [ChartDataLabels]
+    });
+}
+
+// Automatically select the current month in the dropdown.
+function setCurrentMonth2() {
+    const monthDropdown = document.getElementById("monthDropdown2");
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    const currentMonth = months[new Date().getMonth()];
+    for (const option of monthDropdown.options) {
+        if (option.value === currentMonth) {
+            option.selected = true;
+            break;
+        }
+    }
+}
+
+// Function to count product items per category based on your desired grouping.
+// Optionally filters by month if the product has a "date" property.
+function countProductCategories() {
+    // Updated category mapping:
+    // "Accommodation": Boat or Cottage.
+    // "Food and Dessert": Accepts Food, Dessert, Food/Dessert, or Food & Dessert.
+    // "Beverage and Alcohol": Accepts Beverage, Alcohol, Beverage/Alcohol, or Beverage & Alcohol.
+    // "Package": Package.
+    const categoryMapping = {
+        "Accommodation": ["Boat", "Cottage"],
+        "Food and Dessert": ["Food", "Dessert", "Food/Dessert", "Food & Dessert"],
+        "Beverage and Alcohol": ["Beverage", "Alcohol", "Beverage/Alcohol", "Beverage & Alcohol"],
+        "Package": ["Package"]
+    };
+
+    // Get selected month from the dropdown.
+    const monthDropdown = document.getElementById("monthDropdown2");
+    const selectedMonth = monthDropdown.value;
+    let monthIndex = -1;
+    if (selectedMonth) {
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        monthIndex = months.indexOf(selectedMonth);
+    }
+
+    // Initialize counts for each group.
+    let counts = {
+        "Accommodation": 0,
+        "Food and Dessert": 0,
+        "Beverage and Alcohol": 0,
+        "Package": 0
+    };
+
+    // Fetch all products from Firebase.
+    firebase.database().ref("products").once("value")
+        .then(snapshot => {
+            snapshot.forEach(productSnapshot => {
+                const product = productSnapshot.val();
+                if (product.category) {
+                    console.log("Product category:", product.category); // Debug log
+
+                    // Optionally, if your products have a date field, filter by month.
+                    if (monthIndex !== -1 && product.date) {
+                        const prodDate = new Date(product.date);
+                        if (prodDate.getMonth() !== monthIndex) {
+                            return; // Skip if not in the selected month.
+                        }
+                    }
+
+                    // Check each group mapping.
+                    for (let group in categoryMapping) {
+                        if (categoryMapping[group].includes(product.category)) {
+                            counts[group]++;
+                            break;
+                        }
+                    }
+                }
+            });
+            console.log("Counts per group:", counts);
+
+            // Calculate total products (in the selected month if filtering is applied).
+            const totalItems = Object.values(counts).reduce((sum, val) => sum + val, 0);
+            console.log("Total products:", totalItems);
+
+            // Compute percentages for each group.
+            let percentages = [];
+            if (totalItems > 0) {
+                percentages = [
+                    Math.round((counts["Accommodation"] / totalItems) * 100),
+                    Math.round((counts["Food and Dessert"] / totalItems) * 100),
+                    Math.round((counts["Beverage and Alcohol"] / totalItems) * 100),
+                    Math.round((counts["Package"] / totalItems) * 100)
+                ];
+            } else {
+                percentages = [0, 0, 0, 0];
+            }
+
+            console.log("Computed percentages:", percentages);
+            updatePieChart(percentages);
+        })
+        .catch(error => {
+            console.error("Error fetching product data:", error);
+        });
+}
+
+// Update the pie chart with new data.
+function updatePieChart(percentages) {
+    if (pieChart) {
+        pieChart.data.datasets[0].data = percentages;
+        pieChart.update();
+    }
+}
+
+// Set up a realtime listener on the "products" node to automatically detect changes.
+function listenForNewProducts() {
+    firebase.database().ref("products").on("value", () => {
+        // Whenever the products data changes, re-run the count.
+        countProductCategories();
+    });
+}
+
+// Expose countProductCategories to the global scope.
+window.countProductCategories = countProductCategories;
+
+// On DOM load, initialize everything.
+document.addEventListener('DOMContentLoaded', function () {
+    initializePieChart();
+    setCurrentMonth2();
+    countProductCategories();
+    listenForNewProducts(); // Start listening for realtime updates.
+
+
+    //This data count all pending, sales and vacancy
+    fetchPendingBookingCount();
+    fetchTotalApprovedSales();
+    countVacancies();
+});
+
+
+
+
+
+
+
+
+
+
+
+//THIS BY DAY COUNT INCOME CHART
+let myChart;
+
+// Initialize Chart.js with default settings (empty daily data)
+function initializeChart() {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    if (myChart) {
+        myChart.destroy();
+    }
+    // Default empty chart with one label, will be updated later
+    myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [''],
+            datasets: [{
+                label: 'Income',
+                data: [0],
+                borderColor: 'rgba(135, 206, 250, 1)',
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 500,
+                easing: 'easeOutQuad'
+            },
+            scales: {
+                x: {
+                    grid: { color: 'grey' },
+                    ticks: { font: { family: 'Arial', size: 14, weight: 'bold' } },
+                    title: { display: true, text: 'Day of Month' }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'grey' },
+                    ticks: { font: { family: 'Arial', size: 14, weight: 'bold' } }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { font: { family: 'Arial', size: 14, weight: 'bold' } }
+                }
+            }
+        }
+    });
+}
+
+// Automatically select the current month in the dropdown
+function setCurrentMonth() {
+    const monthDropdown = document.getElementById("monthDropdown");
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    const currentMonth = months[new Date().getMonth()];
+    for (const option of monthDropdown.options) {
+        if (option.value === currentMonth) {
+            option.selected = true;
+            break;
+        }
+    }
+}
+
+function filterIncomeByDay() {
+    const selectedMonth = document.getElementById("monthDropdown").value;
+    if (!selectedMonth) return;
+
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    const monthIndex = monthNames.indexOf(selectedMonth);
+    if (monthIndex === -1) return;
+
+    const currentYear = new Date().getFullYear();
+    const daysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
+    let dailyTotals = new Array(daysInMonth).fill(0);
+
+    firebase.database().ref("users").once("value")
+        .then(snapshot => {
+            console.log("Fetching data for", selectedMonth, currentYear);
+            snapshot.forEach(userSnapshot => {
+                const userData = userSnapshot.val();
+                if (userData.MyHistory) {
+                    Object.values(userData.MyHistory).forEach(booking => {
+                        // Check if paymentTransaction exists
+                        if (booking.paymentTransaction) {
+                            const transaction = booking.paymentTransaction;
+                            // Use PaymentDate instead of booking.date
+                            const bookingDateStr = transaction.PaymentDate;
+                            if (!bookingDateStr) {
+                                console.warn("No PaymentDate found for booking:", booking);
+                                return;
+                            }
+                            // Parse the date string
+                            const bookingDate = new Date(bookingDateStr);
+                            console.log("Processing PaymentDate:", bookingDateStr, "Parsed:", bookingDate);
+
+                            // Check if the booking matches the current year and selected month
+                            if (bookingDate.getFullYear() !== currentYear) return;
+                            if (bookingDate.getMonth() !== monthIndex) return;
+
+                            const day = bookingDate.getDate();
+                            const amount = parseFloat(transaction.amount) || 0;
+
+                            // Only add if finalStatus is approved (change "approved" to match your data)
+                            if (transaction.finalStatus && transaction.finalStatus.toLowerCase() === "approved") {
+                                dailyTotals[day - 1] += amount;
+                                console.log(`Day ${day}: Added ₱${amount}. Running total: ₱${dailyTotals[day - 1]}`);
+                            } else {
+                                console.log(`Day ${day}: Transaction not approved. Status: ${transaction.finalStatus}`);
+                            }
+                        } else {
+                            console.warn("No paymentTransaction found for booking:", booking);
+                        }
+                    });
+                }
+            });
+            console.log("Final daily totals:", dailyTotals);
+        })
+        .then(() => {
+            // Compute the maximum value for dynamic y-axis scaling
+            const maxVal = Math.max(...dailyTotals);
+            const newSuggestedMax = maxVal + (maxVal * 0.2);
+
+            const labels = Array.from({ length: daysInMonth }, (_, i) => (i + 1).toString());
+            if (myChart) {
+                myChart.options.scales.y.suggestedMax = newSuggestedMax;
+                myChart.data.labels = labels;
+                myChart.data.datasets[0].data = dailyTotals;
+                myChart.update();
+            }
+            console.log("Chart updated with new suggestedMax:", newSuggestedMax);
+        })
+        .catch(error => {
+            console.error("Error fetching approved sales:", error);
+        });
+}
+
+
+
+
+// Expose filterIncomeByDay to the global scope so the inline onchange event can access it
+window.filterIncomeByDay = filterIncomeByDay;
+
+// Initialize chart, auto-select current month, and load daily income data on DOM load
+document.addEventListener('DOMContentLoaded', function () {
+    initializeChart();
+    setCurrentMonth();
+    filterIncomeByDay();
+});
+
+
+
+
+
+
+
+
+// //THIS CODE FOR THE INCOME CHART BUT NOT WORK
+//  let myChart;
+// // Initialize Chart.js
+// function initializeChart() {
+//   const ctx = document.getElementById('myChart').getContext('2d');
+//   // Destroy an existing instance if it exists to avoid duplicates
+//   if (myChart) {
+//     myChart.destroy();
+//   }
+//   myChart = new Chart(ctx, {
+//     type: 'line',
+//     data: {
+//       labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+//       datasets: [{
+//         label: 'Income',
+//         data: [0, 0, 0, 0],
+//         borderColor: 'rgba(135, 206, 250, 1)',
+//         borderWidth: 2,
+//         fill: false
+//       }]
+//     },
+//     options: {
+//       responsive: true,
+//       maintainAspectRatio: false,
+//       animation: {
+//         duration: 500,
+//         easing: 'easeOutQuad'
+//       },
+//       scales: {
+//         x: {
+//           grid: { color: 'grey' },
+//           ticks: { font: { family: 'Arial', size: 14, weight: 'bold' } }
+//         },
+//         y: {
+//           beginAtZero: true,
+//           grid: { color: 'grey' },
+//           ticks: { font: { family: 'Arial', size: 14, weight: 'bold' } }
+//         }
+//       },
+//       plugins: {
+//         legend: {
+//           labels: { font: { family: 'Arial', size: 14, weight: 'bold' } }
+//         }
+//       }
+//     }
+//   });
+// }
+
+// // Fetch approved transactions and group income by week for the selected month
+// function filterIncome() {
+//   const selectedMonth = document.getElementById("monthDropdown").value;
+//   if (!selectedMonth) return;
+
+//   const weekTotals = [0, 0, 0, 0];
+//   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+//   firebase.database().ref("users").once("value")
+//     .then(snapshot => {
+//       snapshot.forEach(userSnapshot => {
+//         const userData = userSnapshot.val();
+//         if (userData.MyHistory) {
+//           Object.values(userData.MyHistory).forEach(booking => {
+//             if (booking.paymentTransaction && booking.paymentTransaction.paymentStatus) {
+//               if (booking.paymentTransaction.paymentStatus.toLowerCase() === "approved") {
+//                 // Assumes a 'date' property in "YYYY-MM-DD" format
+//                 const bookingDateStr = booking.date;
+//                 if (!bookingDateStr) return;
+//                 const bookingDate = new Date(bookingDateStr);
+//                 if (monthNames[bookingDate.getMonth()] !== selectedMonth) return;
+//                 const day = bookingDate.getDate();
+//                 let weekIndex = day <= 7 ? 0 : day <= 14 ? 1 : day <= 21 ? 2 : 3;
+//                 weekTotals[weekIndex] += parseFloat(booking.paymentTransaction.amount) || 0;
+//               }
+//             }
+//           });
+//         }
+//       });
+//     })
+//     .then(() => {
+//       if (myChart) {
+//         myChart.data.datasets[0].data = weekTotals;
+//         console.log("Weekly totals:", weekTotals);
+//         myChart.update();
+//       }
+//     })
+//     .catch(error => {
+//       console.error("Error fetching approved sales:", error);
+//     });
+// }
+
+// // Function to automatically select the current month in the dropdown
+// function setCurrentMonth() {
+//   const monthDropdown = document.getElementById("monthDropdown");
+//   const months = [
+//     "January", "February", "March", "April", "May", "June",
+//     "July", "August", "September", "October", "November", "December"
+//   ];
+//   const currentMonth = months[new Date().getMonth()];
+//   for (const option of monthDropdown.options) {
+//     if (option.value === currentMonth) {
+//       option.selected = true;
+//       break;
+//     }
+//   }
+// }
+
+// // Expose filterIncome to the global scope so the inline onchange event can access it
+// window.filterIncome = filterIncome;
+
+// // Initialize chart and auto-select month on DOM load, then load income data
+// document.addEventListener('DOMContentLoaded', function () {
+//   initializeChart();
+//   setCurrentMonth();
+//   filterIncome();
+// });
