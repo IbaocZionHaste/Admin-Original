@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Walkin Transaction</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Walkin Transaction - Product Gallery</title>
+    <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Boxicons for icons -->
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
-        /* Your CSS styles go here */
-        .body {
+        body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -16,6 +18,7 @@
             color: #333;
         }
 
+        /* Filter Buttons */
         .button-container {
             display: flex;
             justify-content: space-around;
@@ -24,62 +27,8 @@
             border-radius: 50px;
             overflow-x: auto;
             background: #eee;
-            gap: 0px;
-        }
-
-        .buttons {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+            gap: 0;
             padding: 10px;
-            border-radius: 50%;
-            transition: transform 0.3s, background-color 0.3s;
-            text-align: center;
-        }
-
-        .button-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 5px;
-        }
-
-        .gallery {
-            min-height: 100vh;
-            background: #eee;
-            border-radius: 50px;
-            padding-bottom: 100px;
-        }
-
-        .image-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .image-container .image {
-            height: 200px;
-            width: 200px;
-            border-radius: 150px;
-            overflow: hidden;
-            border: 2px solid black;
-            box-shadow: 0 3px 5px rgba(0, 0, 0, .3);
-            margin: 20px;
-        }
-
-        .image-container .image img {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-        }
-
-        .image-container .image img:hover {
-            transform: scale(1.1);
         }
 
         .button-container::-webkit-scrollbar {
@@ -95,7 +44,84 @@
             background: #f4f4f9;
         }
 
-        /* Modal styles */
+        .buttons {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: transform 0.3s, background-color 0.3s;
+            text-align: center;
+        }
+
+        .buttons.active,
+        .buttons:hover {
+            background-color: #ddd;
+        }
+
+        .button-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 5px;
+        }
+
+        /* Gallery */
+        .gallery {
+            background: #eee;
+            border-radius: 50px;
+            padding: 2rem;
+            min-height: 60vh;
+        }
+
+        .image-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .image-container .image {
+            height: 200px;
+            width: 200px;
+            border-radius: 150px;
+            overflow: hidden;
+            border: 2px solid black;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+            margin: 20px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .image-container .image img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .image-container .image img:hover {
+            transform: scale(1.1);
+        }
+
+        .view-item {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .image-container .image:hover .view-item {
+            opacity: 1;
+        }
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -106,20 +132,62 @@
             background-color: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
+            z-index: 1000;
         }
 
         .modal-content {
             background: white;
-            padding: 20px;
+            padding: 2rem;
             border-radius: 10px;
-            width: 80%;
-            max-width: 600px;
+            width: 90%;
+            max-width: 1400px;
+            position: relative;
         }
 
-        .modal-content img {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
+        .modal-content .grid {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media(min-width:768px) {
+            .modal-content .grid {
+                flex-direction: row;
+            }
+
+            .modal-content .left-col {
+                width: 50%;
+                padding: 2rem;
+                border-right: 1px solid #ccc;
+            }
+
+            .modal-content .right-col {
+                width: 50%;
+                padding: 2rem;
+                border-left: 1px solid #ccc;
+                position: relative;
+            }
+        }
+
+        .modal-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content h2 {
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-content p,
+        .modal-content li {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .specs-container {
+            border-bottom: 1px dotted #ccc;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
         }
 
         .close {
@@ -128,448 +196,335 @@
             right: 10px;
             background-color: red;
             color: white;
-            padding: 5px 10px;
             border: none;
+            font-size: larger;
+            padding: 5px 10px;
+            font-size: 1.25rem;
             cursor: pointer;
+            border-radius: 200px;
+        }
+
+        .add-to-cart {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgb(0, 186, 248);
+            border-radius: 50px;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+        }
+
+        .price-rating {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .price-rating-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .star-rating {
+            display: flex;
+            align-items: center;
+        }
+
+        .star-rating i {
+            color: #facc15;
+            font-size: 1.5rem;
+            margin-right: 0.25rem;
+        }
+
+        .availability {
+            color: green;
+            font-size: 1rem;
         }
     </style>
 </head>
+
 <body class="bg-gray-100">
 
+    <!-- Filter Buttons Container -->
     <div class="button-container">
-        <li class="buttons active" data-filter="all">
+        <li class="buttons active" data-filter="all" onclick="filterProducts('all')">
             <img src="../img/admin.jpg" alt="All" class="button-image">
             <span>All</span>
         </li>
-        <li class="buttons" data-filter="cottage">
+        <li class="buttons" data-filter="cottage" onclick="filterProducts('cottage')">
             <img src="../img/admin.jpg" alt="Cottage" class="button-image">
             <span>Cottage</span>
         </li>
-        <li class="buttons" data-filter="boat">
+        <li class="buttons" data-filter="boat" onclick="filterProducts('boat')">
             <img src="../img/admin.jpg" alt="Boat" class="button-image">
             <span>Boat</span>
         </li>
-        <li class="buttons" data-filter="food">
+        <li class="buttons" data-filter="food" onclick="filterProducts('food')">
             <img src="../img/admin.jpg" alt="Food" class="button-image">
             <span>Food</span>
         </li>
-        <li class="buttons" data-filter="dessert">
+        <li class="buttons" data-filter="dessert" onclick="filterProducts('dessert')">
             <img src="../img/admin.jpg" alt="Dessert" class="button-image">
             <span>Dessert</span>
         </li>
-        <li class="buttons" data-filter="beverage">
+        <li class="buttons" data-filter="beverage" onclick="filterProducts('beverage')">
             <img src="../img/admin.jpg" alt="Beverage" class="button-image">
             <span>Beverage</span>
         </li>
-        <li class="buttons" data-filter="alcohol">
+        <li class="buttons" data-filter="alcohol" onclick="filterProducts('alcohol')">
             <img src="../img/admin.jpg" alt="Alcohol" class="button-image">
             <span>Alcohol</span>
         </li>
-        <li class="buttons" data-filter="package">
+        <li class="buttons" data-filter="package" onclick="filterProducts('package')">
             <img src="../img/admin.jpg" alt="Package" class="button-image">
             <span>Package</span>
         </li>
     </div>
-    
-    <!-- Gallery -->
-    <div class="gallery">
-        <div class="image-container">
-            <a href="javascript:void(0);" class="image food" onclick="openModal('Food', '$99.99', 'This is a detailed description of the food item', 'Food Item Specifications')">
-                <img src="../img/admin.jpg" alt="Food">
-                <div class="view-item">
-                    <button class="view-button">View Item</button>
-                </div>
-            </a>
-            <a href="javascript:void(0);" class="image cottage" onclick="openModal('Cottage', '$199.99', 'This is a detailed description of the cottage item', 'Cottage Item Specifications')">
-                <img src="../img/admin.jpg" alt="Cottage">
-                <div class="view-item">
-                    <button class="view-button">View Item</button>
-                </div>
-            </a>
+
+    <!-- Gallery Container (dynamically populated) -->
+    <div class="gallery p-6">
+        <div class="image-container" id="galleryContainer">
+            <!-- Gallery items will be inserted here -->
         </div>
     </div>
 
     <!-- Modal -->
-    <div id="itemModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
-        <div class="bg-white rounded-lg shadow-lg max-w-4xl mx-auto p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2">
-                <div>
-                    <img id="modalImage" src="../img/admin.jpg" alt="Item Image" class="w-full h-auto rounded-l-lg">
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <!-- Global Exit Button -->
+            <button id="closeModalBtn" class="close" onclick="closeModal()">X</button>
+            <div class="grid">
+                <!-- Left Column: Details -->
+                <div class="left-col">
+                    <h1 id="modalTitle">Item Name</h1>
+                    <div class="price-rating-container">
+                        <div class="price-rating">
+                            <span id="modalPrice" style="font-size: 1.5rem; font-weight: bold;">$99.99</span>
+                            <div class="star-rating">
+                                <i class='bx bxs-star'></i>
+                                <span id="modalRating" style="font-size: 1.25rem; font-weight: bold;">4.5/5</span>
+                            </div>
+                        </div>
+                        <!-- Availability below star rating -->
+                        <p id="modalAvailability" class="availability">Available</p>
+                    </div>
+                    <h2>Description</h2>
+                    <p id="modalDescription">Description of the item.</p>
+                    <h2>Specifications</h2>
+                    <div class="specs-container">
+                        <ul id="modalSpecs">
+                            <li>Capacity: N/A</li>
+                            <li>Design: N/A</li>
+                            <li>Amenities: N/A</li>
+                            <li>Location: N/A</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="p-6">
-                    <h1 id="modalTitle" class="text-3xl font-bold mb-4">Item Name</h1>
-                    <p id="modalPrice" class="text-gray-700 mb-2">Price: <span class="font-semibold">$99.99</span></p>
-                    <p class="text-gray-700 mb-4">Availability: <span class="text-green-600">In Stock</span></p>
-                    <h2 class="text-xl font-semibold mb-2">Description</h2>
-                    <p id="modalDescription" class="text-gray-600 mb-4">Description of the item.</p>
-                    <h2 class="text-xl font-semibold mb-2">Specifications</h2>
-                    <ul id="modalSpecs" class="list-disc list-inside text-gray-600 mb-4">
-                        <li>Specification 1</li>
-                        <li>Specification 2</li>
-                        <li>Specification 3</li>
-                    </ul>
-                    <button id="addToCartBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to Cart</button>
-                    <button id="closeModalBtn" class="bg-red-500 text-white px-4 py-2 rounded mt-4 hover:bg-red-600">Close</button>
+                <!-- Right Column: Image -->
+                <div class="right-col">
+                    <img id="modalImage" src="https://via.placeholder.com/500x400?text=Item+Image" alt="Item Image"
+                        class="modal-image">
                 </div>
             </div>
+            <!-- Add to Cart Button (small, bottom-right) -->
+            <button id="addToCartBtn" class="add-to-cart" onclick="addToCart()">Add to Cart</button>
         </div>
     </div>
 
+
+    <!-- Firebase and JavaScript -->
+    <!-- Include Firebase scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
-        // Function to open the modal and populate data
-        function openModal(title, price, description, specs) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalPrice').textContent = `Price: ${price}`;
-            document.getElementById('modalDescription').textContent = description;
-            document.getElementById('modalSpecs').innerHTML = `<li>${specs}</li>`;
+        // Initialize Firebase (replace with your configuration)
+        var firebaseConfig = {
+            apiKey: "AIzaSyCiSJrKhSII8vLTsmMh8rKlJERFNpG9plU",
+            authDomain: "resort-admin-b8411.firebaseapp.com",
+            databaseURL: "https://resort-admin-b8411-default-rtdb.firebaseio.com",
+            projectId: "resort-admin-b8411",
+            storageBucket: "resort-admin-b8411.appspot.com",
+            messagingSenderId: "865886329874",
+            appId: "1:865886329874:web:2c5e61e88e733fb00a4ccb",
+            measurementId: "G-P59Y09ZVT4"
+        };
+        firebase.initializeApp(firebaseConfig);
 
-            document.getElementById('itemModal').classList.remove('hidden');
+
+        // Global cart array stored in localStorage
+        var cart = JSON.parse(localStorage.getItem("cartItems")) || [];
+
+        function updateCartStorage() {
+            localStorage.setItem("cartItems", JSON.stringify(cart));
         }
 
-        // Close modal
-        document.getElementById('closeModalBtn').addEventListener('click', function() {
-            document.getElementById('itemModal').classList.add('hidden');
-        });
+        function updateCartCount() {
+            document.getElementById("cartCount").textContent = cart.length;
+        }
 
-        // Add to Cart functionality
-        document.getElementById('addToCartBtn').addEventListener('click', function() {
-            Swal.fire({
-                icon: 'success',
-                title: 'Added to Cart',
-                text: 'The item has been added to your cart!',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
+        // Build specifications string based on product category
+        function buildSpecs(product) {
+            var category = product.category.toLowerCase();
+            var specs = "";
+            if (category === "dessert") {
+                specs = "Size: " + (product.pieceNameDessert || "N/A") +
+                    "<br>Flavor: " + (product.flavorToppings || "N/A") +
+                    "<br>Perfect for: " + (product.perfectFor || "N/A");
+            } else if (category === "beverage") {
+                specs = "Size: " + (product.beverageSize || "N/A") +
+                    "<br>Flavor: " + (product.beverageFlavor || "N/A") +
+                    "<br>Ocasion: " + (product.beverageOccasions || "N/A") +
+                    "<br>Serving: " + (product.beverageServing || "N/A");
+            } else if (category === "alcohol") {
+                specs = "Size: " + (product.alcoholSize || "N/A") +
+                    "<br>Alcohol content: " + (product.alcoholContent || "N/A") +
+                    "<br>Type: " + (product.alcoholType || "N/A");
+            } else if (category === "package") {
+                specs = "Cottage: " + (product.capacityCottage || "N/A") +
+                    "<br>Cottage Name: " + (product.cottage || "N/A") +
+                    "<br>Food 1: " + (product.food1 || "N/A") +
+                    "<br>Food 2: " + (product.food2 || "N/A") +
+                    "<br>Food 3: " + (product.food3 || "N/A") +
+                    "<br>Food 4: " + (product.food4 || "N/A") +
+                    "<br>Food 5: " + (product.food5 || "N/A") +
+                    "<br>Food 6: " + (product.food6 || "N/A") +
+                    "<br>Beverage: " + (product.beverage || "N/A");
+            } else if (category === "boat") {
+                specs = "Capacity: " + (product.capacity || "N/A") +
+                    "<br>Design: " + (product.design || "N/A") +
+                    "<br>Amenities: " + (product.amenities || "N/A");
+            } else {
+                specs = "Capacity: " + (product.capacity || "N/A") +
+                    "<br>Design: " + (product.design || "N/A") +
+                    "<br>Amenities: " + (product.amenities || "N/A") +
+                    "<br>Location: " + (product.location || "N/A");
+            }
+            return specs;
+        }
+
+        // Open product modal
+        function openModal(product) {
+            document.getElementById("modalTitle").textContent = product.name;
+            document.getElementById("modalPrice").textContent = "₱" + product.price;
+            document.getElementById("modalDescription").textContent = product.description;
+            var specsStr = buildSpecs(product);
+            var specsContainer = document.getElementById("modalSpecs");
+            specsContainer.innerHTML = "";
+            var specsArray = specsStr.includes("<br>") ? specsStr.split("<br>") : [specsStr];
+            specsArray.forEach(function (item) {
+                var li = document.createElement("li");
+                li.innerHTML = item;
+                specsContainer.appendChild(li);
             });
-        });
+            document.getElementById("modalRating").textContent = "4.5";
+            document.getElementById("modalAvailability").textContent = "Available";
+            var imageUrl = product.imageUrl && product.imageUrl.trim() !== "" ? product.imageUrl : "https://via.placeholder.com/500x400?text=No+Image";
+            document.getElementById("modalImage").src = imageUrl;
+            document.getElementById("itemModal").style.display = "flex";
+        }
+
+        // Close product modal
+        function closeModal() {
+            document.getElementById("itemModal").style.display = "none";
+        }
+
+        // Add-to-cart: store product details in cart array, update localStorage, then redirect to cart page
+        function addToCart() {
+            var name = document.getElementById("modalTitle").textContent;
+            var priceStr = document.getElementById("modalPrice").textContent;
+            var price = parseFloat(priceStr.replace("₱", ""));
+            cart.push({ name: name, price: price });
+            updateCartStorage();
+            updateCartCount();
+            alert("Added to cart: " + name + " (" + priceStr + ")");
+            closeModal();
+            // Redirect to a separate cart page:
+            window.location.href = "cart.html";
+        }
 
 
-               // Filter functionality
-               document.addEventListener('DOMContentLoaded', () => {
-            const buttons = document.querySelectorAll('.buttons');
-            const images = document.querySelectorAll('.image');
 
-            buttons.forEach(button => {
-                button.addEventListener('click', () => {
-                    // Remove active class from all buttons
-                    buttons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-
-                    const filter = button.getAttribute('data-filter');
-                    images.forEach(image => {
-                        if (filter === 'all' || image.classList.contains(filter)) {
-                            image.style.display = 'block';
-                        } else {
-                            image.style.display = 'none';
-                        }
+        // Fetch products from Firebase
+        function fetchProducts(callback) {
+            firebase.database().ref("products").once("value")
+                .then(function (snapshot) {
+                    var products = [];
+                    snapshot.forEach(function (childSnapshot) {
+                        var product = childSnapshot.val();
+                        product.id = childSnapshot.key;
+                        products.push(product);
                     });
+                    callback(products);
+                })
+                .catch(function (error) {
+                    console.error("Error fetching products:", error);
                 });
+        }
+
+        // Populate gallery with products
+        function populateGallery(products) {
+            var galleryContainer = document.getElementById("galleryContainer");
+            galleryContainer.innerHTML = "";
+            products.forEach(function (product) {
+                var a = document.createElement("a");
+                a.href = "javascript:void(0);";
+                a.className = "image " + product.category.toLowerCase();
+                a.onclick = function () { openModal(product); };
+                var img = document.createElement("img");
+                img.src = product.imageUrl && product.imageUrl.trim() !== "" ? product.imageUrl : "https://via.placeholder.com/300x200?text=No+Image";
+                img.alt = product.name;
+                a.appendChild(img);
+                var viewDiv = document.createElement("div");
+                viewDiv.className = "view-item";
+                var viewBtn = document.createElement("button");
+                viewBtn.className = "bg-blue-500 text-white px-4 py-2 rounded";
+                viewBtn.textContent = "View Item";
+                viewDiv.appendChild(viewBtn);
+                a.appendChild(viewDiv);
+                galleryContainer.appendChild(a);
             });
-        });
-    </script>
-
-</body>
-</html>
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <style>
-
-        .body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
         }
 
-        .button-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin: 20px 0;
-            border-radius: 50px;
-            overflow-x: auto;
-            background: #eee;
-            gap: 0px;
-        }
-
-        .buttons {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 50%;
-            transition: transform 0.3s, background-color 0.3s;
-            text-align: center;
-        }
-
-        .button-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 5px;
-
-        }
-
-        .gallery {
-            min-height: 100vh;
-            background: #eee;
-            border-radius: 50px;
-            padding-bottom: 100px;
-        }
-
-        .image-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .image-container .image {
-            height: 200px;
-            width: 200px;
-            border-radius: 150px;
-            overflow: hidden;
-            border: 2px solid black;
-            box-shadow: 0 3px 5px rgba(0, 0, 0, .3);
-            margin: 20px;
-        }
-
-        .image-container .image img {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-        }
-
-        .image-container .image img:hover {
-            transform: scale(1.1);
-        }
-
-        .button-container::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .button-container::-webkit-scrollbar-thumb {
-            background: #bbb;
-            border-radius: 4px;
-        }
-
-        .button-container::-webkit-scrollbar-track {
-            background: #f4f4f9;
-        }
-      
-    </style>
-</head>
-
-<body>
-    <main>
-        <div class="button-container">
-            <li class="buttons active" data-filter="all">
-                <img src="../img/admin.jpg" alt="All" class="button-image">
-                <span>All</span>
-            </li>
-            <li class="buttons" data-filter="cottage">
-                <img src="../img/admin.jpg" alt="Cottage" class="button-image">
-                <span>Cottage</span>
-            </li>
-            <li class="buttons" data-filter="boat">
-                <img src="../img/admin.jpg" alt="Boat" class="button-image">
-                <span>Boat</span>
-            </li>
-            <li class="buttons" data-filter="food">
-                <img src="../img/admin.jpg" alt="Food" class="button-image">
-                <span>Food</span>
-            </li>
-            <li class="buttons" data-filter="dessert">
-                <img src="../img/admin.jpg" alt="Dessert" class="button-image">
-                <span>Dessert</span>
-            </li>
-            <li class="buttons" data-filter="beverage">
-                <img src="../img/admin.jpg" alt="Beverage" class="button-image">
-                <span>Beverage</span>
-            </li>
-            <li class="buttons" data-filter="alcohol">
-                <img src="../img/admin.jpg" alt="Alcohol" class="button-image">
-                <span>Alcohol</span>
-            </li>
-            <li class="buttons" data-filter="package">
-                <img src="../img/admin.jpg" alt="Package" class="button-image">
-                <span>Package</span>
-            </li>
-        </div>
-
-
-        <div class="gallery">
-            <div class="image-container">
-                <a href="../img/admin.jpg" class="image food">
-                    <img src="../img/admin.jpg" alt="Food">
-                    <div class="view-item">
-                        <button class="view-button">View Item</button>
-                    </div>
-                </a>
-                <a href="../img/admin.jpg" class="image food">
-                    <img src="../img/admin.jpg" alt="Food">
-                    <div class="view-item">
-                        <button class="view-button">View Item</button>
-                    </div>
-                </a>
-                <a href="../img/admin.jpg" class="image cottage">
-                    <img src="../img/admin.jpg" alt="Cottage">
-                    <div class="view-item">
-                        <button class="view-button">View Item</button>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        // JavaScript
-        document.addEventListener('DOMContentLoaded', () => {
-            const buttons = document.querySelectorAll('.buttons');
-            const images = document.querySelectorAll('.image');
-
-            buttons.forEach(button => {
-                button.addEventListener('click', () => {
-                    // Remove active class from all buttons
-                    buttons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-
-                    const filter = button.getAttribute('data-filter');
-                    images.forEach(image => {
-                        if (filter === 'all' || image.classList.contains(filter)) {
-                            image.style.display = 'block';
-                        } else {
-                            image.style.display = 'none';
-                        }
-                    });
+        // Filter products and update gallery
+        function filterProducts(filter) {
+            document.querySelectorAll(".buttons").forEach(function (btn) {
+                btn.classList.remove("active");
+            });
+            var activeBtn = document.querySelector('.buttons[data-filter="' + filter + '"]');
+            if (activeBtn) activeBtn.classList.add("active");
+            fetchProducts(function (products) {
+                var filteredProducts = filter === "all" ? products : products.filter(function (p) {
+                    return p.category.toLowerCase() === filter.toLowerCase();
                 });
+                populateGallery(filteredProducts);
             });
+        }
+
+        // Expose functions
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.addToCart = addToCart;
+        window.filterProducts = filterProducts;
+
+        // Initially load all products and update cart count
+        document.addEventListener("DOMContentLoaded", function () {
+            filterProducts("all");
+            updateCartCount();
         });
+
     </script>
 </body>
-</html>
-        
 
-        <!-- <div class="gallery">
-            <div class="image-container">
-                <a href="../img/admin.jpg" class="image food">
-                    <img src="../img/admin.jpg" alt="Food">
-                </a>
-                <a href="../img/admin.jpg" class="image food">
-                    <img src="../img/admin.jpg" alt="Food">
-                </a>
-                <a href="../img/admin.jpg" class="image food">
-                    <img src="../img/admin.jpg" alt="Food">
-                </a>
-                <a href="../img/admin.jpg" class="image food">
-                    <img src="../img/admin.jpg" alt="Food">
-                </a>
-                <a href="../img/admin.jpg" class="image food">
-                    <img src="../img/admin.jpg" alt="Food">
-                </a>
-                <a href="../img/admin.jpg" class="image cottage">
-                    <img src="../img/admin.jpg" alt="Cottage">
-                </a>
-                <a href="../img/admin.jpg" class="image cottage">
-                    <img src="../img/admin.jpg" alt="Cottage">
-                </a>
-                <a href="../img/admin.jpg" class="image cottage">
-                    <img src="../img/admin.jpg" alt="Cottage">
-                </a>
-                <a href="../img/admin.jpg" class="image cottage">
-                    <img src="../img/admin.jpg" alt="Cottage">
-                </a>
-                <a href="../img/admin.jpg" class="image cottage">
-                    <img src="../img/admin.jpg" alt="Cottage">
-                </a>
-                <a href="../img/admin.jpg" class="image boat">
-                    <img src="../img/admin.jpg" alt="Boat">
-                </a>
-                <a href="../img/admin.jpg" class="image boat">
-                    <img src="../img/admin.jpg" alt="Boat">
-                </a>
-                <a href="../img/admin.jpg" class="image boat">
-                    <img src="../img/admin.jpg" alt="Boat">
-                </a>
-                <a href="../img/admin.jpg" class="image boat">
-                    <img src="../img/admin.jpg" alt="Boat">
-                </a>
-                <a href="../img/admin.jpg" class="image boat">
-                    <img src="../img/admin.jpg" alt="Boat">
-                </a>
-                <a href="../img/admin.jpg" class="image dessert">
-                    <img src="../img/admin.jpg" alt="Dessert">
-                </a>
-                <a href="../img/admin.jpg" class="image dessert">
-                    <img src="../img/admin.jpg" alt="Dessert">
-                </a>
-                <a href="../img/admin.jpg" class="image dessert">
-                    <img src="../img/admin.jpg" alt="Dessert">
-                </a>
-                <a href="../img/admin.jpg" class="image dessert">
-                    <img src="../img/admin.jpg" alt="Dessert">
-                </a>
-                <a href="../img/admin.jpg" class="image dessert">
-                    <img src="../img/admin.jpg" alt="Dessert">
-                </a>
-                <a href="../img/admin.jpg" class="image beverage">
-                    <img src="../img/admin.jpg" alt="Beverage">
-                </a>
-                <a href="../img/admin.jpg" class="image beverage">
-                    <img src="../img/admin.jpg" alt="Beverage">
-                </a>
-                <a href="../img/admin.jpg" class="image beverage">
-                    <img src="../img/admin.jpg" alt="Beverage">
-                </a>
-                <a href="../img/admin.jpg" class="image beverage">
-                    <img src="../img/admin.jpg" alt="Beverage">
-                </a>
-                <a href="../img/admin.jpg" class="image beverage">
-                    <img src="../img/admin.jpg" alt="Beverage">
-                </a>
-                <a href="../img/admin.jpg" class="image alcohol">
-                    <img src="../img/admin.jpg" alt="Alcohol">
-                </a>
-                <a href="../img/admin.jpg" class="image alcohol">
-                    <img src="../img/admin.jpg" alt="Alcohol">
-                </a>
-                <a href="../img/admin.jpg" class="image alcohol">
-                    <img src="../img/admin.jpg" alt="Alcohol">
-                </a>
-                <a href="../img/admin.jpg" class="image alcohol">
-                    <img src="../img/admin.jpg" alt="Alcohol">
-                </a>
-                <a href="../img/admin.jpg" class="image alcohol">
-                    <img src="../img/admin.jpg" alt="Alcohol">
-                </a>
-                <a href="../img/admin.jpg" class="image package">
-                    <img src="../img/admin.jpg" alt="Package">
-                </a>
-                <a href="../img/admin.jpg" class="image package">
-                    <img src="../img/admin.jpg" alt="Package">
-                </a>
-                <a href="../img/admin.jpg" class="image package">
-                    <img src="../img/admin.jpg" alt="Package">
-                </a>
-                <a href="../img/admin.jpg" class="image package">
-                    <img src="../img/admin.jpg" alt="Package">
-                </a>
-                <a href="../img/admin.jpg" class="image package">
-                    <img src="../img/admin.jpg" alt="Package">
-                </a>  
-                
-            </div>
-        </div> -->
-     -->
+</html>
