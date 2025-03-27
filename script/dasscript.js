@@ -1,3 +1,5 @@
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCiSJrKhSII8vLTsmMh8rKlJERFNpG9plU",
@@ -379,6 +381,7 @@ function toggleAccommodationSection(event) {
         arrowUp.style.display = 'none';
     }
 }
+window.toggleAccommodationSection = toggleAccommodationSection;
 
 
 
@@ -403,6 +406,7 @@ function toggleReportSection(event) {
         arrowUp.style.display = 'none';
     }
 }
+window.toggleReportSection = toggleReportSection;
 
 
 
@@ -427,6 +431,7 @@ function toggleTransactionSection(event) {
         arrowUp.style.display = 'none';
     }
 }
+window.toggleTransactionSection = toggleTransactionSection;
 
 // Fetch products when the page loads
 window.onload = function () {
@@ -536,3 +541,33 @@ function setCurrentMonth2() {
 // Run the function on page load
 document.addEventListener("DOMContentLoaded", setCurrentMonth);
 document.addEventListener("DOMContentLoaded", setCurrentMonth2);
+
+
+
+//Count al pending booking
+function fetchPendingBookingCount() {
+    firebase.database().ref("users").once("value")
+      .then(snapshot => {
+        let pendingCount = 0;
+        snapshot.forEach(userSnapshot => {
+          const userData = userSnapshot.val();
+          if (userData.MyBooking) {
+            Object.values(userData.MyBooking).forEach(booking => {
+              const status = (booking.bookingReview?.statusReview || "").toLowerCase();
+              if (status === "pending") {
+                pendingCount++;
+              }
+            });
+          }
+        });
+        document.querySelector("li span.text h3").innerText = pendingCount;
+      })
+      .catch(error => {
+        console.error("Error fetching booking count:", error);
+      });
+  }
+  
+  fetchPendingBookingCount();
+
+  
+  
