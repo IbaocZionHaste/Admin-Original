@@ -262,7 +262,8 @@ function toggleAccommodationSection(event) {
 
 
 
-//THIS DATA CAN ACCESS THE MY HISTORY
+
+//THIS DATA CANT ACCESS THE MY HISTORY
 /**
  * Helper function to convert orderItems into a formatted HTML output.
  * It supports both object and array structures and groups items by category.
@@ -622,6 +623,7 @@ document.getElementById("modalClose").addEventListener("click", function() {
 
 // Call the fetch function when the page loads.
 fetchPaymentTransactions();
+
 
 
 //This code no format peso

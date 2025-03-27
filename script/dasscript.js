@@ -543,6 +543,32 @@ document.addEventListener("DOMContentLoaded", setCurrentMonth);
 document.addEventListener("DOMContentLoaded", setCurrentMonth2);
 
 
+// Count total approved sales from all users' payment transactions
+function fetchTotalApprovedSales() {
+    firebase.database().ref("users").once("value")
+      .then(snapshot => {
+        let totalSales = 0;
+        snapshot.forEach(userSnapshot => {
+          const userData = userSnapshot.val();
+          if (userData.MyHistory) {
+            Object.values(userData.MyHistory).forEach(booking => {
+              if (booking.paymentTransaction && booking.paymentTransaction.paymentStatus) {
+                if (booking.paymentTransaction.paymentStatus.toLowerCase() === "approved") {
+                  totalSales += parseFloat(booking.paymentTransaction.amount) || 0;
+                }
+              }
+            });
+          }
+        });
+        // Update the Total Sales element using its ID with the Philippine peso sign and no decimals
+        document.getElementById("totalSalesAmount").innerText = "₱" + Math.round(totalSales);
+      })
+      .catch(error => {
+        console.error("Error fetching total approved sales:", error);
+      });
+  }
+  
+
 
 //Count al pending booking
 function fetchPendingBookingCount() {
@@ -568,6 +594,5 @@ function fetchPendingBookingCount() {
   }
   
   fetchPendingBookingCount();
-
-  
+  fetchTotalApprovedSales();
   

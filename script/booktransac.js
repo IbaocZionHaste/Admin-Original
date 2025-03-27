@@ -236,9 +236,7 @@ history.replaceState({}, document.title, "" + '?key=' + randomKey);
 
 
 
-
-
-//THIS DATA CAN ACESS THE DECLINE AND THE CANCEL
+//THIS DATA CANt ACESS THE DECLINE AND THE CANCEL
 /**
  * Helper function to convert orderItems into a formatted HTML output.
  * It supports both object and array structures and groups items by category.
@@ -529,11 +527,6 @@ window.onclick = function (event) {
 document.addEventListener("DOMContentLoaded", function () {
   fetchUserBookings();
 });
-
-
-
-
-
 
 
 

@@ -132,7 +132,6 @@
                 </a>
             </li>
 
-
             <!-- <li>
                 <a href="walkintransaction.html">
                     <i class='bx bxs-credit-card-alt'></i>
@@ -153,8 +152,6 @@
 
     </section>
     <!-- SIDEBAR -->
-
-
 
 
 
@@ -246,6 +243,15 @@
                         <option value="2025">2025</option>
                         <option value="2024">2024</option>
                         <option value="2023">2023</option>
+                    </select>
+
+                    <label for="Status">Status:</label>
+                    <select id="Status" onchange="updateStatusOptions()">
+                        <option value="">All</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="Refund">Refund</option>
+                        <option value="Declined">Declined</option>
                     </select>
 
                     <button onclick="filterTable()">Search</button>

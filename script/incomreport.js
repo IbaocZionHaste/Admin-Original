@@ -347,34 +347,6 @@ function updateDayOptions() {
   }
 }
 
-// Render table rows for the current page.
-// function renderPage(page) {
-//   const tableBody = document.getElementById("accommodation-list");
-//   tableBody.innerHTML = "";
-//   const start = (page - 1) * pageSize;
-//   const end = start + pageSize;
-//   const pageData = filteredBookings.slice(start, end);
-
-//   pageData.forEach((booking) => {
-//     // Format paymentStatus nicely
-//     const formattedStatusPayment = booking.paymentStatus.charAt(0).toUpperCase() + booking.paymentStatus.slice(1).toLowerCase();
-//     const row = document.createElement("tr");
-
-//     // Optionally attach date data as data attributes (for debugging or further filtering)
-//     row.dataset.paymentDate = booking.formatted; // e.g., "3/26/2025"
-//     row.dataset.paymentYear = booking.year;
-//     row.dataset.paymentMonth = booking.month;
-//     row.dataset.paymentDay = booking.day;
-
-//     row.innerHTML = `
-//       <td>${booking.name}</td>
-//       <td>₱${booking.downPayment}</td>
-//       <td>₱${booking.amount}</td>
-//       <td>${formattedStatusPayment}</td>
-//     `;
-//     tableBody.appendChild(row);
-//   });
-// }
 
 
 function renderPage(page) {
@@ -461,15 +433,17 @@ function renderPagination() {
   paginationDiv.appendChild(nextBtn);
 }
 
-// Filter the bookings based on the selected Year, Month, and Day.
+// Filter the bookings based on the selected Year, Month, Day, and Status.
 function filterTable() {
   const yearFilter = document.getElementById("year").value;
   const monthFilter = document.getElementById("month").value;
   const dayFilter = document.getElementById("day").value;
-  console.log("Filters selected:", { yearFilter, monthFilter, dayFilter });
+  const statusFilter = document.getElementById("Status").value; // New status filter
+
+  console.log("Filters selected:", { yearFilter, monthFilter, dayFilter, statusFilter });
+
   filteredBookings = window.initialBookings.filter(b => {
     let valid = true;
-    // Use b.year, b.month, and b.day instead of b.parsedYear, etc.
     if (yearFilter !== "" && b.year !== parseInt(yearFilter)) {
       valid = false;
     }
@@ -479,16 +453,28 @@ function filterTable() {
     if (dayFilter !== "" && b.day !== parseInt(dayFilter)) {
       valid = false;
     }
+    // If a status is selected, compare (case-insensitive)
+    if (statusFilter !== "" && b.paymentStatus.toLowerCase() !== statusFilter.toLowerCase()) {
+      valid = false;
+    }
     return valid;
   });
+
   console.log("Filtered bookings:", filteredBookings);
   currentPage = 1;
   renderPage(currentPage);
   renderPagination();
 }
+
+// Call filterTable() whenever the status dropdown changes
+function updateStatusOptions() {
+  filterTable();
+}
+
 // Expose filterTable globally for inline event handlers
 window.filterTable = filterTable;
 window.printTable = printTable;
+window.updateStatusOptions = updateStatusOptions;
 
 // Print Function
 function printTable() {
@@ -548,6 +534,34 @@ window.onload = function () {
 
 
 
+// Render table rows for the current page.
+// function renderPage(page) {
+//   const tableBody = document.getElementById("accommodation-list");
+//   tableBody.innerHTML = "";
+//   const start = (page - 1) * pageSize;
+//   const end = start + pageSize;
+//   const pageData = filteredBookings.slice(start, end);
+
+//   pageData.forEach((booking) => {
+//     // Format paymentStatus nicely
+//     const formattedStatusPayment = booking.paymentStatus.charAt(0).toUpperCase() + booking.paymentStatus.slice(1).toLowerCase();
+//     const row = document.createElement("tr");
+
+//     // Optionally attach date data as data attributes (for debugging or further filtering)
+//     row.dataset.paymentDate = booking.formatted; // e.g., "3/26/2025"
+//     row.dataset.paymentYear = booking.year;
+//     row.dataset.paymentMonth = booking.month;
+//     row.dataset.paymentDay = booking.day;
+
+//     row.innerHTML = `
+//       <td>${booking.name}</td>
+//       <td>₱${booking.downPayment}</td>
+//       <td>₱${booking.amount}</td>
+//       <td>${formattedStatusPayment}</td>
+//     `;
+//     tableBody.appendChild(row);
+//   });
+// }
 // // Global variables for pagination and data
 // const pageSize = 20;
 // let currentPage = 1;
