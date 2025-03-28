@@ -1230,3 +1230,21 @@ h1 {
 #statusDropdown option {
     padding: 8px 12px;
 }
+
+
+
+
+
+.action-button {
+    background-color: #3498db;
+    color: var(--dark);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: large;
+    font-weight: bolder;
+}
+.action-button:hover {
+    background-color: #a4b8c5;
+}

@@ -231,7 +231,10 @@ const randomKey = generateRandomKey();
 history.replaceState({}, document.title, "" + '?key=' + randomKey);
 
 
-
+function goToTransaction() {
+  // This will load the "walkintransaction.html" page
+  window.location.href = "walkintransaction.html";
+}
 
 
 

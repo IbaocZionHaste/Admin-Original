@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Walkin Transaction - Product Gallery</title>
+    <title>Walkin Transaction</title>
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Boxicons for icons -->
@@ -349,7 +349,6 @@
 
 
 
-
         /* Modal Cart */
         .modal-cart {
             background: #fff;
@@ -361,6 +360,7 @@
             border-radius: 10px;
             overflow: hidden;
             position: relative;
+            scrollbar-width: none;
         }
 
         /* Modal Header */
@@ -376,7 +376,7 @@
             flex: 1;
             text-align: center;
             font-weight: bolder;
-            font-size: large;
+            font-size: 35px;
             margin: 0;
         }
 
@@ -387,12 +387,7 @@
             cursor: pointer;
         }
 
-        .modal-header .print-icon {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.9rem;
-        }
+
 
         /* Cart Content */
         .cart-content {
@@ -411,6 +406,7 @@
         /* Cart Buttons */
         .cart-buttons {
             display: flex;
+
             justify-content: space-between;
             padding: 1rem;
             border-top: 1px solid #ccc;
@@ -421,7 +417,8 @@
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            font-size: 1rem;
+            font-weight: bolder;
+            font-size: 1.2rem;
             transition: background 0.3s ease;
         }
 
@@ -452,6 +449,7 @@
         .proceed-btn:hover {
             background-color: lightblue;
         }
+
 
 
 
@@ -503,8 +501,33 @@
 
         /* Optional: Increase icon size for better visibility */
         .cart-item i {
-            font-size: 1.2em;
+            font-size: 1.5em;
         }
+
+
+
+
+        .cart-item span:nth-child(1) {
+            order: 1;
+            /* Quantity on left */
+            width: 15%;
+            text-align: left;
+        }
+
+        .cart-item span:nth-child(2) {
+            order: 2;
+            /* Name in center */
+            width: 55%;
+            text-align: center;
+        }
+
+        .cart-item span:nth-child(3) {
+            order: 3;
+            /* Price on right */
+            width: 30%;
+            text-align: right;
+        }
+
 
 
 
@@ -525,12 +548,13 @@
             background: #fff;
             padding: 2.5rem;
             border-radius: 12px;
-            width: 95%;
+            width: 100%;
             max-width: 600px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             max-height: 90vh;
             overflow-y: auto;
             animation: slideIn 0.4s ease;
+            scrollbar-width: none;
         }
 
         @keyframes slideIn {
@@ -590,11 +614,12 @@
             color: #555;
         }
 
+
         /* Reordering spans: 
-   Assuming generated HTML spans order is:
-   <span>Quantity</span> <span>Name</span> <span>Price</span>
-   Adjust widths and text alignment accordingly.
-*/
+        Assuming generated HTML spans order is:
+         <span>Quantity</span> <span>Name</span> <span>Price</span>
+         Adjust widths and text alignment accordingly.
+        */
         .checkout-item span:nth-child(1) {
             order: 1;
             /* Quantity on left */
@@ -602,24 +627,26 @@
             text-align: left;
         }
 
-        .checkout-item span:nth-child(2) {
+        .checkout-item span:nth-child(3) {
             order: 2;
             /* Name in center */
             width: 55%;
-            text-align: left;
+            text-align: center;
         }
 
-        .checkout-item span:nth-child(3) {
+        .checkout-item span:nth-child(2) {
             order: 3;
             /* Price on right */
             width: 30%;
             text-align: right;
         }
 
+
+
         /* Total Amount Styling */
         .checkout-total {
             font-size: 1.3rem;
-            font-weight: 700;
+            font-weight: 500;
             text-align: right;
             margin-top: 1rem;
             color: #333;
@@ -642,7 +669,7 @@
             padding: 0.75rem;
             margin-bottom: 1rem;
             border: 1px solid #ccc;
-            border-radius: 6px;
+            border-radius: 50px;
             font-size: 1rem;
             transition: border-color 0.3s ease;
         }
@@ -662,7 +689,7 @@
         .checkout-buttons button {
             padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 50px;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 600;
@@ -673,19 +700,16 @@
             transform: translateY(-2px);
         }
 
-
-        /* Submit Button Styling */
         .submit-btn {
-            background-color: #2ecc71;
+            background-color: rgb(0, 186, 248);
             color: #fff;
         }
 
 
-
-
-
-
-
+        .cancel-btn-check {
+            background-color: red;
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -693,12 +717,23 @@
 
 
     <!-- Header with clickable cart icon -->
-    <header>
+    <header style="display: flex; justify-content: space-between; align-items: center;">
+
+        <span id="backIcon" style="cursor: pointer;" onclick="backModal()">
+            <i class="bx bx-arrow-back" style="font-size: 2.5rem; margin-left: 5px;"></i>
+        </span>
+
+        <span class="header-title" style="font-size: 1.9rem; font-weight: bold; text-align: center;">
+            Walk-in Transaction
+          </span>
+
         <span id="cartCount" style="display: inline-flex; align-items: center; cursor: pointer;"
             onclick="openCartModal()">
             <i class="bx bx-cart" style="font-size: 2.5rem; margin-right: 5px;"></i>
             <span class="cart-number" style="color: red; font-weight: bold;">0</span>
         </span>
+
+
     </header>
 
 
@@ -833,10 +868,14 @@
             <div class="cart-buttons">
                 <button class="cancel-btn" onclick="cancelCart()">Cancel</button>
                 <button class="clear-btn" onclick="clearCart()">Clear</button>
-                <button class="proceed-btn" onclick="proceedCart()">Proceed <i class="bx bx-check"></i></button>
+                <button class="proceed-btn" onclick="proceedCart()">Proceed</button>
             </div>
         </div>
     </div>
+
+
+
+
 
 
 
@@ -848,7 +887,7 @@
         <div class="modal-checkout">
             <div class="modal-header-checkout">
                 <h1>Payment</h1>
-                <button class="print-icon" onclick=" openPrintWindow()">
+                <button class="print-icon" onclick=" printCart()">
                     <i class="bx bx-printer"></i>
                 </button>
             </div>
@@ -857,15 +896,15 @@
             <div class="customer-details">
                 <label>
                     Name:
-                    <input type="text" id="customerName" placeholder="Your name" />
+                    <input type="text" id="customerName" placeholder="Name" />
                 </label>
                 <label>
                     Address:
-                    <input type="text" id="customerAddress" placeholder="Your address" />
+                    <input type="text" id="customerAddress" placeholder="Address" />
                 </label>
                 <label>
                     Phone:
-                    <input type="text" id="customerPhone" placeholder="Your phone number" />
+                    <input type="text" id="customerPhone" placeholder="Number" />
                 </label>
             </div>
 
@@ -877,8 +916,8 @@
 
             <!-- Checkout Buttons -->
             <div class="checkout-buttons">
-                <button class="cancel-btn" onclick="cancelCheckout()">Cancel</button>
-                <button class="submit-btn" onclick="submitOrder()">Submit</button>
+                <button class="cancel-btn-check" onclick="cancelCheckout()">Cancel</button>
+                <button class="submit-btn" onclick="submitOrder()">Pay</button>
             </div>
         </div>
     </div>
@@ -1188,10 +1227,10 @@
             alert("Proceeding to checkout!");
         }
 
-        // // Print the cart
-        // function printCart() {
-        //     window.print();
-        // }
+        // Print the cart
+        function printCart() {
+            window.print();
+        }
 
         // ----------------------- Product Gallery Functions -----------------------
 
@@ -1275,7 +1314,7 @@
 
 
 
-        
+
 
 
 
@@ -1320,7 +1359,7 @@
             // openCartModal();
         }
 
-        // Process the order: gather customer details and clear the cart (update this function as needed)
+
         function submitOrder() {
             var name = document.getElementById("customerName").value.trim();
             var address = document.getElementById("customerAddress").value.trim();
@@ -1331,15 +1370,51 @@
                 return;
             }
 
-            // Here you can add your order processing logic (e.g., sending data to Firebase)
-            alert("Order submitted!\nCustomer: " + name + "\nAddress: " + address + "\nPhone: " + phone);
+            // Build an array of order items and calculate total
+            var orderItems = [];
+            var total = 0;
+            cart.forEach(function (item) {
+                orderItems.push({
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
+                });
+                total += item.price * item.quantity;
+            });
 
-            // Clear the cart after submission
-            cancelCart();
+            // Date formatting function for "YYYY-MM-DD"
+            function formatDate(date) {
+                var year = date.getFullYear();
+                var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                var day = ('0' + date.getDate()).slice(-2);
+                return year + '-' + month + '-' + day;
+            }
 
-            // Close the checkout modal
-            document.getElementById("checkoutModal").style.display = "none";
+            // Create order data object with formatted date
+            var orderData = {
+                orderName: "Walkin Order",
+                customerName: name,
+                customerAddress: address,
+                customerPhone: phone,
+                items: orderItems,
+                total: total,
+                date: formatDate(new Date())
+            };
+
+            // Push order data into Firebase under "walkinorder"
+            firebase.database().ref('walkin').push(orderData)
+                .then(function () {
+                    alert("Order submitted and saved!");
+                    localStorage.removeItem("cartItems");
+                    cancelCart(); // Assuming this function clears the cart
+                    document.getElementById("checkoutModal").style.display = "none";
+                })
+                .catch(function (error) {
+                    console.error("Error saving order: ", error);
+                    alert("Failed to submit order: " + error.message);
+                });
         }
+
 
         // Updated proceedCart function: Open the checkout modal instead of alerting
         function proceedCart() {
@@ -1347,13 +1422,14 @@
         }
 
 
-     
 
-
+        function backModal() {
+            // This will load the "walkintransaction.html" page
+            window.location.href = "bookingtransaction.html";
+        }
 
 
     </script>
 </body>
 
 </html>
-
