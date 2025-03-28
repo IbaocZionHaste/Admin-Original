@@ -7,7 +7,7 @@
 body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(120deg, rgba(41, 128, 185, 0.4), rgba(142, 68, 173, 0.4)),
-                url('../img/gojo.jpg') no-repeat center center fixed;
+                url('../img/background.jpg') no-repeat center center fixed;
     background-size: cover;
     height: 100vh;
     display: flex;

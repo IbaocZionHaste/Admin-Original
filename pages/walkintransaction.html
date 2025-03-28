@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Boxicons for icons -->
     <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,6 +18,23 @@
             padding: 0;
             background-color: #f4f4f9;
             color: #333;
+        }
+
+        /* Header with cart count */
+        header {
+            padding: 1rem;
+            background-color: #eee;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #cartCount {
+            color: #333;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 50%;
         }
 
         /* Filter Buttons */
@@ -45,6 +64,8 @@
         }
 
         .buttons {
+            width: 110px;
+            height: 110px;
             list-style: none;
             display: flex;
             flex-direction: column;
@@ -59,7 +80,7 @@
 
         .buttons.active,
         .buttons:hover {
-            background-color: #ddd;
+            background-color: #ccc;
         }
 
         .button-image {
@@ -132,7 +153,7 @@
             background-color: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            /* z-index: 1000; */
         }
 
         .modal-content {
@@ -140,8 +161,15 @@
             padding: 2rem;
             border-radius: 10px;
             width: 90%;
-            max-width: 1400px;
+            max-width: 1100px;
             position: relative;
+            max-height: 90vh;
+            /* overflow-y: auto; */
+        }
+
+        .modal-content::-webkit-scrollbar {
+            display: none;
+            /* Hides scrollbar in WebKit browsers */
         }
 
         .modal-content .grid {
@@ -157,19 +185,34 @@
             .modal-content .left-col {
                 width: 50%;
                 padding: 2rem;
-                border-right: 1px solid #ccc;
+                background-color: #ccc;
+                border-radius: 20px;
+                max-height: 80vh;
+                /* Limit height to 80% of viewport */
+                overflow-y: auto;
+                /* Enable vertical scrolling */
+                -ms-overflow-style: none;
+                /* Hide scrollbar in IE and Edge */
+                scrollbar-width: none;
+                /* Hide scrollbar in Firefox */
+                /* border-right: 1px solid #ccc; */
             }
 
             .modal-content .right-col {
                 width: 50%;
                 padding: 2rem;
-                border-left: 1px solid #ccc;
+                /* border-left: 1px solid #ccc; */
                 position: relative;
             }
         }
 
+
+
+
+
         .modal-content h1 {
             font-size: 2.5rem;
+            font-weight: bolder;
             margin-bottom: 1.5rem;
         }
 
@@ -194,15 +237,46 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            background-color: red;
-            color: white;
+            background-color: transparent;
+            /* No background */
+            color: red;
+            /* Text color red */
             border: none;
-            font-size: larger;
             padding: 5px 10px;
-            font-size: 1.25rem;
+            font-size: 1.6rem;
+            font-weight: bold;
+            /* Bold text */
             cursor: pointer;
             border-radius: 200px;
+            transition: transform 0.2s ease;
+            /* Smooth transition for hover */
         }
+
+        /* Hover effect: slightly enlarge the button */
+        .close:hover {
+            transform: scale(1.1);
+        }
+
+        /* Active (click) effect: use keyframe animation for a "bounce" effect */
+        .close:active {
+            animation: clickAnimation 0.2s ease;
+        }
+
+        @keyframes clickAnimation {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+
 
         .add-to-cart {
             position: absolute;
@@ -220,6 +294,10 @@
         .modal-image {
             width: 100%;
             height: auto;
+            max-width: 500px;
+            max-height: 400px;
+            object-fit: contain;
+            background-color: #ccc;
             border-radius: 10px;
             border: 2px solid #ccc;
         }
@@ -252,10 +330,377 @@
             color: green;
             font-size: 1rem;
         }
+
+        /* Swiper Arrow Navigation */
+        .swiper-button-prev,
+        .swiper-button-next {
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+        }
+
+        .swiper-button-prev::after,
+        .swiper-button-next::after {
+            font-size: 2rem;
+        }
+
+
+
+
+
+
+
+        /* Modal Cart */
+        .modal-cart {
+            background: #fff;
+            width: 90%;
+            max-width: 600px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Modal Header */
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .modal-header h1 {
+            flex: 1;
+            text-align: center;
+            font-weight: bolder;
+            font-size: large;
+            margin: 0;
+        }
+
+        .modal-header .close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        .modal-header .print-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.9rem;
+        }
+
+        /* Cart Content */
+        .cart-content {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            min-height: 400px;
+        }
+
+        .cart-total {
+            text-align: right;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        /* Cart Buttons */
+        .cart-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-top: 1px solid #ccc;
+        }
+
+        .cart-buttons button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .cancel-btn {
+            background-color: red;
+            color: #fff;
+        }
+
+        .cancel-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .clear-btn {
+            background-color: red;
+            color: #fff;
+        }
+
+        .clear-btn:hover {
+            background-color: #c0392b;
+        }
+
+
+        .proceed-btn {
+            background-color: rgb(0, 186, 248);
+            color: #fff;
+        }
+
+        .proceed-btn:hover {
+            background-color: lightblue;
+        }
+
+
+
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            font-weight: bolder;
+            border-bottom: 1px solid #ccc;
+        }
+
+        /* Style for the cart item buttons without background */
+        .cart-item button {
+            background-color: transparent;
+            /* Remove background */
+            border: none;
+            padding: 8px 12px;
+            color: #3498db;
+            /* Icon/text color */
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        /* Change color on hover */
+        .cart-item button:hover {
+            color: #2980b9;
+        }
+
+        /* Animation on click */
+        @keyframes button-click {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .cart-item button:active {
+            animation: button-click 0.2s ease;
+        }
+
+        /* Optional: Increase icon size for better visibility */
+        .cart-item i {
+            font-size: 1.2em;
+        }
+
+
+
+
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Enhanced Checkout Modal Container */
+        .modal-checkout {
+            background: #fff;
+            padding: 2.5rem;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 600px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Checkout Modal Header */
+        .modal-header-checkout {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 0.5rem;
+        }
+
+        .modal-header-checkout h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .print-icon {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.8rem;
+            color: #555;
+            transition: color 0.3s ease;
+        }
+
+        .print-icon:hover {
+            color: #000;
+        }
+
+        /* Checkout Content Area */
+        .checkout-content {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Checkout Cart Items */
+        .checkout-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 1rem;
+            color: #555;
+        }
+
+        /* Reordering spans: 
+   Assuming generated HTML spans order is:
+   <span>Quantity</span> <span>Name</span> <span>Price</span>
+   Adjust widths and text alignment accordingly.
+*/
+        .checkout-item span:nth-child(1) {
+            order: 1;
+            /* Quantity on left */
+            width: 15%;
+            text-align: left;
+        }
+
+        .checkout-item span:nth-child(2) {
+            order: 2;
+            /* Name in center */
+            width: 55%;
+            text-align: left;
+        }
+
+        .checkout-item span:nth-child(3) {
+            order: 3;
+            /* Price on right */
+            width: 30%;
+            text-align: right;
+        }
+
+        /* Total Amount Styling */
+        .checkout-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: right;
+            margin-top: 1rem;
+            color: #333;
+        }
+
+        /* Customer Details Section */
+        .customer-details {
+            margin-top: 1.5rem;
+        }
+
+        .customer-details label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .customer-details input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .customer-details input:focus {
+            border-color: #2ecc71;
+            outline: none;
+        }
+
+        /* Checkout Buttons Container */
+        .checkout-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .checkout-buttons button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .checkout-buttons button:hover {
+            transform: translateY(-2px);
+        }
+
+
+        /* Submit Button Styling */
+        .submit-btn {
+            background-color: #2ecc71;
+            color: #fff;
+        }
+
+
+
+
+
+
+
     </style>
 </head>
 
 <body class="bg-gray-100">
+
+
+    <!-- Header with clickable cart icon -->
+    <header>
+        <span id="cartCount" style="display: inline-flex; align-items: center; cursor: pointer;"
+            onclick="openCartModal()">
+            <i class="bx bx-cart" style="font-size: 2.5rem; margin-right: 5px;"></i>
+            <span class="cart-number" style="color: red; font-weight: bold;">0</span>
+        </span>
+    </header>
+
 
     <!-- Filter Buttons Container -->
     <div class="button-container">
@@ -293,6 +738,10 @@
         </li>
     </div>
 
+
+
+
+
     <!-- Gallery Container (dynamically populated) -->
     <div class="gallery p-6">
         <div class="image-container" id="galleryContainer">
@@ -300,11 +749,17 @@
         </div>
     </div>
 
+
+
+
     <!-- Modal -->
     <div id="itemModal" class="modal">
         <div class="modal-content">
             <!-- Global Exit Button -->
-            <button id="closeModalBtn" class="close" onclick="closeModal()">X</button>
+            <button id="closeModalBtn" class="close" onclick="closeModal()">
+                <i class="bx bx-x"></i>
+            </button>
+
             <div class="grid">
                 <!-- Left Column: Details -->
                 <div class="left-col">
@@ -332,47 +787,172 @@
                         </ul>
                     </div>
                 </div>
-                <!-- Right Column: Image -->
+                <!-- Right Column: Image Swiper with Arrow Navigation -->
                 <div class="right-col">
-                    <img id="modalImage" src="https://via.placeholder.com/500x400?text=Item+Image" alt="Item Image"
-                        class="modal-image">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            <!-- Slides will be inserted dynamically -->
+                        </div>
+                        <!-- Navigation Arrows -->
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                        <!-- Pagination Dots -->
+                        <div class="swiper-pagination"></div>
+                    </div>
                 </div>
             </div>
-            <!-- Add to Cart Button (small, bottom-right) -->
+            <!-- Add to Cart Button -->
             <button id="addToCartBtn" class="add-to-cart" onclick="addToCart()">Add to Cart</button>
         </div>
     </div>
 
 
+
+
+
+    <!-- Revised Cart Modal -->
+    <div id="cartModal" class="modal" style="display: none;">
+        <div class="modal-cart">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h1>Cart</h1>
+                <!-- <button class="print-icon" onclick="printCart()">
+                    <i class="bx bx-printer"></i>
+                </button> -->
+            </div>
+            <!-- Cart Content -->
+            <div class="cart-content">
+                <div id="cartModalItems">
+                    <!-- Dynamic cart items will be rendered here -->
+                </div>
+                <div id="cartModalTotal" class="cart-total">
+                    Total: ₱0.00
+                </div>
+            </div>
+            <!-- Cart Buttons at Bottom -->
+            <div class="cart-buttons">
+                <button class="cancel-btn" onclick="cancelCart()">Cancel</button>
+                <button class="clear-btn" onclick="clearCart()">Clear</button>
+                <button class="proceed-btn" onclick="proceedCart()">Proceed <i class="bx bx-check"></i></button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal" style="display: none;">
+        <div class="modal-checkout">
+            <div class="modal-header-checkout">
+                <h1>Payment</h1>
+                <button class="print-icon" onclick=" openPrintWindow()">
+                    <i class="bx bx-printer"></i>
+                </button>
+            </div>
+
+            <!-- Customer Details at the Bottom -->
+            <div class="customer-details">
+                <label>
+                    Name:
+                    <input type="text" id="customerName" placeholder="Your name" />
+                </label>
+                <label>
+                    Address:
+                    <input type="text" id="customerAddress" placeholder="Your address" />
+                </label>
+                <label>
+                    Phone:
+                    <input type="text" id="customerPhone" placeholder="Your phone number" />
+                </label>
+            </div>
+
+            <div class="checkout-content">
+                <!-- Cart Items will be rendered here -->
+                <div id="checkoutCartItems"></div>
+                <div id="checkoutCartTotal" class="checkout-total">Total: ₱0.00</div>
+            </div>
+
+            <!-- Checkout Buttons -->
+            <div class="checkout-buttons">
+                <button class="cancel-btn" onclick="cancelCheckout()">Cancel</button>
+                <button class="submit-btn" onclick="submitOrder()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
     <!-- Firebase and JavaScript -->
     <!-- Include Firebase scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <!-- Include Swiper JS -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
-        // Initialize Firebase (replace with your configuration)
+        // ----------------------- Firebase Initialization -----------------------
         var firebaseConfig = {
             apiKey: "AIzaSyCiSJrKhSII8vLTsmMh8rKlJERFNpG9plU",
             authDomain: "resort-admin-b8411.firebaseapp.com",
             databaseURL: "https://resort-admin-b8411-default-rtdb.firebaseio.com",
             projectId: "resort-admin-b8411",
-            storageBucket: "resort-admin-b8411.appspot.com",
+            storageBucket: "resort-admin-b8411",
             messagingSenderId: "865886329874",
             appId: "1:865886329874:web:2c5e61e88e733fb00a4ccb",
             measurementId: "G-P59Y09ZVT4"
         };
         firebase.initializeApp(firebaseConfig);
 
-
-        // Global cart array stored in localStorage
+        // ----------------------- Global Cart Variable -----------------------
         var cart = JSON.parse(localStorage.getItem("cartItems")) || [];
 
+        // ----------------------- Utility Functions -----------------------
+
+        // Save updated cart to localStorage
         function updateCartStorage() {
             localStorage.setItem("cartItems", JSON.stringify(cart));
         }
 
-        function updateCartCount() {
-            document.getElementById("cartCount").textContent = cart.length;
+        // Consolidate duplicate items in the cart (using product name as identifier)
+        // You can change this to use a unique product id if available.
+        // Consolidate duplicate items in the cart based on product name
+        function consolidateCart() {
+            var consolidated = {};
+            cart.forEach(function (item) {
+                if (consolidated[item.name]) {
+                    consolidated[item.name].quantity += item.quantity || 1;
+                } else {
+                    consolidated[item.name] = { ...item, quantity: item.quantity || 1 };
+                }
+            });
+            cart = Object.values(consolidated);
+            updateCartStorage();
+            updateCartCount();
         }
+
+
+        // Update the cart count in the header (summing quantities)
+        function updateCartCount() {
+            var cartCountElem = document.querySelector("#cartCount .cart-number");
+            if (cartCountElem) {
+                cartCountElem.textContent = cart.reduce(function (sum, item) {
+                    return sum + (item.quantity || 1);
+                }, 0);
+            }
+        }
+
+        // ----------------------- Product Modal Functions -----------------------
 
         // Build specifications string based on product category
         function buildSpecs(product) {
@@ -385,7 +965,7 @@
             } else if (category === "beverage") {
                 specs = "Size: " + (product.beverageSize || "N/A") +
                     "<br>Flavor: " + (product.beverageFlavor || "N/A") +
-                    "<br>Ocasion: " + (product.beverageOccasions || "N/A") +
+                    "<br>Occasion: " + (product.beverageOccasions || "N/A") +
                     "<br>Serving: " + (product.beverageServing || "N/A");
             } else if (category === "alcohol") {
                 specs = "Size: " + (product.alcoholSize || "N/A") +
@@ -405,6 +985,9 @@
                 specs = "Capacity: " + (product.capacity || "N/A") +
                     "<br>Design: " + (product.design || "N/A") +
                     "<br>Amenities: " + (product.amenities || "N/A");
+            } else if (category === "food") {
+                specs = "Serving: " + (product.pieceNameFood || "N/A") +
+                    "<br>Food: " + (product.food1 || "N/A");
             } else {
                 specs = "Capacity: " + (product.capacity || "N/A") +
                     "<br>Design: " + (product.design || "N/A") +
@@ -414,11 +997,13 @@
             return specs;
         }
 
-        // Open product modal
+        // Open the product modal and populate with product details
         function openModal(product) {
             document.getElementById("modalTitle").textContent = product.name;
             document.getElementById("modalPrice").textContent = "₱" + product.price;
             document.getElementById("modalDescription").textContent = product.description;
+
+            // Build specifications
             var specsStr = buildSpecs(product);
             var specsContainer = document.getElementById("modalSpecs");
             specsContainer.innerHTML = "";
@@ -428,33 +1013,187 @@
                 li.innerHTML = item;
                 specsContainer.appendChild(li);
             });
+
             document.getElementById("modalRating").textContent = "4.5";
-            document.getElementById("modalAvailability").textContent = "Available";
-            var imageUrl = product.imageUrl && product.imageUrl.trim() !== "" ? product.imageUrl : "https://via.placeholder.com/500x400?text=No+Image";
-            document.getElementById("modalImage").src = imageUrl;
+            document.getElementById("modalAvailability").textContent = product.status || "Available";
+
+
+            // Setup Swiper for images in the modal
+            var swiperContainer = document.querySelector(".swiper-container");
+            if (swiperContainer) {
+                var swiperWrapper = swiperContainer.querySelector(".swiper-wrapper");
+                swiperWrapper.innerHTML = "";
+
+                // Determine images: if product.images exists use that; else product.imageUrl; otherwise, three blank slides
+                var images = [];
+                if (product.images && product.images.length > 0) {
+                    images = product.images;
+                } else if (product.imageUrl && product.imageUrl.trim() !== "") {
+                    images = [product.imageUrl];
+                } else {
+                    images = ["", "", ""];
+                }
+                images.forEach(function (imgUrl) {
+                    var slideDiv = document.createElement("div");
+                    slideDiv.className = "swiper-slide";
+                    if (imgUrl && imgUrl.trim() !== "") {
+                        var img = document.createElement("img");
+                        img.src = imgUrl;
+                        img.alt = product.name;
+                        img.className = "modal-image";
+                        slideDiv.appendChild(img);
+                    } else {
+                        slideDiv.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; font-size:1.5rem; color:#ccc;">No Image</div>';
+                    }
+                    swiperWrapper.appendChild(slideDiv);
+                });
+
+                if (window.mySwiper) {
+                    window.mySwiper.update();
+                } else {
+                    window.mySwiper = new Swiper('.swiper-container', {
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev'
+                        },
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                        },
+                        loop: true,
+                        spaceBetween: 10,
+                        slidesPerView: 1,
+                    });
+                }
+            }
             document.getElementById("itemModal").style.display = "flex";
         }
 
-        // Close product modal
+        // Close the product modal
         function closeModal() {
             document.getElementById("itemModal").style.display = "none";
         }
 
-        // Add-to-cart: store product details in cart array, update localStorage, then redirect to cart page
+        // ----------------------- Add to Cart Functions -----------------------
+
+        // Updated addToCart: if the item exists, increase its quantity; otherwise, add a new entry.
         function addToCart() {
             var name = document.getElementById("modalTitle").textContent;
             var priceStr = document.getElementById("modalPrice").textContent;
             var price = parseFloat(priceStr.replace("₱", ""));
-            cart.push({ name: name, price: price });
+
+            // Check for an existing item by name
+            var existingIndex = cart.findIndex(function (item) { return item.name === name; });
+            if (existingIndex !== -1) {
+                cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+            } else {
+                cart.push({ name: name, price: price, quantity: 1 });
+            }
             updateCartStorage();
             updateCartCount();
             alert("Added to cart: " + name + " (" + priceStr + ")");
             closeModal();
-            // Redirect to a separate cart page:
-            window.location.href = "cart.html";
+            // We no longer redirect; the user can click the cart icon to view the cart modal.
+        }
+
+        // ----------------------- Cart Modal Functions -----------------------
+
+        // Clear any saved cart data on page load (if you want the cart to be empty by default)
+        // window.onload = function () {
+        //     localStorage.removeItem("cartItems");
+        //     cart = [];
+        //     updateCartCount();
+        // };
+
+
+        function renderCartModal() {
+            consolidateCart();
+            var container = document.getElementById("cartModalItems");
+            if (cart.length === 0) {
+                container.innerHTML = "<p>Your cart is empty.</p>";
+                document.getElementById("cartModalTotal").textContent = "Total: ₱0.00";
+                return;
+            }
+            var html = "<ul>";
+            var total = 0;
+            cart.forEach(function (item, index) {
+                html += `<li class="cart-item">
+      <span>${item.name}</span>
+      <span>₱${item.price.toFixed(2)}</span>
+      <span>
+        <button onclick="decrementQuantity(${index})">
+          <i class="bx bx-minus"></i>
+        </button>
+        ${item.quantity}
+        <button onclick="incrementQuantity(${index})">
+          <i class="bx bx-plus"></i>
+        </button>
+      </span>
+    </li>`;
+                total += item.price * item.quantity;
+            });
+            html += "</ul>";
+            container.innerHTML = html;
+            document.getElementById("cartModalTotal").textContent = "Total: ₱" + total.toFixed(2);
         }
 
 
+
+
+
+        // Increase quantity for a cart item in the modal
+        function incrementQuantity(index) {
+            cart[index].quantity = (cart[index].quantity || 1) + 1;
+            updateCartStorage();
+            updateCartCount();
+            renderCartModal();
+        }
+
+        // Decrease quantity for a cart item (if greater than 1)
+        function decrementQuantity(index) {
+            if (cart[index].quantity > 1) {
+                cart[index].quantity--;
+                updateCartStorage();
+                updateCartCount();
+                renderCartModal();
+            }
+        }
+
+        // Clear the cart and close the cart modal
+        function cancelCart() {
+            closeCartModal();
+        }
+
+        function clearCart() {
+            localStorage.removeItem("cartItems");
+            cart = [];
+            updateCartCount();
+            closeCartModal();
+        }
+        // Open the cart modal (called when cart icon is clicked)
+        function openCartModal() {
+            renderCartModal();
+            document.getElementById("cartModal").style.display = "flex";
+        }
+
+        // Close the cart modal
+        function closeCartModal() {
+            document.getElementById("cartModal").style.display = "none";
+        }
+
+
+
+        // Dummy proceed function (replace with your checkout logic)
+        function proceedCart() {
+            alert("Proceeding to checkout!");
+        }
+
+        // // Print the cart
+        // function printCart() {
+        //     window.print();
+        // }
+
+        // ----------------------- Product Gallery Functions -----------------------
 
         // Fetch products from Firebase
         function fetchProducts(callback) {
@@ -473,7 +1212,10 @@
                 });
         }
 
-        // Populate gallery with products
+
+
+
+        // Populate the gallery with product items
         function populateGallery(products) {
             var galleryContainer = document.getElementById("galleryContainer");
             galleryContainer.innerHTML = "";
@@ -490,14 +1232,14 @@
                 viewDiv.className = "view-item";
                 var viewBtn = document.createElement("button");
                 viewBtn.className = "bg-blue-500 text-white px-4 py-2 rounded";
-                viewBtn.textContent = "View Item";
+                viewBtn.textContent = "View";
                 viewDiv.appendChild(viewBtn);
                 a.appendChild(viewDiv);
                 galleryContainer.appendChild(a);
             });
         }
 
-        // Filter products and update gallery
+        // Filter products by category and update the gallery
         function filterProducts(filter) {
             document.querySelectorAll(".buttons").forEach(function (btn) {
                 btn.classList.remove("active");
@@ -512,19 +1254,106 @@
             });
         }
 
-        // Expose functions
+        // ----------------------- Global Exposure and Initialization -----------------------
         window.openModal = openModal;
         window.closeModal = closeModal;
         window.addToCart = addToCart;
         window.filterProducts = filterProducts;
+        window.openCartModal = openCartModal;
+        window.closeCartModal = closeCartModal;
 
-        // Initially load all products and update cart count
         document.addEventListener("DOMContentLoaded", function () {
             filterProducts("all");
+            consolidateCart();
             updateCartCount();
         });
+
+
+
+
+
+
+
+
+        
+
+
+
+        // Open the checkout modal and render cart details and customer input fields
+        function openCheckoutModal() {
+            // Hide the cart modal if it's open
+            closeCartModal();
+            var container = document.getElementById("checkoutCartItems");
+            container.innerHTML = "";
+            if (cart.length === 0) {
+                container.innerHTML = "<p>Your cart is empty.</p>";
+                document.getElementById("checkoutCartTotal").textContent = "Total: ₱0.00";
+            } else {
+                var html = "<ul>";
+                var total = 0;
+                cart.forEach(function (item) {
+                    html += `<li class="checkout-item">
+                        <span>${item.name}</span>
+                        <span>₱${item.price.toFixed(2)}</span>
+                        <span>Qty: ${item.quantity}</span>
+                     </li>`;
+                    total += item.price * item.quantity;
+                });
+                html += "</ul>";
+                container.innerHTML = html;
+                document.getElementById("checkoutCartTotal").textContent = "Total: ₱" + total.toFixed(2);
+            }
+
+            // Clear previous customer details
+            document.getElementById("customerName").value = "";
+            document.getElementById("customerAddress").value = "";
+            document.getElementById("customerPhone").value = "";
+
+            // Display the checkout modal
+            document.getElementById("checkoutModal").style.display = "flex";
+        }
+
+        // Cancel checkout and close the checkout modal (optionally reopen cart modal)
+        function cancelCheckout() {
+            document.getElementById("checkoutModal").style.display = "none";
+            // Optionally, you can reopen the cart modal:
+            // openCartModal();
+        }
+
+        // Process the order: gather customer details and clear the cart (update this function as needed)
+        function submitOrder() {
+            var name = document.getElementById("customerName").value.trim();
+            var address = document.getElementById("customerAddress").value.trim();
+            var phone = document.getElementById("customerPhone").value.trim();
+
+            if (!name || !address || !phone) {
+                alert("Please fill in all customer details.");
+                return;
+            }
+
+            // Here you can add your order processing logic (e.g., sending data to Firebase)
+            alert("Order submitted!\nCustomer: " + name + "\nAddress: " + address + "\nPhone: " + phone);
+
+            // Clear the cart after submission
+            cancelCart();
+
+            // Close the checkout modal
+            document.getElementById("checkoutModal").style.display = "none";
+        }
+
+        // Updated proceedCart function: Open the checkout modal instead of alerting
+        function proceedCart() {
+            openCheckoutModal();
+        }
+
+
+     
+
+
+
 
     </script>
 </body>
 
 </html>
+
