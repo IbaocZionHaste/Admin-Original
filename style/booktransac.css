@@ -1086,6 +1086,8 @@ h1 {
     color: #000;
 }
 
+
+
 /* Booking Details and Order Categories */
 #bookingDetails p {
     margin: 10px 0;
@@ -1108,6 +1110,7 @@ h1 {
     padding-bottom: 5px;
 }
 
+
 /* Status Labels */
 .status {
     display: inline-block;
@@ -1119,14 +1122,14 @@ h1 {
     text-align: center;
 }
 
-.status.pending {
-    background-color: #f1c40f;
-    border: 1px solid #f39c12;
-}
-
 .status.approved {
     background-color: #27ae60;
     border: 1px solid #1e8449;
+}
+
+.status.pending {
+    background-color: #f1c40f;
+    border: 1px solid #f39c12;
 }
 
 .status.declined {
@@ -1230,7 +1233,6 @@ h1 {
 }
 
 
-
 .action-button {
     background-color: var(--light);
     color: var(--dark);
@@ -1245,3 +1247,42 @@ h1 {
 .action-button:hover {
     background-color: #ccc;
 }
+
+
+
+
+
+
+
+.order-items-container {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    height: 130px;       /* Fixed height para hindi mag-stretch */
+    overflow-y: auto;    /* Scroll kapag maraming items */
+    scrollbar-width: none;
+  }
+  
+  
+  .order-items-container h3 {
+    margin-top: 0;
+    text-align: center;
+  }
+  
+  .order-items-container ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .order-items-container li {
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .order-items-container li:last-child {
+    border-bottom: none;
+  }
+  

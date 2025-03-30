@@ -409,7 +409,6 @@
         /* Cart Buttons */
         .cart-buttons {
             display: flex;
-
             justify-content: space-between;
             padding: 1rem;
             border-top: 1px solid #ccc;
@@ -421,7 +420,7 @@
             border-radius: 50px;
             cursor: pointer;
             font-weight: bolder;
-            font-size: 1.2rem;
+            font-size: 1rem;
             transition: background 0.3s ease;
         }
 
@@ -728,8 +727,8 @@
         .receipt-container {
             max-width: 650px;
             margin: auto;
-            background: #fff;
-            border-radius: 8px;
+            background: #ccc;
+            border-radius: 50px;
             display: none;
             overflow: hidden;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
@@ -1457,6 +1456,7 @@
 
 
 
+        
         // Revised incrementQuantity() - disable increment for restricted categories
         function incrementQuantity(index) {
             var restrictedCategories = ["boat", "package", "cottage"];
@@ -1556,6 +1556,8 @@
             });
         }
 
+
+
         // Filter products by category and update the gallery
         // function filterProducts(filter) {
         //     document.querySelectorAll(".buttons").forEach(function (btn) {
@@ -1612,26 +1614,29 @@
         function openCheckoutModal() {
             // Hide the cart modal if it's open
             closeCartModal();
+
+            // Check if the cart is empty and, if so, alert the user and exit
+            if (cart.length === 0) {
+                alert("Your cart is empty. Please add items to proceed.");
+                return;
+            }
+
+            // Render cart items and total
             var container = document.getElementById("checkoutCartItems");
             container.innerHTML = "";
-            if (cart.length === 0) {
-                container.innerHTML = "<p>Your cart is empty.</p>";
-                document.getElementById("checkoutCartTotal").textContent = "Total: ₱0.00";
-            } else {
-                var html = "<ul>";
-                var total = 0;
-                cart.forEach(function (item) {
-                    html += `<li class="checkout-item">
-                        <span>${item.name}</span>
-                        <span>₱${item.price.toFixed(2)}</span>
-                        <span>Qty: ${item.quantity}</span>
-                     </li>`;
-                    total += item.price * item.quantity;
-                });
-                html += "</ul>";
-                container.innerHTML = html;
-                document.getElementById("checkoutCartTotal").textContent = "Total: ₱" + total.toFixed(2);
-            }
+            var html = "<ul>";
+            var total = 0;
+            cart.forEach(function (item) {
+                html += `<li class="checkout-item">
+                    <span>${item.name}</span>
+                    <span>₱${item.price.toFixed(2)}</span>
+                    <span>Qty: ${item.quantity}</span>
+                 </li>`;
+                total += item.price * item.quantity;
+            });
+            html += "</ul>";
+            container.innerHTML = html;
+            document.getElementById("checkoutCartTotal").textContent = "Total: ₱" + total.toFixed(2);
 
             // Clear previous customer details
             document.getElementById("customerName").value = "";
@@ -1645,7 +1650,7 @@
         // Cancel checkout and close the checkout modal (optionally reopen cart modal)
         function cancelCheckout() {
             document.getElementById("checkoutModal").style.display = "none";
-            // Optionally, you can reopen the cart modal:
+            // Optionally, reopen the cart modal:
             openCartModal();
         }
 
@@ -1683,20 +1688,22 @@
 
             // Generate a random receipt number
             function generateReceiptNo() {
-                return "WALKIN" + Date.now();
+                return "REF" + Date.now();
             }
 
 
             var orderData = {
-                orderName: "Walkin Order",
+                orderName: "Walkin",
                 customerName: name,
                 customerAddress: address,
                 customerPhone: phone,
                 items: orderItems,
                 total: total,
                 date: formatDate(new Date()),
-                receiptNo: generateReceiptNo()
+                receiptNo: generateReceiptNo(),
+                status: "approved"
             };
+
 
 
             // Push order data into Firebase
@@ -1710,7 +1717,7 @@
                     // Now print only the receipt container
                     printReceipt();
 
-                    localStorage.removeItem("cartItems");
+                    // localStorage.removeItem("cartItems");
                     cancelCart(); // Assuming this clears the cart
                     document.getElementById("checkoutModal").style.display = "none";
                 })
@@ -1721,6 +1728,7 @@
         }
 
 
+        
 
         function populateReceipt(orderData) {
             // Update customer info on the left side
@@ -1763,8 +1771,10 @@
 
 
         function printReceipt() {
+            localStorage.removeItem("cartItems");
             window.print();
         }
+
 
 
         // Updated proceedCart function: Open the checkout modal instead of alerting

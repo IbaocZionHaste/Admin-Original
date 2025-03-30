@@ -244,9 +244,6 @@ history.replaceState({}, document.title, "" + '?key=' + randomKey);
 
 
 
-
-
-
 // Global variables for pagination and data
 const pageSize = 30;
 let currentPage = 1;
@@ -262,22 +259,40 @@ function parseBookingDate(rawDateStr) {
     return null;
   }
   return {
-    formatted: dateObj.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' }), // e.g. "3/19/2025"
+    formatted: dateObj.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' }),
     year: dateObj.getFullYear(),
     month: dateObj.getMonth() + 1,
     day: dateObj.getDate()
   };
 }
 
-// Fetch booking data from Firebase under all users' MyHistory node.
+// Helper function: Returns the current (local) date formatted as needed.
+function getDefaultDate() {
+  const now = new Date();
+  return {
+    formatted: now.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' }),
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    day: now.getDate()
+  };
+}
+
+// Fetch booking data from Firebase under all users' MyHistory node and walkin node.
 function fetchBookingsFromFirebase() {
+  let bookings = [];
   const usersRef = ref(db, "users");
-  console.log("Fetching data from all users...");
-  get(usersRef)
-    .then(snapshot => {
-      if (snapshot.exists()) {
-        let bookings = [];
-        snapshot.forEach(userSnapshot => {
+  const walkinRef = ref(db, "walkin");
+
+  console.log("Fetching data from 'users' and 'walkin'...");
+
+  Promise.all([get(usersRef), get(walkinRef)])
+    .then(results => {
+      const usersSnapshot = results[0];
+      const walkinSnapshot = results[1];
+
+      // Process bookings from users
+      if (usersSnapshot.exists()) {
+        usersSnapshot.forEach(userSnapshot => {
           const userData = userSnapshot.val();
           let accountName = "";
           if (userData.firstName || userData.lastName) {
@@ -287,20 +302,16 @@ function fetchBookingsFromFirebase() {
             for (let bookingId in userData.MyHistory) {
               if (userData.MyHistory.hasOwnProperty(bookingId)) {
                 const record = userData.MyHistory[bookingId];
-                // Directly fetch the paymentTransaction from the record
                 if (record && record.paymentTransaction) {
                   const transaction = record.paymentTransaction;
                   console.log("Payment Transaction Data:", transaction);
-
-                  // Parse the PaymentDate string (e.g., "2025-03-26 10:11 PM")
-                  const parsedDate = parseBookingDate(transaction.PaymentDate);
-
+                  // Parse the PaymentDate string or use default date
+                  const parsedDate = parseBookingDate(transaction.PaymentDate) || getDefaultDate();
                   bookings.push({
                     name: transaction.name || accountName || "N/A",
-                    downPayment: transaction.downPayment || 0,
+                    downPayment: transaction.downPayment !== undefined ? transaction.downPayment : "N/A",
                     amount: transaction.amount || 0,
                     paymentStatus: transaction.paymentStatus || "N/A",
-                    // Add parsed date fields to your booking object
                     ...parsedDate
                   });
                 } else {
@@ -310,15 +321,41 @@ function fetchBookingsFromFirebase() {
             }
           }
         });
-
-        console.log("Processed bookings:", bookings);
-        window.initialBookings = bookings;
-        filteredBookings = bookings;
-        renderPage(currentPage);
-        renderPagination();
       } else {
         console.warn("No data available under 'users'");
       }
+
+      // Process walkin data from Firebase
+      if (walkinSnapshot.exists()) {
+        walkinSnapshot.forEach(childSnapshot => {
+          const record = childSnapshot.val();
+          // Parse the date; kung walang valid na date, gagamitin ang default local date.
+          const parsedDate = parseBookingDate(record.date) || getDefaultDate();
+          const walkinRecord = {
+            name: record.customerName || "N/A",
+            downPayment: "N/A",
+            amount: record.total || 0,
+            paymentStatus: record.status || "N/A",
+            ...parsedDate
+          };
+          bookings.push(walkinRecord);
+        });
+      } else {
+        console.warn("No data available under 'walkin'");
+      }
+
+      // Sort bookings so that the newest date is on top
+      bookings.sort((a, b) => {
+        const dateA = new Date(a.year, a.month - 1, a.day);
+        const dateB = new Date(b.year, b.month - 1, b.day);
+        return dateB - dateA; // descending order
+      });
+
+      console.log("Processed bookings:", bookings);
+      window.initialBookings = bookings;
+      filteredBookings = bookings;
+      renderPage(currentPage);
+      renderPagination();
     })
     .catch(error => {
       console.error("Error fetching data:", error);
@@ -346,8 +383,6 @@ function updateDayOptions() {
     daySelect.appendChild(option);
   }
 }
-
-
 
 function renderPage(page) {
   const tableBody = document.getElementById("accommodation-list");
@@ -379,19 +414,14 @@ function renderPage(page) {
   updateTotalView(pageData);
 }
 
-
 function updateTotalView(pageData) {
   let totalAmount = 0;
   pageData.forEach(booking => {
-      totalAmount += parseFloat(booking.amount) || 0;
+    totalAmount += parseFloat(booking.amount) || 0;
   });
-  
- // Update the "total" div with the formatted total amount.
- const totalDiv = document.getElementById("total");
- totalDiv.innerHTML = `<strong>Total :</strong> ₱${totalAmount.toFixed(2)}`;
+  const totalDiv = document.getElementById("total");
+  totalDiv.innerHTML = `<strong>Total :</strong> ₱${totalAmount.toFixed(2)}`;
 }
-
-
 
 // Render pagination controls.
 function renderPagination() {
@@ -433,7 +463,6 @@ function renderPagination() {
   paginationDiv.appendChild(nextBtn);
 }
 
-
 // Filter the bookings based on the selected Year, Month, Day, and Status.
 function filterTable() {
   const yearFilter = document.getElementById("year").value;
@@ -454,14 +483,19 @@ function filterTable() {
     if (dayFilter !== "" && b.day !== parseInt(dayFilter)) {
       valid = false;
     }
-    // If a status is selected, compare (case-insensitive)
     if (statusFilter !== "" && b.paymentStatus.toLowerCase() !== statusFilter.toLowerCase()) {
       valid = false;
     }
     return valid;
   });
 
-  console.log("Filtered bookings:", filteredBookings);
+  // Re-sort filteredBookings para matiyak ang new-to-old order
+  filteredBookings.sort((a, b) => {
+    const dateA = new Date(a.year, a.month - 1, a.day);
+    const dateB = new Date(b.year, b.month - 1, b.day);
+    return dateB - dateA;
+  });
+
   currentPage = 1;
   renderPage(currentPage);
   renderPagination();
@@ -472,26 +506,20 @@ function updateStatusOptions() {
   filterTable();
 }
 
-// Expose filterTable globally for inline event handlers
+// Expose functions globally for inline event handlers
 window.filterTable = filterTable;
 window.printTable = printTable;
 window.updateStatusOptions = updateStatusOptions;
 
 // Print Function
 function printTable() {
-  // Get the HTML of the table; adjust the selector as needed.
   const tableHTML = document.getElementById("table-print").outerHTML;
-
-  // Open a new window.
   const printWindow = window.open("", "PrintWindow", "width=800,height=600");
-
-  // Write a basic HTML document to the new window.
   printWindow.document.write(`
     <html>
       <head>
         <title>Payment Report</title>
         <style>
-          /* Optional: Add your print-specific styles here */
           table {
             width: 100%;
             border-collapse: collapse;
@@ -506,12 +534,9 @@ function printTable() {
       </body>
     </html>
   `);
-  // Ensure the document is fully loaded before printing.
   printWindow.document.close();
   printWindow.focus();
-  // Trigger the print dialog.
   printWindow.print();
-  // Optionally close the print window after printing.
   printWindow.close();
 }
 
@@ -530,6 +555,293 @@ window.onload = function () {
   setDefaultDateFilters();
   fetchBookingsFromFirebase();
 };
+
+
+//This no walkin data
+// // Global variables for pagination and data
+// const pageSize = 30;
+// let currentPage = 1;
+// let filteredBookings = [];
+
+// // Utility function: Convert raw date string to numeric format and return an object.
+// function parseBookingDate(rawDateStr) {
+//   // Remove "Date:" prefix and split at the first "("
+//   const cleanStr = rawDateStr.replace(/Date:\s*/i, "").split("(")[0].trim();
+//   // Try to create a Date object. The raw string should be in a parseable format.
+//   const dateObj = new Date(cleanStr);
+//   if (isNaN(dateObj)) {
+//     return null;
+//   }
+//   return {
+//     formatted: dateObj.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' }), // e.g. "3/19/2025"
+//     year: dateObj.getFullYear(),
+//     month: dateObj.getMonth() + 1,
+//     day: dateObj.getDate()
+//   };
+// }
+
+// // Fetch booking data from Firebase under all users' MyHistory node.
+// function fetchBookingsFromFirebase() {
+//   const usersRef = ref(db, "users");
+//   console.log("Fetching data from all users...");
+//   get(usersRef)
+//     .then(snapshot => {
+//       if (snapshot.exists()) {
+//         let bookings = [];
+//         snapshot.forEach(userSnapshot => {
+//           const userData = userSnapshot.val();
+//           let accountName = "";
+//           if (userData.firstName || userData.lastName) {
+//             accountName = ((userData.firstName || "") + " " + (userData.lastName || "")).trim();
+//           }
+//           if (userData.MyHistory) {
+//             for (let bookingId in userData.MyHistory) {
+//               if (userData.MyHistory.hasOwnProperty(bookingId)) {
+//                 const record = userData.MyHistory[bookingId];
+//                 // Directly fetch the paymentTransaction from the record
+//                 if (record && record.paymentTransaction) {
+//                   const transaction = record.paymentTransaction;
+//                   console.log("Payment Transaction Data:", transaction);
+
+//                   // Parse the PaymentDate string (e.g., "2025-03-26 10:11 PM")
+//                   const parsedDate = parseBookingDate(transaction.PaymentDate);
+
+//                   bookings.push({
+//                     name: transaction.name || accountName || "N/A",
+//                     downPayment: transaction.downPayment || 0,
+//                     amount: transaction.amount || 0,
+//                     paymentStatus: transaction.paymentStatus || "N/A",
+//                     // Add parsed date fields to your booking object
+//                     ...parsedDate
+//                   });
+//                 } else {
+//                   console.warn("No paymentTransaction found for record:", bookingId);
+//                 }
+//               }
+//             }
+//           }
+//         });
+
+//         console.log("Processed bookings:", bookings);
+//         window.initialBookings = bookings;
+//         filteredBookings = bookings;
+//         renderPage(currentPage);
+//         renderPagination();
+//       } else {
+//         console.warn("No data available under 'users'");
+//       }
+//     })
+//     .catch(error => {
+//       console.error("Error fetching data:", error);
+//     });
+// }
+
+// // Update the Day dropdown based on the selected Year and Month.
+// function updateDayOptions() {
+//   const daySelect = document.getElementById("day");
+//   daySelect.innerHTML = "";
+//   let maxDays = 31;
+//   const monthVal = document.getElementById("month").value;
+//   const yearVal = document.getElementById("year").value || new Date().getFullYear();
+//   if (monthVal) {
+//     maxDays = new Date(yearVal, monthVal, 0).getDate();
+//   }
+//   const defaultOption = document.createElement("option");
+//   defaultOption.value = "";
+//   defaultOption.textContent = "All";
+//   daySelect.appendChild(defaultOption);
+//   for (let d = 1; d <= maxDays; d++) {
+//     const option = document.createElement("option");
+//     option.value = d;
+//     option.textContent = d;
+//     daySelect.appendChild(option);
+//   }
+// }
+
+
+
+// function renderPage(page) {
+//   const tableBody = document.getElementById("accommodation-list");
+//   tableBody.innerHTML = "";
+//   const start = (page - 1) * pageSize;
+//   const end = start + pageSize;
+//   const pageData = filteredBookings.slice(start, end);
+
+//   pageData.forEach((booking) => {
+//     const formattedStatusPayment = booking.paymentStatus.charAt(0).toUpperCase() + booking.paymentStatus.slice(1).toLowerCase();
+//     const row = document.createElement("tr");
+
+//     // Attach date data as data attributes
+//     row.dataset.paymentDate = booking.formatted;
+//     row.dataset.paymentYear = booking.year;
+//     row.dataset.paymentMonth = booking.month;
+//     row.dataset.paymentDay = booking.day;
+
+//     row.innerHTML = `
+//       <td>${booking.name}</td>
+//       <td>₱${booking.downPayment}</td>
+//       <td>₱${booking.amount}</td>
+//       <td>${formattedStatusPayment}</td>
+//     `;
+//     tableBody.appendChild(row);
+//   });
+
+//   // Update total view with the total amount for the current page.
+//   updateTotalView(pageData);
+// }
+
+
+// function updateTotalView(pageData) {
+//   let totalAmount = 0;
+//   pageData.forEach(booking => {
+//       totalAmount += parseFloat(booking.amount) || 0;
+//   });
+  
+//  // Update the "total" div with the formatted total amount.
+//  const totalDiv = document.getElementById("total");
+//  totalDiv.innerHTML = `<strong>Total :</strong> ₱${totalAmount.toFixed(2)}`;
+// }
+
+
+
+// // Render pagination controls.
+// function renderPagination() {
+//   const paginationDiv = document.getElementById("pagination");
+//   paginationDiv.innerHTML = "";
+//   const totalPages = Math.ceil(filteredBookings.length / pageSize);
+//   const prevBtn = document.createElement("button");
+//   prevBtn.innerText = "Previous";
+//   prevBtn.disabled = currentPage === 1;
+//   prevBtn.onclick = () => {
+//     if (currentPage > 1) {
+//       currentPage--;
+//       renderPage(currentPage);
+//       renderPagination();
+//     }
+//   };
+//   paginationDiv.appendChild(prevBtn);
+//   for (let i = 1; i <= totalPages; i++) {
+//     const pageBtn = document.createElement("button");
+//     pageBtn.innerText = i;
+//     if (i === currentPage) pageBtn.classList.add("active");
+//     pageBtn.onclick = () => {
+//       currentPage = i;
+//       renderPage(currentPage);
+//       renderPagination();
+//     };
+//     paginationDiv.appendChild(pageBtn);
+//   }
+//   const nextBtn = document.createElement("button");
+//   nextBtn.innerText = "Next";
+//   nextBtn.disabled = currentPage === totalPages;
+//   nextBtn.onclick = () => {
+//     if (currentPage < totalPages) {
+//       currentPage++;
+//       renderPage(currentPage);
+//       renderPagination();
+//     }
+//   };
+//   paginationDiv.appendChild(nextBtn);
+// }
+
+
+// // Filter the bookings based on the selected Year, Month, Day, and Status.
+// function filterTable() {
+//   const yearFilter = document.getElementById("year").value;
+//   const monthFilter = document.getElementById("month").value;
+//   const dayFilter = document.getElementById("day").value;
+//   const statusFilter = document.getElementById("Status").value; // New status filter
+
+//   console.log("Filters selected:", { yearFilter, monthFilter, dayFilter, statusFilter });
+
+//   filteredBookings = window.initialBookings.filter(b => {
+//     let valid = true;
+//     if (yearFilter !== "" && b.year !== parseInt(yearFilter)) {
+//       valid = false;
+//     }
+//     if (monthFilter !== "" && b.month !== parseInt(monthFilter)) {
+//       valid = false;
+//     }
+//     if (dayFilter !== "" && b.day !== parseInt(dayFilter)) {
+//       valid = false;
+//     }
+//     // If a status is selected, compare (case-insensitive)
+//     if (statusFilter !== "" && b.paymentStatus.toLowerCase() !== statusFilter.toLowerCase()) {
+//       valid = false;
+//     }
+//     return valid;
+//   });
+
+//   console.log("Filtered bookings:", filteredBookings);
+//   currentPage = 1;
+//   renderPage(currentPage);
+//   renderPagination();
+// }
+
+// // Call filterTable() whenever the status dropdown changes
+// function updateStatusOptions() {
+//   filterTable();
+// }
+
+// // Expose filterTable globally for inline event handlers
+// window.filterTable = filterTable;
+// window.printTable = printTable;
+// window.updateStatusOptions = updateStatusOptions;
+
+// // Print Function
+// function printTable() {
+//   // Get the HTML of the table; adjust the selector as needed.
+//   const tableHTML = document.getElementById("table-print").outerHTML;
+
+//   // Open a new window.
+//   const printWindow = window.open("", "PrintWindow", "width=800,height=600");
+
+//   // Write a basic HTML document to the new window.
+//   printWindow.document.write(`
+//     <html>
+//       <head>
+//         <title>Payment Report</title>
+//         <style>
+//           /* Optional: Add your print-specific styles here */
+//           table {
+//             width: 100%;
+//             border-collapse: collapse;
+//           }
+//           table, th, td {
+//             border: 1px solid black;
+//           }
+//         </style>
+//       </head>
+//       <body>
+//         ${tableHTML}
+//       </body>
+//     </html>
+//   `);
+//   // Ensure the document is fully loaded before printing.
+//   printWindow.document.close();
+//   printWindow.focus();
+//   // Trigger the print dialog.
+//   printWindow.print();
+//   // Optionally close the print window after printing.
+//   printWindow.close();
+// }
+
+// // Set default filters to the current date and update the Day dropdown.
+// function setDefaultDateFilters() {
+//   const now = new Date();
+//   document.getElementById("year").value = now.getFullYear();
+//   document.getElementById("month").value = now.getMonth() + 1;
+//   updateDayOptions();
+//   document.getElementById("day").value = now.getDate();
+// }
+
+// // On page load, set defaults and fetch data.
+// window.onload = function () {
+//   sidebar.classList.add('hide');
+//   setDefaultDateFilters();
+//   fetchBookingsFromFirebase();
+// };
+
 
 
 

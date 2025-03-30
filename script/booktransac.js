@@ -244,61 +244,140 @@ function goToTransaction() {
  * Helper function to convert orderItems into a formatted HTML output.
  * It supports both object and array structures and groups items by category.
  */
+// function jsonToHtmlByCategory(orderItems) {
+//   if (!orderItems) return '';
+
+//   let html = '';
+
+//   // If orderItems is an array, group them by category.
+//   if (Array.isArray(orderItems)) {
+//     const groups = {};
+//     orderItems.forEach(item => {
+//       if (item.category) {
+//         if (!groups[item.category]) groups[item.category] = [];
+//         groups[item.category].push(item);
+//       }
+//     });
+//     // Render each group.
+//     for (let category in groups) {
+//       html += `<div class="order-section"><h3>${category}</h3><ul>`;
+//       groups[category].forEach(item => {
+//         html += `<li><strong>${item.name}</strong>: ₱${item.price} (Qty: ${item.quantity})</li>`;
+//       });
+//       html += `</ul></div>`;
+//     }
+//   } else if (typeof orderItems === 'object') {
+//     // If orderItems is an object, it might contain arrays or single objects.
+//     for (let key in orderItems) {
+//       if (orderItems.hasOwnProperty(key)) {
+//         let value = orderItems[key];
+//         // If it's an array, group items by their category.
+//         if (Array.isArray(value)) {
+//           const groups = {};
+//           value.forEach(item => {
+//             if (item.category) {
+//               if (!groups[item.category]) groups[item.category] = [];
+//               groups[item.category].push(item);
+//             }
+//           });
+//           for (let category in groups) {
+//             html += `<div class="order-section"><h3>${category}</h3><ul>`;
+//             groups[category].forEach(item => {
+//               html += `<li><strong>${item.name}</strong>: ₱${item.price} (Qty: ${item.quantity})</li>`;
+//             });
+//             html += `</ul></div>`;
+//           }
+//         } else if (typeof value === 'object') {
+//           // Handle single object items.
+//           const category = value.category || key;
+//           html += `<div class="order-section"><h3>${category}</h3><ul>`;
+//           html += `<li><strong>${value.name}</strong>: ₱${value.price} (Qty: ${value.quantity})</li>`;
+//           html += `</ul></div>`;
+//         }
+//       }
+//     }
+//   }
+//   return html;
+// }
+
 function jsonToHtmlByCategory(orderItems) {
   if (!orderItems) return '';
 
   let html = '';
 
-  // If orderItems is an array, group them by category.
+  // Check if orderItems is an array
   if (Array.isArray(orderItems)) {
-    const groups = {};
-    orderItems.forEach(item => {
-      if (item.category) {
-        if (!groups[item.category]) groups[item.category] = [];
-        groups[item.category].push(item);
-      }
-    });
-    // Render each group.
-    for (let category in groups) {
-      html += `<div class="order-section"><h3>${category}</h3><ul>`;
-      groups[category].forEach(item => {
+    // Determine if any items have a category property
+    const hasCategory = orderItems.some(item => item.category);
+    
+    // If no item has a category, render them in a simple list
+    if (!hasCategory) {
+      html += '<ul>';
+      orderItems.forEach(item => {
         html += `<li><strong>${item.name}</strong>: ₱${item.price} (Qty: ${item.quantity})</li>`;
       });
-      html += `</ul></div>`;
+      html += '</ul>';
+    } else {
+      // Otherwise, group by category
+      const groups = {};
+      orderItems.forEach(item => {
+        if (item.category) {
+          if (!groups[item.category]) groups[item.category] = [];
+          groups[item.category].push(item);
+        }
+      });
+      // Render each group
+      for (let category in groups) {
+        html += `<div class="order-section"><h3>${category}</h3><ul>`;
+        groups[category].forEach(item => {
+          html += `<li><strong>${item.name}</strong>: ₱${item.price} (Qty: ${item.quantity})</li>`;
+        });
+        html += '</ul></div>';
+      }
     }
   } else if (typeof orderItems === 'object') {
-    // If orderItems is an object, it might contain arrays or single objects.
+    // If orderItems is an object, handle each property
     for (let key in orderItems) {
       if (orderItems.hasOwnProperty(key)) {
         let value = orderItems[key];
-        // If it's an array, group items by their category.
         if (Array.isArray(value)) {
-          const groups = {};
-          value.forEach(item => {
-            if (item.category) {
-              if (!groups[item.category]) groups[item.category] = [];
-              groups[item.category].push(item);
-            }
-          });
-          for (let category in groups) {
-            html += `<div class="order-section"><h3>${category}</h3><ul>`;
-            groups[category].forEach(item => {
+          const hasCategory = value.some(item => item.category);
+          if (!hasCategory) {
+            html += '<ul>';
+            value.forEach(item => {
               html += `<li><strong>${item.name}</strong>: ₱${item.price} (Qty: ${item.quantity})</li>`;
             });
-            html += `</ul></div>`;
+            html += '</ul>';
+          } else {
+            const groups = {};
+            value.forEach(item => {
+              if (item.category) {
+                if (!groups[item.category]) groups[item.category] = [];
+                groups[item.category].push(item);
+              }
+            });
+            for (let category in groups) {
+              html += `<div class="order-section"><h3>${category}</h3><ul>`;
+              groups[category].forEach(item => {
+                html += `<li><strong>${item.name}</strong>: ₱${item.price} (Qty: ${item.quantity})</li>`;
+              });
+              html += '</ul></div>';
+            }
           }
         } else if (typeof value === 'object') {
-          // Handle single object items.
           const category = value.category || key;
           html += `<div class="order-section"><h3>${category}</h3><ul>`;
           html += `<li><strong>${value.name}</strong>: ₱${value.price} (Qty: ${value.quantity})</li>`;
-          html += `</ul></div>`;
+          html += '</ul></div>';
         }
       }
     }
   }
   return html;
 }
+
+
+
 
 // Helper function to determine if today is the last day of the month.
 function isMonthEnd() {
@@ -307,25 +386,26 @@ function isMonthEnd() {
   return now.getDate() === lastDay;
 }
 
-// Function to fetch user bookings and history, then update the table.
-function fetchUserBookings() {
+
+
+
+function fetchAllBookings() {
+  var tableBody = document.getElementById("accommodation-list");
+  tableBody.innerHTML = ""; // Clear existing rows
+
+  // Separate arrays for each booking type
+  var myBookingRows = [];
+  var myHistoryRows = [];
+  var walkinRows = [];
+
+  // Fetch user bookings (MyBooking and MyHistory)
   var usersRef = firebase.database().ref("users");
-  usersRef.on("value", function (snapshot) {
-    var tableBody = document.getElementById("accommodation-list");
-    tableBody.innerHTML = ""; // Clear existing rows.
-
-    // Separate arrays for MyBooking and MyHistory rows.
-    var bookingRows = [];
-    var historyRows = [];
-    const hideHistory = isMonthEnd(); // Hide MyHistory if it's month-end.
-
+  usersRef.once("value").then(function (snapshot) {
     snapshot.forEach(function (userSnapshot) {
       var userData = userSnapshot.val();
-      var firstName = userData.firstName || "";
-      var lastName = userData.lastName || "";
-      var accountName = (firstName + " " + lastName).trim() || "N/A";
+      var accountName = ((userData.firstName || "") + " " + (userData.lastName || "")).trim() || "N/A";
 
-      // Process MyBooking rows (editing enabled).
+      // Process MyBooking rows
       if (userData['MyBooking']) {
         for (var bookingId in userData['MyBooking']) {
           if (userData['MyBooking'].hasOwnProperty(bookingId)) {
@@ -333,7 +413,6 @@ function fetchUserBookings() {
             var review = booking.bookingReview || {};
             var name = review.name || accountName;
             var rawDate = review.bookingDate || "N/A";
-            // Remove "Date:" and any time info in parentheses.
             var date = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
             var status = (review.statusReview || "pending").toLowerCase();
 
@@ -341,7 +420,7 @@ function fetchUserBookings() {
             row.innerHTML = `
               <td>${name}</td>
               <td>${date}</td>
-              <td><span class="online" style="color: green;">Online</span></td>
+              <td style="color: green;">Online</td>
               <td><span id="status-${userSnapshot.key}-${bookingId}-MyBooking" class="status ${status}">${status.toUpperCase()}</span></td>
               <td>
                 <div class="actions">
@@ -350,13 +429,15 @@ function fetchUserBookings() {
                 </div>
               </td>
             `;
-            bookingRows.push(row);
+            row.dataset.bookingDate = date;
+            row.dataset.bookingType = "MyBooking";
+            myBookingRows.push(row);
           }
         }
       }
 
-      // Process MyHistory rows only if not hiding them.
-      if (!hideHistory && userData['MyHistory']) {
+      // Process MyHistory rows
+      if (userData['MyHistory']) {
         for (var bookingId in userData['MyHistory']) {
           if (userData['MyHistory'].hasOwnProperty(bookingId)) {
             var booking = userData['MyHistory'][bookingId];
@@ -370,29 +451,118 @@ function fetchUserBookings() {
             row.innerHTML = `
               <td>${name}</td>
               <td>${date}</td>
-              <td><span class="online" style="color: red;">Online</span></td>
+              <td style="color: red;">Online</td>
               <td><span id="status-${userSnapshot.key}-${bookingId}-MyHistory" class="status ${status}">${status.toUpperCase()}</span></td>
               <td>
                 <div class="actions">
-                  <!-- Edit is disabled for MyHistory: icon shown but not clickable -->
                   <i class="bx bx-pencil disabled" style="opacity: 0.5; cursor: not-allowed;"></i>
                   <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyHistory')"></i>
                 </div>
               </td>
             `;
-            historyRows.push(row);
+            row.dataset.bookingDate = date;
+            row.dataset.bookingType = "MyHistory";
+            myHistoryRows.push(row);
           }
         }
       }
     });
 
-    // Append MyBooking rows first, then MyHistory rows.
-    bookingRows.forEach(function(row) {
-      tableBody.appendChild(row);
+
+
+
+    // After processing user bookings, fetch Walkin orders.
+    var walkinRef = firebase.database().ref("walkin");
+    walkinRef.once("value").then(function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        var order = childSnapshot.val();
+        var name = order.customerName || "N/A";
+        var date = order.date || "N/A";
+        var orderName = order.orderName || "Walkin";
+        var status = (order.status || "approve").toUpperCase();
+
+        var row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${name}</td>
+          <td>${date}</td>
+          <td style="color: blue;">${orderName}</td>
+          <td><span class="status approved">${status}</span></td>
+          <td>
+            <i class='bx bx-detail' onclick="viewWalkinBooking('${childSnapshot.key}')"></i>
+          </td>
+        `;
+        row.dataset.bookingDate = date;
+        row.dataset.bookingType = "Walkin";
+        walkinRows.push(row);
+      });
+
+      // Sort rows within each category by booking date descending
+      function sortRows(rows) {
+        return rows.sort(function (a, b) {
+          return new Date(b.dataset.bookingDate) - new Date(a.dataset.bookingDate);
+        });
+      }
+      myBookingRows = sortRows(myBookingRows);
+      myHistoryRows = sortRows(myHistoryRows);
+      walkinRows = sortRows(walkinRows);
+
+      // Append rows: MyBooking on top, then MyHistory, then Walkin orders.
+      var allRows = myBookingRows.concat(walkinRows, myHistoryRows);
+      allRows.forEach(function (row) {
+        tableBody.appendChild(row);
+      });
+    }).catch(function (error) {
+      console.error("Error fetching walkin orders:", error);
     });
-    historyRows.forEach(function(row) {
-      tableBody.appendChild(row);
-    });
+  }).catch(function (error) {
+    console.error("Error fetching user bookings:", error);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  fetchAllBookings();
+});
+
+
+
+
+
+function viewWalkinBooking(orderKey) {
+  var orderRef = firebase.database().ref("walkin/" + orderKey);
+  orderRef.once("value").then(function (snapshot) {
+    var orderData = snapshot.val();
+    var modalContent = document.getElementById("bookingDetails");
+    modalContent.innerHTML = ""; // Clear previous details
+
+    if (orderData) {
+      // All order details are wrapped in a single container
+      modalContent.innerHTML += `<div class="order-container">
+        <p><strong>Name:</strong> ${orderData.customerName || "N/A"}</p>
+        <p><strong>Date:</strong> ${orderData.date || "N/A"}</p>
+        <p><strong>Phone:</strong> ${orderData.customerPhone || "N/A"}</p>
+        <p><strong>Status:</strong> <span id="modalStatus" class="status ${(orderData.status || 'pending').toLowerCase()}">${(orderData.status || 'PENDING').toUpperCase()}</span></p>
+        <p><strong>Address:</strong> ${orderData.customerAddress || "N/A"}</p>
+        <p><strong>Receipt No:</strong> ${orderData.receiptNo || "N/A"}</p>
+        <p><strong>Total:</strong> ₱${orderData.total || "0"}</p>`;
+
+      // Check if order items exist and wrap them in their own sub-container
+      if (orderData.items) {
+        modalContent.innerHTML += `
+          <div class="order-items-container">
+            <hr  style="display: none;">
+            <h3 style="text-align: center;">Order Items</h3>
+            ${jsonToHtmlByCategory(orderData.items)}
+          </div>`;
+      }
+      modalContent.innerHTML += `</div>`;
+    } else {
+      modalContent.innerHTML = "<p>No order details found.</p>";
+    }
+    document.getElementById("bookingModal").style.display = "block";
+    centerModalContent("bookingModal");
+  }).catch(function (error) {
+    console.error("Error fetching walkin order data:", error);
+    alert("Error fetching order details.");
   });
 }
 
@@ -418,7 +588,7 @@ function viewBooking(userId, bookingId, node) {
 
       // Show Order Details if available.
       if (review.orderItems) {
-        modalContent.innerHTML += `<hr><h3>Order Details</h3>`;
+        modalContent.innerHTML += `<hr><h3 style="text-align: center;">Order Details</h3>`;
         modalContent.innerHTML += jsonToHtmlByCategory(review.orderItems);
       }
     } else {
@@ -444,6 +614,8 @@ function centerModalContent(modalId) {
     modal.style.alignItems = "center";
   }
 }
+
+
 
 // New function to view booking details with an editable status dropdown.
 function viewBookingEdit(userId, bookingId, node) {
@@ -489,6 +661,10 @@ function viewBookingEdit(userId, bookingId, node) {
   });
 }
 
+
+
+
+
 // Function to update the booking status.
 function updateBookingStatus(userId, bookingId, newStatus, node) {
   var bookingRef = firebase.database().ref("users/" + userId + "/" + node + "/" + bookingId + "/bookingReview");
@@ -526,10 +702,114 @@ window.onclick = function (event) {
   }
 };
 
-// Initialize bookings when DOM is ready.
-document.addEventListener("DOMContentLoaded", function () {
-  fetchUserBookings();
-});
+
+
+
+
+
+
+// Function to fetch user bookings and history, then update the table.
+// function fetchUserBookings() {
+//   var usersRef = firebase.database().ref("users");
+//   usersRef.on("value", function (snapshot) {
+//     var tableBody = document.getElementById("accommodation-list");
+//     tableBody.innerHTML = ""; // Clear existing rows.
+
+//     // Separate arrays for MyBooking and MyHistory rows.
+//     var bookingRows = [];
+//     var historyRows = [];
+//     const hideHistory = isMonthEnd(); // Hide MyHistory if it's month-end.
+
+//     snapshot.forEach(function (userSnapshot) {
+//       var userData = userSnapshot.val();
+//       var firstName = userData.firstName || "";
+//       var lastName = userData.lastName || "";
+//       var accountName = (firstName + " " + lastName).trim() || "N/A";
+
+//       // Process MyBooking rows (editing enabled).
+//       if (userData['MyBooking']) {
+//         for (var bookingId in userData['MyBooking']) {
+//           if (userData['MyBooking'].hasOwnProperty(bookingId)) {
+//             var booking = userData['MyBooking'][bookingId];
+//             var review = booking.bookingReview || {};
+//             var name = review.name || accountName;
+//             var rawDate = review.bookingDate || "N/A";
+//             // Remove "Date:" and any time info in parentheses.
+//             var date = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
+//             var status = (review.statusReview || "pending").toLowerCase();
+
+//             var row = document.createElement("tr");
+//             row.innerHTML = `
+//               <td>${name}</td>
+//               <td>${date}</td>
+//               <td><span class="online" style="color: green;">Online</span></td>
+//               <td><span id="status-${userSnapshot.key}-${bookingId}-MyBooking" class="status ${status}">${status.toUpperCase()}</span></td>
+//               <td>
+//                 <div class="actions">
+//                   <i class="bx bx-pencil" onclick="viewBookingEdit('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
+//                   <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
+//                 </div>
+//               </td>
+//             `;
+//             bookingRows.push(row);
+//           }
+//         }
+//       }
+
+
+
+
+
+//       // Process MyHistory rows only if not hiding them.
+//       if (!hideHistory && userData['MyHistory']) {
+//         for (var bookingId in userData['MyHistory']) {
+//           if (userData['MyHistory'].hasOwnProperty(bookingId)) {
+//             var booking = userData['MyHistory'][bookingId];
+//             var review = booking.bookingReview || {};
+//             var name = review.name || accountName;
+//             var rawDate = review.bookingDate || "N/A";
+//             var date = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
+//             var status = (review.statusReview || "pending").toLowerCase();
+
+//             var row = document.createElement("tr");
+//             row.innerHTML = `
+//               <td>${name}</td>
+//               <td>${date}</td>
+//               <td><span class="online" style="color: red;">Online</span></td>
+//               <td><span id="status-${userSnapshot.key}-${bookingId}-MyHistory" class="status ${status}">${status.toUpperCase()}</span></td>
+//               <td>
+//                 <div class="actions">
+//                   <!-- Edit is disabled for MyHistory: icon shown but not clickable -->
+//                   <i class="bx bx-pencil disabled" style="opacity: 0.5; cursor: not-allowed;"></i>
+//                   <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyHistory')"></i>
+//                 </div>
+//               </td>
+//             `;
+//             historyRows.push(row);
+//           }
+//         }
+//       }
+//     });
+
+//     // Append MyBooking rows first, then MyHistory rows.
+//     bookingRows.forEach(function(row) {
+//       tableBody.appendChild(row);
+//     });
+//      // Sort MyHistory rows by date descending (latest first)
+// historyRows.sort(function(a, b) {
+//   // Assuming the date is in the second <td> (index 1) and in a format recognized by Date()
+//   var dateA = new Date(a.querySelectorAll('td')[1].innerText.trim());
+//   var dateB = new Date(b.querySelectorAll('td')[1].innerText.trim());
+//   return dateB - dateA; // Latest date first
+// });
+//     historyRows.forEach(function(row) {
+//       tableBody.appendChild(row);
+//     });
+//   });
+// }
+
+
+
 
 
 

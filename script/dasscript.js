@@ -579,10 +579,37 @@ function countVacancies() {
 
 
 // Count total approved sales from all users' payment transactions
+
+// function fetchTotalApprovedSales() {
+//     firebase.database().ref("users").once("value")
+//         .then(snapshot => {
+//             let totalSales = 0;
+//             snapshot.forEach(userSnapshot => {
+//                 const userData = userSnapshot.val();
+//                 if (userData.MyHistory) {
+//                     Object.values(userData.MyHistory).forEach(booking => {
+//                         if (booking.paymentTransaction && booking.paymentTransaction.paymentStatus) {
+//                             if (booking.paymentTransaction.paymentStatus.toLowerCase() === "approved") {
+//                                 totalSales += parseFloat(booking.paymentTransaction.amount) || 0;
+//                             }
+//                         }
+//                     });
+//                 }
+//             });
+//             // Update the Total Sales element using its ID with the Philippine peso sign and no decimals
+//             document.getElementById("totalSalesAmount").innerText = "₱" + Math.round(totalSales);
+//         })
+//         .catch(error => {
+//             console.error("Error fetching total approved sales:", error);
+//         });
+// }
+
 function fetchTotalApprovedSales() {
+    let totalSales = 0;
+
+    // Fetch approved sales from user MyHistory transactions
     firebase.database().ref("users").once("value")
         .then(snapshot => {
-            let totalSales = 0;
             snapshot.forEach(userSnapshot => {
                 const userData = userSnapshot.val();
                 if (userData.MyHistory) {
@@ -595,13 +622,24 @@ function fetchTotalApprovedSales() {
                     });
                 }
             });
-            // Update the Total Sales element using its ID with the Philippine peso sign and no decimals
+            // Now fetch approved walkin transactions
+            return firebase.database().ref("walkin").once("value");
+        })
+        .then(snapshot => {
+            snapshot.forEach(bookingSnapshot => {
+                const booking = bookingSnapshot.val();
+                if (booking.status && booking.status.toLowerCase() === "approved") {
+                    totalSales += parseFloat(booking.total) || 0;
+                }
+            });
+            // Update the Total Sales element with the Philippine peso sign and no decimals
             document.getElementById("totalSalesAmount").innerText = "₱" + Math.round(totalSales);
         })
         .catch(error => {
             console.error("Error fetching total approved sales:", error);
         });
 }
+
 
 
 //Count al pending booking
@@ -633,7 +671,6 @@ function fetchPendingBookingCount() {
 
 
 //COUN ALL ITEM IN PRODUCT
-
 let pieChart;
 
 // Initialize the pie chart with default data.
@@ -709,6 +746,7 @@ function setCurrentMonth2() {
         }
     }
 }
+
 
 // Function to count product items per category based on your desired grouping.
 // Optionally filters by month if the product has a "date" property.
@@ -834,12 +872,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
-
-
-
-
-
 //THIS BY DAY COUNT INCOME CHART
 let myChart;
 
@@ -905,7 +937,84 @@ function setCurrentMonth() {
         }
     }
 }
+// function filterIncomeByDay() {
+//     const selectedMonth = document.getElementById("monthDropdown").value;
+//     if (!selectedMonth) return;
 
+//     const monthNames = [
+//         "January", "February", "March", "April", "May", "June",
+//         "July", "August", "September", "October", "November", "December"
+//     ];
+//     const monthIndex = monthNames.indexOf(selectedMonth);
+//     if (monthIndex === -1) return;
+
+//     const currentYear = new Date().getFullYear();
+//     const daysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
+//     let dailyTotals = new Array(daysInMonth).fill(0);
+
+//     firebase.database().ref("users").once("value")
+//         .then(snapshot => {
+//             console.log("Fetching data for", selectedMonth, currentYear);
+//             snapshot.forEach(userSnapshot => {
+//                 const userData = userSnapshot.val();
+//                 if (userData.MyHistory) {
+//                     Object.values(userData.MyHistory).forEach(booking => {
+//                         // Check if paymentTransaction exists
+//                         if (booking.paymentTransaction) {
+//                             const transaction = booking.paymentTransaction;
+//                             // Use PaymentDate instead of booking.date
+//                             const bookingDateStr = transaction.PaymentDate;
+//                             if (!bookingDateStr) {
+//                                 console.warn("No PaymentDate found for booking:", booking);
+//                                 return;
+//                             }
+//                             // Parse the date string
+//                             const bookingDate = new Date(bookingDateStr);
+//                             console.log("Processing PaymentDate:", bookingDateStr, "Parsed:", bookingDate);
+
+//                             // Check if the booking matches the current year and selected month
+//                             if (bookingDate.getFullYear() !== currentYear) return;
+//                             if (bookingDate.getMonth() !== monthIndex) return;
+
+//                             const day = bookingDate.getDate();
+//                             const amount = parseFloat(transaction.amount) || 0;
+
+//                             // Only add if finalStatus is approved (change "approved" to match your data)
+//                             if (transaction.finalStatus && transaction.finalStatus.toLowerCase() === "approved") {
+//                                 dailyTotals[day - 1] += amount;
+//                                 console.log(`Day ${day}: Added ₱${amount}. Running total: ₱${dailyTotals[day - 1]}`);
+//                             } else {
+//                                 console.log(`Day ${day}: Transaction not approved. Status: ${transaction.finalStatus}`);
+//                             }
+//                         } else {
+//                             console.warn("No paymentTransaction found for booking:", booking);
+//                         }
+//                     });
+//                 }
+//             });
+//             console.log("Final daily totals:", dailyTotals);
+//         })
+//         .then(() => {
+//             // Compute the maximum value for dynamic y-axis scaling
+//             const maxVal = Math.max(...dailyTotals);
+//             const newSuggestedMax = maxVal + (maxVal * 0.2);
+
+//             const labels = Array.from({ length: daysInMonth }, (_, i) => (i + 1).toString());
+//             if (myChart) {
+//                 myChart.options.scales.y.suggestedMax = newSuggestedMax;
+//                 myChart.data.labels = labels;
+//                 myChart.data.datasets[0].data = dailyTotals;
+//                 myChart.update();
+//             }
+//             console.log("Chart updated with new suggestedMax:", newSuggestedMax);
+//         })
+//         .catch(error => {
+//             console.error("Error fetching approved sales:", error);
+//         });
+// }
+
+
+//This code walkin count the amount and view into income chart
 function filterIncomeByDay() {
     const selectedMonth = document.getElementById("monthDropdown").value;
     if (!selectedMonth) return;
@@ -923,42 +1032,57 @@ function filterIncomeByDay() {
 
     firebase.database().ref("users").once("value")
         .then(snapshot => {
-            console.log("Fetching data for", selectedMonth, currentYear);
+            console.log("Fetching user data for", selectedMonth, currentYear);
             snapshot.forEach(userSnapshot => {
                 const userData = userSnapshot.val();
                 if (userData.MyHistory) {
                     Object.values(userData.MyHistory).forEach(booking => {
-                        // Check if paymentTransaction exists
                         if (booking.paymentTransaction) {
                             const transaction = booking.paymentTransaction;
-                            // Use PaymentDate instead of booking.date
                             const bookingDateStr = transaction.PaymentDate;
                             if (!bookingDateStr) {
                                 console.warn("No PaymentDate found for booking:", booking);
                                 return;
                             }
-                            // Parse the date string
                             const bookingDate = new Date(bookingDateStr);
                             console.log("Processing PaymentDate:", bookingDateStr, "Parsed:", bookingDate);
 
-                            // Check if the booking matches the current year and selected month
                             if (bookingDate.getFullYear() !== currentYear) return;
                             if (bookingDate.getMonth() !== monthIndex) return;
 
                             const day = bookingDate.getDate();
                             const amount = parseFloat(transaction.amount) || 0;
 
-                            // Only add if finalStatus is approved (change "approved" to match your data)
+                            // Only count if finalStatus is approved
                             if (transaction.finalStatus && transaction.finalStatus.toLowerCase() === "approved") {
                                 dailyTotals[day - 1] += amount;
-                                console.log(`Day ${day}: Added ₱${amount}. Running total: ₱${dailyTotals[day - 1]}`);
+                                console.log(`User Day ${day}: Added ₱${amount}. Running total: ₱${dailyTotals[day - 1]}`);
                             } else {
-                                console.log(`Day ${day}: Transaction not approved. Status: ${transaction.finalStatus}`);
+                                console.log(`User Day ${day}: Transaction not approved. Status: ${transaction.finalStatus}`);
                             }
                         } else {
                             console.warn("No paymentTransaction found for booking:", booking);
                         }
                     });
+                }
+            });
+            // Now process walkin transactions
+            return firebase.database().ref("walkin").once("value");
+        })
+        .then(snapshot => {
+            console.log("Fetching walkin data for", selectedMonth, currentYear);
+            snapshot.forEach(bookingSnapshot => {
+                const booking = bookingSnapshot.val();
+                // Check if booking.date exists and status is approved
+                if (booking.date && booking.status && booking.status.toLowerCase() === "approved") {
+                    const bookingDate = new Date(booking.date);
+                    if (bookingDate.getFullYear() !== currentYear) return;
+                    if (bookingDate.getMonth() !== monthIndex) return;
+
+                    const day = bookingDate.getDate();
+                    const amount = parseFloat(booking.total) || 0;
+                    dailyTotals[day - 1] += amount;
+                    console.log(`Walkin Day ${day}: Added ₱${amount}. Running total: ₱${dailyTotals[day - 1]}`);
                 }
             });
             console.log("Final daily totals:", dailyTotals);
@@ -981,8 +1105,6 @@ function filterIncomeByDay() {
             console.error("Error fetching approved sales:", error);
         });
 }
-
-
 
 
 // Expose filterIncomeByDay to the global scope so the inline onchange event can access it

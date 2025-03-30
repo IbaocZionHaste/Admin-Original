@@ -1069,16 +1069,18 @@ td:last-child {
 
 
 
+
+
+
 /* General Styles */
-h1 {
+h2 {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 /* Modal Background and Layout */
 .modal {
     display: none;
-    /* Hidden by default */
     position: fixed;
     left: 0;
     top: 0;
@@ -1088,7 +1090,7 @@ h1 {
 }
 
 .modal-content {
-    background-color: #fff;
+    background-color: #f7f7f7;
     margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
@@ -1099,9 +1101,9 @@ h1 {
     position: relative;
     max-height: 85vh;
     overflow-y: auto;
+    
 }
 
-/* Hide scrollbar */
 .modal-content::-webkit-scrollbar {
     width: 0px;
 }
@@ -1119,27 +1121,8 @@ h1 {
     color: #000;
 }
 
-/* Booking Details and Order Categories */
-#bookingDetails p {
-    margin: 10px 0;
-    line-height: 1.6;
-}
 
-.order-section {
-    margin: 20px 0;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #fafafa;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
 
-.order-section h3 {
-    margin-top: 0;
-    color: #2c3e50;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
-}
 
 
 /* Status Labels */
@@ -1233,6 +1216,9 @@ h1 {
     }
 }
 
+
+
+
 /* Dropdown styling */
 #paymentStatusDropdown {
     background-color: #f7f7f7;
@@ -1278,7 +1264,45 @@ h1 {
     padding: 8px 12px;
 }
 
+
+
+
+/* Text size payment */
 .payment-detail {
-    font-size: 1rem;
+    font-size: 1.2rem;
     margin: 10px 0;
+    line-height: 1.6;
 }
+
+/* Payment Transaction Section */
+.payment-transaction {
+    background-color: #f0f8ff;  /* Light blue background */
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Payment Method Section */
+  .payment-method {
+    background-color: #f0f8ff;   /* Light pink background */
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+
+  /* Editable Payment Transaction Section */
+.payment-transaction-edit {
+    background-color: #e6ffe6;  /* Light green background */
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  
