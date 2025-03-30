@@ -370,7 +370,7 @@ function fetchUserBookings() {
             row.innerHTML = `
               <td>${name}</td>
               <td>${date}</td>
-              <td><span class="online" style="color: red;">Recent Online</span></td>
+              <td><span class="online" style="color: red;">Online</span></td>
               <td><span id="status-${userSnapshot.key}-${bookingId}-MyHistory" class="status ${status}">${status.toUpperCase()}</span></td>
               <td>
                 <div class="actions">

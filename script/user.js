@@ -192,7 +192,7 @@ function toggleAccommodationSection(event) {
   }
   
   
-  
+
   //TRANSACTION FUNCTION
   
   function toggleTransactionSection(event) {
@@ -235,9 +235,11 @@ function toggleAccommodationSection(event) {
   const randomKey = generateRandomKey();
   history.replaceState({}, document.title, "" + '?key=' + randomKey);
   
+
+
   
 
-// Fetch users and display their status
+ // Fetch users and display their status
 function fetchUsers() {
   var usersRef = firebase.database().ref("users");
   usersRef.on("value", function(snapshot) {
@@ -249,19 +251,18 @@ function fetchUsers() {
       var username = userData.username || "N/A";
       var registrationDate = userData.registrationDate || "N/A";
       
-      // Determine status: if the user is banned, show "Banned"; 
-      // otherwise, if online show "Online", else "Offline"
       var statusText, statusClass;
       if (userData.status === "banned") {
         statusText = "Banned";
         statusClass = "banned";
       } else {
-        if (userData.isOnline === true) {
-          statusText = "Online";
-          statusClass = "online";
+        // Check the phoneVerified field:
+        if (userData.phoneVerified === true) {
+          statusText = "Verified";
+          statusClass = "verified";
         } else {
-          statusText = "Offline";
-          statusClass = "offline";
+          statusText = "Unverified";
+          statusClass = "unverified";
         }
       }
       
@@ -282,6 +283,7 @@ function fetchUsers() {
     });
   });
 }
+
 
 // Call fetchUsers when the DOM is ready
 document.addEventListener("DOMContentLoaded", function() {
@@ -312,6 +314,7 @@ function viewUserUpdate(userId) {
 }
 
   
+
   
 //View the details of the user
 function viewUserDetail(userId) {

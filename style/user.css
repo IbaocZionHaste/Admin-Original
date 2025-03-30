@@ -838,6 +838,8 @@ body {
 }
 
 
+
+
 /* Report Arrow */
 .report-toggle {
     display: flex;
@@ -973,6 +975,7 @@ body {
 
 
 
+
 /* Status User */
 .status {
     display: inline-block;
@@ -984,17 +987,24 @@ body {
     color: #fff;
   }
   
-  /* Online status (green) */
-  .status.online {
-    background-color: #27ae60;
-    border: 2px solid #1e8449;
+/* Verified status (green) */
+.status.verified {
+    background-color: #27ae60; /* green background */
+    border: 2px solid #1e8449; /* darker green border */
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
   }
   
-  /* Offline status (red) */
-  .status.offline {
-    background-color: red;
-    border: 2px solid #c0392b;
+  /* Unverified status (red) */
+  .status.unverified {
+    background-color: red; /* red background */
+    border: 2px solid #c0392b; /* darker red border */
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
   }
+  
   
   /* Banned status (gray or custom color) */
   .status.banned {
@@ -1045,8 +1055,6 @@ body {
 .bx-filter{
     font-size: 30px;
 }
-
-
 
 
 
@@ -1182,6 +1190,7 @@ select:focus {
       transform: translateY(0);
     }
   }
+
   
   /* Close button */
   .modal-content .close {

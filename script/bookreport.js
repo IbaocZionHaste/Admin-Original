@@ -241,7 +241,7 @@ history.replaceState({}, document.title, "" + '?key=' + randomKey);
 
 
 // Global variables for pagination and data
-const pageSize = 20;
+const pageSize = 30;
 let currentPage = 1;
 let filteredBookings = [];
 
@@ -326,6 +326,7 @@ function fetchBookingsFromFirebase() {
 }
 
 
+
 // Update the Day dropdown based on the selected Year and Month.
 function updateDayOptions() {
   const daySelect = document.getElementById("day");
@@ -367,6 +368,7 @@ function renderPage(page) {
     tableBody.appendChild(row);
   });
 }
+
 
 // Render pagination controls.
 function renderPagination() {

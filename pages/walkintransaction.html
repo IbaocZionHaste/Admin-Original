@@ -153,6 +153,7 @@
             background-color: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
+
             /* z-index: 1000; */
         }
 
@@ -205,6 +206,8 @@
                 position: relative;
             }
         }
+
+
 
 
 
@@ -275,8 +278,6 @@
                 transform: scale(1);
             }
         }
-
-
 
         .add-to-cart {
             position: absolute;
@@ -349,6 +350,8 @@
 
 
 
+
+
         /* Modal Cart */
         .modal-cart {
             background: #fff;
@@ -358,7 +361,7 @@
             display: flex;
             flex-direction: column;
             border-radius: 10px;
-            overflow: hidden;
+            overflow-y: auto;
             position: relative;
             scrollbar-width: none;
         }
@@ -454,6 +457,9 @@
 
 
 
+
+
+
         .cart-item {
             display: flex;
             justify-content: space-between;
@@ -504,9 +510,6 @@
             font-size: 1.5em;
         }
 
-
-
-
         .cart-item span:nth-child(1) {
             order: 1;
             /* Quantity on left */
@@ -527,6 +530,9 @@
             width: 30%;
             text-align: right;
         }
+
+
+
 
 
 
@@ -710,6 +716,186 @@
             background-color: red;
             color: #fff;
         }
+
+
+
+
+
+
+
+
+
+        .receipt-container {
+            max-width: 650px;
+            margin: auto;
+            background: #fff;
+            border-radius: 8px;
+            display: none;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Header: Centered title and logo top-right */
+        .receipt-header {
+            position: relative;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, #4f93ce, #285f8f);
+            color: #fff;
+        }
+
+        .receipt-header h1 {
+            text-align: center;
+            font-size: 28px;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .receipt-logo {
+            position: absolute;
+            top: 25px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+        }
+
+        .receipt-logo img {
+            max-width: 100%;
+            display: block;
+            width: 70%;
+            height: 70%;
+            border-radius: 50px;
+            object-fit: cover;
+        }
+
+        /* Info row: left = customer name/address; right = receipt no & date */
+        .receipt-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .info-left {
+            width: 48%;
+        }
+
+        .info-left .customer-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #222;
+        }
+
+        .info-right {
+            width: 48%;
+            text-align: right;
+        }
+
+        .info-right .receipt-no {
+            font-weight: bold;
+            font-size: 17px;
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .info-right .receipt-date {
+            font-size: 16px;
+        }
+
+        /* Items section */
+        .receipt-items {
+            padding: 20px;
+        }
+
+        .receipt-items {
+            padding: 20px;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 16px;
+        }
+
+        .item-row.header {
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+        }
+
+
+        .item-name {
+            flex: 1;
+            text-align: left;
+        }
+
+        .item-quantity {
+            width: 60px;
+            text-align: center;
+        }
+
+
+        .item-price {
+            width: 120px;
+            text-align: right;
+        }
+
+        /* Total */
+        .receipt-total {
+            text-align: right;
+            padding: 15px 20px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #285f8f;
+        }
+
+        /* Footer */
+        .receipt-footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            background: #fafafa;
+            font-size: 18px;
+            color: #555;
+        }
+
+
+        @media print {
+
+            /* Hide everything */
+            body * {
+                visibility: hidden;
+            }
+
+            /* Show only the receipt container and its children */
+            .receipt-container,
+            .receipt-container * {
+                visibility: visible;
+            }
+
+            /* Position the receipt container at the center of the page */
+            .receipt-container {
+                display: block !important;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 80%;
+                page-break-inside: avoid;
+                /* Adjust width as needed */
+                margin: auto;
+                page-break-inside: avoid;
+                page-break-before: avoid;
+                page-break-after: avoid;
+            }
+
+            /* If you have table-like data, you can also center it */
+            .receipt-items {
+                margin: 0 auto;
+            }
+        }
     </style>
 </head>
 
@@ -725,25 +911,25 @@
 
         <span class="header-title" style="font-size: 1.9rem; font-weight: bold; text-align: center;">
             Walk-in Transaction
-          </span>
+        </span>
 
         <span id="cartCount" style="display: inline-flex; align-items: center; cursor: pointer;"
             onclick="openCartModal()">
             <i class="bx bx-cart" style="font-size: 2.5rem; margin-right: 5px;"></i>
             <span class="cart-number" style="color: red; font-weight: bold;">0</span>
         </span>
-
-
     </header>
+
 
 
     <!-- Filter Buttons Container -->
     <div class="button-container">
-        <li class="buttons active" data-filter="all" onclick="filterProducts('all')">
+        <!-- <li class="buttons active" data-filter="all" onclick="filterProducts('all')">
             <img src="../img/admin.jpg" alt="All" class="button-image">
             <span>All</span>
-        </li>
-        <li class="buttons" data-filter="cottage" onclick="filterProducts('cottage')">
+        </li> -->
+
+        <li class="buttons active" data-filter="cottage" onclick="filterProducts('cottage')">
             <img src="../img/admin.jpg" alt="Cottage" class="button-image">
             <span>Cottage</span>
         </li>
@@ -776,14 +962,12 @@
 
 
 
-
     <!-- Gallery Container (dynamically populated) -->
     <div class="gallery p-6">
         <div class="image-container" id="galleryContainer">
             <!-- Gallery items will be inserted here -->
         </div>
     </div>
-
 
 
 
@@ -802,10 +986,10 @@
                     <div class="price-rating-container">
                         <div class="price-rating">
                             <span id="modalPrice" style="font-size: 1.5rem; font-weight: bold;">$99.99</span>
-                            <div class="star-rating">
+                            <!-- <div class="star-rating">
                                 <i class='bx bxs-star'></i>
                                 <span id="modalRating" style="font-size: 1.25rem; font-weight: bold;">4.5/5</span>
-                            </div>
+                            </div> -->
                         </div>
                         <!-- Availability below star rating -->
                         <p id="modalAvailability" class="availability">Available</p>
@@ -876,19 +1060,13 @@
 
 
 
-
-
-
-
-
-
     <!-- Checkout Modal -->
     <div id="checkoutModal" class="modal" style="display: none;">
         <div class="modal-checkout">
             <div class="modal-header-checkout">
                 <h1>Payment</h1>
-                <button class="print-icon" onclick=" printCart()">
-                    <i class="bx bx-printer"></i>
+                <!-- <button class="print-icon" onclick=" printReceipt()"> -->
+                <!-- <i class="bx bx-printer"></i> -->
                 </button>
             </div>
 
@@ -917,17 +1095,62 @@
             <!-- Checkout Buttons -->
             <div class="checkout-buttons">
                 <button class="cancel-btn-check" onclick="cancelCheckout()">Cancel</button>
-                <button class="submit-btn" onclick="submitOrder()">Pay</button>
+                <button class="submit-btn" onclick="submitOrder()">Submit</button>
             </div>
         </div>
     </div>
 
 
 
+    <div class="receipt-container">
+        <!-- Header: Centered title; logo at top-right -->
+        <div class="receipt-header">
+            <h1>Receipt</h1>
+            <div class="receipt-logo">
+                <img src="../img/admin.jpg" alt="Logo">
+            </div>
+        </div>
+        <!-- Info Section: Customer Info (left) and Receipt No & Date (right) -->
+        <div class="receipt-info">
+            <div class="info-left">
+                <p class="customer-name">John Doe</p>
+                <p>123 Main Street<br>City, ST 45678</p>
+            </div>
+            <div class="info-right">
+                <p class="receipt-no">Receipt No: 00123</p>
+                <p class="receipt-date">Date: 2025-03-30</p>
+            </div>
+        </div>
+        <!-- Items Section -->
+        <div class="receipt-items">
+            <!-- Header Row -->
+            <div class="item-row header">
+                <div class="item-name">Item Description</div>
+                <div class="item-quantity">Qty</div>
+                <div class="item-price">Price</div>
+            </div>
+            <!-- Example Item Row -->
+            <div class="item-row">
+                <div class="item-name">Product A</div>
+                <div class="item-quantity">1</div>
+                <div class="item-price">$25.00</div>
+            </div>
+            <div class="item-row">
+                <div class="item-name">Product B</div>
+                <div class="item-quantity">2</div>
+                <div class="item-price">$30.00</div>
+            </div>
+        </div>
 
-
-
-
+        <!-- Total -->
+        <div class="receipt-total">
+            Total: $55.00
+        </div>
+        <!-- Footer -->
+        <div class="receipt-footer">
+            Thank you for ordering!
+        </div>
+    </div>
 
 
 
@@ -1053,8 +1276,18 @@
                 specsContainer.appendChild(li);
             });
 
-            document.getElementById("modalRating").textContent = "4.5";
-            document.getElementById("modalAvailability").textContent = product.status || "Available";
+            // document.getElementById("modalRating").textContent = "4.5";
+            // Set and style the availability status
+            var status = product.status || "Available";
+            var availabilityElem = document.getElementById("modalAvailability");
+            availabilityElem.textContent = status;
+            if (status.toLowerCase() === "unavailable") {
+                availabilityElem.style.color = "red";
+            } else {
+                availabilityElem.style.color = ""; // resets to default if needed
+            }
+            // Set the modal category for use in addToCart()
+            document.getElementById("itemModal").dataset.category = product.category.toLowerCase();
 
 
             // Setup Swiper for images in the modal
@@ -1116,33 +1349,78 @@
         // ----------------------- Add to Cart Functions -----------------------
 
         // Updated addToCart: if the item exists, increase its quantity; otherwise, add a new entry.
+        // function addToCart() {
+        //     var name = document.getElementById("modalTitle").textContent;
+        //     var priceStr = document.getElementById("modalPrice").textContent;
+        //     var price = parseFloat(priceStr.replace("₱", ""));
+
+        //     // Check for an existing item by name
+        //     var existingIndex = cart.findIndex(function (item) { return item.name === name; });
+        //     if (existingIndex !== -1) {
+        //         cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+        //     } else {
+        //         cart.push({ name: name, price: price, quantity: 1 });
+        //     }
+        //     updateCartStorage();
+        //     updateCartCount();
+        //     alert("Added to cart: " + name + " (" + priceStr + ")");
+        //     closeModal();
+        //     // We no longer redirect; the user can click the cart icon to view the cart modal.
+        // }
+
         function addToCart() {
+            // Check availability from the modal
+            var availability = document.getElementById("modalAvailability").textContent.toLowerCase();
+            if (availability !== "available") {
+                alert("This item is not available.");
+                return;
+            }
+
             var name = document.getElementById("modalTitle").textContent;
             var priceStr = document.getElementById("modalPrice").textContent;
             var price = parseFloat(priceStr.replace("₱", ""));
 
-            // Check for an existing item by name
-            var existingIndex = cart.findIndex(function (item) { return item.name === name; });
-            if (existingIndex !== -1) {
-                cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+            // Retrieve the product category from the modal's data attribute
+            var modal = document.getElementById("itemModal");
+            var category = (modal.dataset.category || "").toLowerCase();
+
+            // Define categories that allow only one item in the cart
+            var singleItemCategories = ["boat", "package", "cottage"];
+
+            // Check if current product's category is one of the single-item categories
+            if (singleItemCategories.indexOf(category) !== -1) {
+                // For these categories, allow only one item in the cart.
+                var existingIndex = cart.findIndex(function (item) {
+                    return item.name === name;
+                });
+                if (existingIndex !== -1) {
+                    alert("Only one " + name + " is allowed in the cart.");
+                    return;
+                } else {
+                    cart.push({ name: name, price: price, quantity: 1, category: category });
+                }
             } else {
-                cart.push({ name: name, price: price, quantity: 1 });
+                // For other categories, if the item exists, increment its quantity.
+                var existingIndex = cart.findIndex(function (item) {
+                    return item.name === name;
+                });
+                if (existingIndex !== -1) {
+                    cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+                } else {
+                    cart.push({ name: name, price: price, quantity: 1, category: category });
+                }
             }
+
             updateCartStorage();
             updateCartCount();
             alert("Added to cart: " + name + " (" + priceStr + ")");
             closeModal();
-            // We no longer redirect; the user can click the cart icon to view the cart modal.
         }
+
+
 
         // ----------------------- Cart Modal Functions -----------------------
 
-        // Clear any saved cart data on page load (if you want the cart to be empty by default)
-        // window.onload = function () {
-        //     localStorage.removeItem("cartItems");
-        //     cart = [];
-        //     updateCartCount();
-        // };
 
 
         function renderCartModal() {
@@ -1179,9 +1457,13 @@
 
 
 
-
-        // Increase quantity for a cart item in the modal
+        // Revised incrementQuantity() - disable increment for restricted categories
         function incrementQuantity(index) {
+            var restrictedCategories = ["boat", "package", "cottage"];
+            if (restrictedCategories.indexOf(cart[index].category) !== -1) {
+                alert("Cannot add more than one " + cart[index].name);
+                return;
+            }
             cart[index].quantity = (cart[index].quantity || 1) + 1;
             updateCartStorage();
             updateCartCount();
@@ -1227,10 +1509,6 @@
             alert("Proceeding to checkout!");
         }
 
-        // Print the cart
-        function printCart() {
-            window.print();
-        }
 
         // ----------------------- Product Gallery Functions -----------------------
 
@@ -1279,42 +1557,54 @@
         }
 
         // Filter products by category and update the gallery
+        // function filterProducts(filter) {
+        //     document.querySelectorAll(".buttons").forEach(function (btn) {
+        //         btn.classList.remove("active");
+        //     });
+        //     var activeBtn = document.querySelector('.buttons[data-filter="' + filter + '"]');
+        //     if (activeBtn) activeBtn.classList.add("active");
+        //     fetchProducts(function (products) {
+        //         var filteredProducts = filter === "all" ? products : products.filter(function (p) {
+        //             return p.category.toLowerCase() === filter.toLowerCase();
+        //         });
+        //         populateGallery(filteredProducts);
+        //     });
+        // }
+
         function filterProducts(filter) {
+            // Remove active class from all buttons
             document.querySelectorAll(".buttons").forEach(function (btn) {
                 btn.classList.remove("active");
             });
+
+            // Add active class to the button with matching data-filter attribute
             var activeBtn = document.querySelector('.buttons[data-filter="' + filter + '"]');
             if (activeBtn) activeBtn.classList.add("active");
+
             fetchProducts(function (products) {
-                var filteredProducts = filter === "all" ? products : products.filter(function (p) {
+                // Filter products by category
+                var filteredProducts = products.filter(function (p) {
                     return p.category.toLowerCase() === filter.toLowerCase();
                 });
                 populateGallery(filteredProducts);
             });
         }
 
+
         // ----------------------- Global Exposure and Initialization -----------------------
         window.openModal = openModal;
         window.closeModal = closeModal;
         window.addToCart = addToCart;
         window.filterProducts = filterProducts;
-        window.openCartModal = openCartModal;
         window.closeCartModal = closeCartModal;
+        window.openCartModal = openCartModal;
+
 
         document.addEventListener("DOMContentLoaded", function () {
-            filterProducts("all");
+            filterProducts("cottage");
             consolidateCart();
             updateCartCount();
         });
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1356,8 +1646,9 @@
         function cancelCheckout() {
             document.getElementById("checkoutModal").style.display = "none";
             // Optionally, you can reopen the cart modal:
-            // openCartModal();
+            openCartModal();
         }
+
 
 
         function submitOrder() {
@@ -1370,7 +1661,7 @@
                 return;
             }
 
-            // Build an array of order items and calculate total
+            // Build order items and calculate total
             var orderItems = [];
             var total = 0;
             cart.forEach(function (item) {
@@ -1382,7 +1673,7 @@
                 total += item.price * item.quantity;
             });
 
-            // Date formatting function for "YYYY-MM-DD"
+            // Format date as "YYYY-MM-DD"
             function formatDate(date) {
                 var year = date.getFullYear();
                 var month = ('0' + (date.getMonth() + 1)).slice(-2);
@@ -1390,7 +1681,12 @@
                 return year + '-' + month + '-' + day;
             }
 
-            // Create order data object with formatted date
+            // Generate a random receipt number
+            function generateReceiptNo() {
+                return "WALKIN" + Date.now();
+            }
+
+
             var orderData = {
                 orderName: "Walkin Order",
                 customerName: name,
@@ -1398,15 +1694,24 @@
                 customerPhone: phone,
                 items: orderItems,
                 total: total,
-                date: formatDate(new Date())
+                date: formatDate(new Date()),
+                receiptNo: generateReceiptNo()
             };
 
-            // Push order data into Firebase under "walkinorder"
+
+            // Push order data into Firebase
             firebase.database().ref('walkin').push(orderData)
                 .then(function () {
                     alert("Order submitted and saved!");
+
+                    // Populate the receipt with the updated order data
+                    populateReceipt(orderData);
+
+                    // Now print only the receipt container
+                    printReceipt();
+
                     localStorage.removeItem("cartItems");
-                    cancelCart(); // Assuming this function clears the cart
+                    cancelCart(); // Assuming this clears the cart
                     document.getElementById("checkoutModal").style.display = "none";
                 })
                 .catch(function (error) {
@@ -1416,11 +1721,56 @@
         }
 
 
+
+        function populateReceipt(orderData) {
+            // Update customer info on the left side
+            document.querySelector('.receipt-info .info-left').innerHTML = `
+    <p class="customer-name">${orderData.customerName}</p>
+    <p>${orderData.customerAddress.replace('\n', '<br>')}</p>
+  `;
+
+            // Update receipt info on the right (receipt no & date)
+            document.querySelector('.receipt-info .info-right').innerHTML = `
+    <p class="receipt-no">Receipt No: ${orderData.receiptNo}</p>
+    <p class="receipt-date">Date: ${orderData.date}</p>
+  `;
+
+            // Populate the items section
+            const itemsContainer = document.querySelector('.receipt-items');
+            // Clear previous rows (keeping the header row)
+            itemsContainer.innerHTML = `
+    <div class="item-row header">
+      <div class="item-name">Item Description</div>
+      <div class="item-quantity">Qty</div>
+      <div class="item-price">Price</div>
+    </div>
+  `;
+            orderData.items.forEach(item => {
+                const itemRow = document.createElement('div');
+                itemRow.className = 'item-row';
+                itemRow.innerHTML = `
+      <div class="item-name">${item.name}</div>
+      <div class="item-quantity">${item.quantity}</div>
+      <div class="item-price">${(item.price * item.quantity).toFixed(2)}</div>
+    `;
+                itemsContainer.appendChild(itemRow);
+            });
+
+            // Update the total
+            document.querySelector('.receipt-total').textContent = "Total: ₱" + orderData.total.toFixed(2);
+        }
+
+
+
+        function printReceipt() {
+            window.print();
+        }
+
+
         // Updated proceedCart function: Open the checkout modal instead of alerting
         function proceedCart() {
             openCheckoutModal();
         }
-
 
 
         function backModal() {
@@ -1429,6 +1779,20 @@
         }
 
 
+        // Generate a random alphanumeric string (e.g., 8 characters long)
+        function generateRandomKey(length = 8) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+
+        // Replace the URL with the new query parameter 'generate' set to a random key
+        const randomKey = generateRandomKey();
+        history.replaceState({}, document.title, "" + '?key=' + randomKey);
     </script>
 </body>
 

@@ -248,7 +248,7 @@ history.replaceState({}, document.title, "" + '?key=' + randomKey);
 
 
 // Global variables for pagination and data
-const pageSize = 20;
+const pageSize = 30;
 let currentPage = 1;
 let filteredBookings = [];
 
