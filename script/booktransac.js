@@ -616,7 +616,6 @@ function centerModalContent(modalId) {
 }
 
 
-
 // New function to view booking details with an editable status dropdown.
 function viewBookingEdit(userId, bookingId, node) {
   var bookingRef = firebase.database().ref("users/" + userId + "/" + node + "/" + bookingId);

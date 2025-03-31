@@ -1118,10 +1118,22 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+document.getElementById('profileMenu').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('modalimage').classList.toggle('active');
+});
 
 
+// Hide modal if clicking outside of modal and profileMenu
+// document.addEventListener('click', function(e) {
+//     const modal = document.getElementById('modalimage');
+//     const profileMenu = document.getElementById('profileMenu');
 
-
+//     // Check if the clicked target is outside both the modal and the profile menu
+//     if (!modal.contains(e.target) && !profileMenu.contains(e.target)) {
+//         modal.classList.remove('active');
+//     }
+// });
 
 
 // //THIS CODE FOR THE INCOME CHART BUT NOT WORK

@@ -14,7 +14,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
-
 <body>
 
     <!-- SIDEBAR -->
@@ -122,7 +121,6 @@
             </div>
             <!-- Transaction -->
 
-
             <li>
                 <a href="useraccount.html">
                     <i class='bx bxs-user-rectangle'></i>
@@ -166,29 +164,28 @@
                 <i class='bx bxs-bell'></i>
                 <!-- <span class="num">8</span> -->
             </a>
-            <!-- this a function is a search, switch-mode notification -->
 
-
-            <!-- this profile logout container -->
+            <!-- Profile image trigger -->
             <a href="#" class="profile" id="profileMenu">
                 <img src="../img/admin.jpg" alt="Profile">
             </a>
-            <!-- Modal Structure for the logout function -->
-            <!-- <div id="profileModal" class="modal">
-                <div class="modal-content close-btn">
-                    <span class="close-btn">&times;</span>  
-                    <h2>Profile Options</h2>
-                    <div class="modal-options">
-                        <a href="#" class="modal-option" id="logout-link">
-                            <i class='bx bxs-left-arrow-circle'></i> Logout
-                        </a>
-                        <a href="#" class="modal-option" id="exit">
-                            <i class='bx bxs-exit'></i> Exit
-                        </a>
-                    </div>
+
+
+            <!-- Modal container inside nav for relative positioning -->
+            <div id="modalimage">
+                <div id="modalcontentimage">
+                    <!-- <h3>Profile Options</h3>  -->
+                    <ul>
+                        <li><a href="../pages/gallerymanagement.html">Gallery Management</a></li>
+                        <li><a href="#">Daily Staff Assignment</a></li>
+                        <li><a href="#">Frequently Asked Questions</a></li>
+                        <li><a href="../pages/ruleandpermission.html">Rules and Permission</a></li>
+                        <li><a href="#">Logout</a></li>
+                    </ul>
                 </div>
-            </div> -->
-            <!-- this profile logout container -->
+            </div>
+
+
         </nav>
         <!-- NAVBAR -->
 
@@ -220,8 +217,8 @@
                     <li>
                         <i class='bx bxs-group'></i>
                         <span class="text">
-                             <h3 id="vacancyCount">0</h3>
-                             <p>Vacancy</p>
+                            <h3 id="vacancyCount">0</h3>
+                            <p>Vacancy</p>
                         </span>
                     </li>
 

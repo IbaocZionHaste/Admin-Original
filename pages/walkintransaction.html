@@ -37,6 +37,7 @@
             border-radius: 50%;
         }
 
+
         /* Filter Buttons */
         .button-container {
             display: flex;
@@ -141,6 +142,8 @@
         .image-container .image:hover .view-item {
             opacity: 1;
         }
+
+
 
         /* Modal Styles */
         .modal {
@@ -923,11 +926,6 @@
 
     <!-- Filter Buttons Container -->
     <div class="button-container">
-        <!-- <li class="buttons active" data-filter="all" onclick="filterProducts('all')">
-            <img src="../img/admin.jpg" alt="All" class="button-image">
-            <span>All</span>
-        </li> -->
-
         <li class="buttons active" data-filter="cottage" onclick="filterProducts('cottage')">
             <img src="../img/admin.jpg" alt="Cottage" class="button-image">
             <span>Cottage</span>
@@ -1456,7 +1454,7 @@
 
 
 
-        
+
         // Revised incrementQuantity() - disable increment for restricted categories
         function incrementQuantity(index) {
             var restrictedCategories = ["boat", "package", "cottage"];
@@ -1728,7 +1726,7 @@
         }
 
 
-        
+
 
         function populateReceipt(orderData) {
             // Update customer info on the left side

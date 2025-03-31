@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+
+
+    <link rel="stylesheet" href="../style/gallerymanagement.css">
+    <title>Dashboard</title>
+    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <!-- this is a admin sidebar -->
+    <section id="sidebar">
+        <a href="#" class="brand">
+            <i class='bx bxl-steam'></i>
+            <span class="text1">Admin</span>
+        </a>
+        <!-- this is a admin sidebar -->
+
+        <!-- this all sidebar name include Dashboard etc... -->
+        <ul class="side-menu top">
+
+            <!-- Sidebar links with a data attribute -->
+            <li class="active">
+                <a href="#">
+                    <i class='bx bxs-folder'></i>
+                    <span class="text">Accommodation Album</span>
+                </a>
+            </li>
+            <li>
+                <a href="gallerylandpage.html">
+                    <i class='bx bxs-folder'></i>
+                    <span class="text">Landing Page Album</span>
+                </a>
+            </li>
+            <li>
+                <a href="gallerypromo.html">
+                    <i class='bx bxs-folder'></i>
+                    <span class="text">Promo Album</span>
+                </a>
+            </li>
+
+    </section>
+    <!-- SIDEBAR -->
+
+
+    <!-- CONTENT -->
+    <section id="content">
+        <!-- NAVBAR -->
+        <nav>
+            <!-- this a function is a search, switch-mode notification -->
+            <i class='bx bx-menu'></i>
+            <form action="#">
+                <div class="form-input">
+                    <input type="search" placeholder="Search">
+                    <button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
+                </div>
+            </form>
+            <input type="checkbox" id="switch-mode" hidden>
+            <label for="switch-mode" class="switch-mode"></label>
+        </nav>
+        <!-- NAVBAR -->
+
+
+
+
+
+        <!-- MAIN -->
+        <main>
+
+            <div class="container">
+                <div class="head-title">
+                    <div class="left">
+                        <h1>Album</h1>
+                    </div>
+                    <i class="bx bx-plus btn-plus"></i>
+                </div>
+            </div>
+
+            <!-- Filter Buttons Container -->
+            <div class="button-container">
+                <li class="buttons active" data-filter="cottage" onclick="filterProducts('cottage')">
+                    <img src="../img/admin.jpg" alt="Cottage" class="button-image">
+                    <span>Cottage</span>
+                </li>
+                <li class="buttons" data-filter="boat" onclick="filterProducts('boat')">
+                    <img src="../img/admin.jpg" alt="Boat" class="button-image">
+                    <span>Boat</span>
+                </li>
+                <li class="buttons" data-filter="food" onclick="filterProducts('food')">
+                    <img src="../img/admin.jpg" alt="Food" class="button-image">
+                    <span>Food</span>
+                </li>
+                <li class="buttons" data-filter="dessert" onclick="filterProducts('dessert')">
+                    <img src="../img/admin.jpg" alt="Dessert" class="button-image">
+                    <span>Dessert</span>
+                </li>
+                <li class="buttons" data-filter="beverage" onclick="filterProducts('beverage')">
+                    <img src="../img/admin.jpg" alt="Beverage" class="button-image">
+                    <span>Beverage</span>
+                </li>
+                <li class="buttons" data-filter="alcohol" onclick="filterProducts('alcohol')">
+                    <img src="../img/admin.jpg" alt="Alcohol" class="button-image">
+                    <span>Alcohol</span>
+                </li>
+                <li class="buttons" data-filter="package" onclick="filterProducts('package')">
+                    <img src="../img/admin.jpg" alt="Package" class="button-image">
+                    <span>Package</span>
+                </li>
+            </div>
+
+             
+            <!-- Gallery Container (dynamically populated) -->
+            <div class="gallery p-6">
+                <div class="image-container" id="galleryContainer">
+                    <!-- Gallery items will be inserted here -->
+                </div>
+            </div>
+
+
+            <div class="modal" id="addModal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Add New Album</h2>
+                    <select id="categorySelect">
+                        <option value="">Select Category</option>
+                        <option value="cottage">Cottage</option>
+                        <option value="boat">Boat</option>
+                        <option value="food">Food</option>
+                        <option value="dessert">Dessert</option>
+                        <option value="beverage">Beverage</option>
+                        <option value="alcohol">Alcohol</option>
+                        <option value="package">Package</option>
+                    </select>
+                    <input type="text" id="productName" placeholder="Enter product name">
+                    <div class="image-container">
+                        <div class="image-box">
+                            <img src="photo1.jpg" alt="Photo 1">
+                            <div class="img-overlay">
+                                <i class="bx bx-plus"></i>
+                            </div>
+                        </div>
+                        <div class="image-box">
+                            <img src="photo2.jpg" alt="Photo 2">
+                            <div class="img-overlay">
+                                <i class="bx bx-plus"></i>
+                            </div>
+                        </div>
+                        <div class="image-box">
+                            <img src="photo3.jpg" alt="Photo 3">
+                            <div class="img-overlay">
+                                <i class="bx bx-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="addProduct">Add</button>
+                </div>
+            </div>
+
+
+
+
+            <!-- Update Modal (Separate from Add Modal) -->
+            <div class="modal" id="updateModal">
+                <div class="modal-content">
+                    <span class="close" id="updateModalClose">&times;</span>
+                    <h2>Update Album</h2>
+                    <select id="updateCategorySelect">
+                        <option value="">Select Category</option>
+                        <option value="cottage">Cottage</option>
+                        <option value="boat">Boat</option>
+                        <option value="food">Food</option>
+                        <option value="dessert">Dessert</option>
+                        <option value="beverage">Beverage</option>
+                        <option value="alcohol">Alcohol</option>
+                        <option value="package">Package</option>
+                    </select>
+                    <input type="text" id="updateProductName" placeholder="Enter product name">
+                    <div class="image-container">
+                        <div class="image-box" id="updateBox1">
+                            <img src="photo1.jpg" alt="Photo 1">
+                            <div class="img-overlay">
+                                <i class="bx bx-plus"></i>
+                            </div>
+                        </div>
+                        <div class="image-box" id="updateBox2">
+                            <img src="photo2.jpg" alt="Photo 2">
+                            <div class="img-overlay">
+                                <i class="bx bx-plus"></i>
+                            </div>
+                        </div>
+                        <div class="image-box" id="updateBox3">
+                            <img src="photo3.jpg" alt="Photo 3">
+                            <div class="img-overlay">
+                                <i class="bx bx-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="updateProductBtn">Update</button>
+                        <button id="deleteProductBtn">Delete</button>
+                    </div>
+                </div>
+            </div>
+
+
+           
+        </main>
+        <!-- MAIN -->
+    </section>
+
+    <!-- script -->
+    <script src="../script/gallerymanagement.js"></script>
+    <!-- script -->
+</body>
+
+</html>
