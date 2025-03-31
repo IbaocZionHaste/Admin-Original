@@ -76,94 +76,41 @@
 
         <!-- MAIN -->
         <main>
-
             <div class="container">
-                <div class="head-title">
-                    <div class="left">
-                        <h1>Album</h1>
-                    </div>
-                    <i class="bx bx-plus btn-plus"></i>
+              <div class="head-title">
+                <div class="left">
+                  <h1>Landpage Album</h1>
                 </div>
+                <i class="bx bx-save btn-plus"></i>
+              </div>
             </div>
-
-
-            <!-- Gallery Container (dynamically populated) -->
-            <div class="gallery p-6">
-                <div class="image-container" id="galleryContainer">
-                    <!-- Gallery items will be inserted here -->
+          
+        
+            <!-- Direct Album Creation Section (formerly modal) -->
+            <div class="album-creation p-6">
+              <div class="image-container">
+                <div class="image-box">
+                  <img src="photo1.jpg" alt="Photo 1">
+                  <div class="img-overlay">
+                    <i class="bx bx-plus"></i>
+                  </div>
                 </div>
-            </div>
-
-
-            <div class="modal" id="addModal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2>Add New Album</h2>
-                    <input type="text" id="productName" placeholder="Enter landpage name">
-                    <div class="image-container">
-                        <div class="image-box">
-                            <img src="photo1.jpg" alt="Photo 1">
-                            <div class="img-overlay">
-                                <i class="bx bx-plus"></i>
-                            </div>
-                        </div>
-                        <div class="image-box">
-                            <img src="photo2.jpg" alt="Photo 2">
-                            <div class="img-overlay">
-                                <i class="bx bx-plus"></i>
-                            </div>
-                        </div>
-                        <div class="image-box">
-                            <img src="photo3.jpg" alt="Photo 3">
-                            <div class="img-overlay">
-                                <i class="bx bx-plus"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <button id="addProduct">Add</button>
+                <div class="image-box">
+                  <img src="photo2.jpg" alt="Photo 2">
+                  <div class="img-overlay">
+                    <i class="bx bx-plus"></i>
+                  </div>
                 </div>
-            </div>
-
-
-
-
-            <!-- Update Modal (Separate from Add Modal) -->
-            <div class="modal" id="updateModal">
-                <div class="modal-content">
-                    <span class="close" id="updateModalClose">&times;</span>
-                    <h2>Update Album</h2>
-                    <input type="text" id="updateProductName" placeholder="Enter landpage name">
-                    <div class="image-container">
-                        <div class="image-box" id="updateBox1">
-                            <img src="photo1.jpg" alt="Photo 1">
-                            <div class="img-overlay">
-                                <i class="bx bx-plus"></i>
-                            </div>
-                        </div>
-                        <div class="image-box" id="updateBox2">
-                            <img src="photo2.jpg" alt="Photo 2">
-                            <div class="img-overlay">
-                                <i class="bx bx-plus"></i>
-                            </div>
-                        </div>
-                        <div class="image-box" id="updateBox3">
-                            <img src="photo3.jpg" alt="Photo 3">
-                            <div class="img-overlay">
-                                <i class="bx bx-plus"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-buttons">
-                        <button id="updateProductBtn">Update</button>
-                        <button id="deleteProductBtn">Delete</button>
-                    </div>
+                <div class="image-box">
+                  <img src="photo3.jpg" alt="Photo 3">
+                  <div class="img-overlay">
+                    <i class="bx bx-plus"></i>
+                  </div>
                 </div>
+              </div>
             </div>
-            </div>
-
-
-
-        </main>
+          </main>
+          
         <!-- MAIN -->
     </section>
 

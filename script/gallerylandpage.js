@@ -150,288 +150,123 @@ const randomKey = generateRandomKey();
 history.replaceState({}, document.title, "" + '?key=' + randomKey);
 
 
-// Open modal when plus icon is clicked
-document.querySelector('.btn-plus').addEventListener('click', function () {
-  document.getElementById('addModal').style.display = 'block';
-});
-
-
-// Close modal when clicking the close button
-document.querySelector('.close').addEventListener('click', function () {
-  document.getElementById('addModal').style.display = 'none';
-});
-
-// Optional: close modal when clicking outside the modal content
-window.addEventListener('click', function (event) {
-  if (event.target === document.getElementById('addModal')) {
-    document.getElementById('addModal').style.display = 'none';
-  }
-});
-
-
-// Remove the category retrieval and validation
-// const categorySelect = document.getElementById('categorySelect');
-const productNameInput = document.getElementById('productName');
-const imageBoxes = document.querySelectorAll('.image-box');
-
-// Variables to store each photo's Base64 string separately
-let photo1 = "";
-let photo2 = "";
-let photo3 = "";
-
-// A helper function to add image selection & preview logic
-function addImageListener(box, setPhoto) {
-  box.addEventListener('click', function () {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.style.display = 'none';
-    document.body.appendChild(fileInput);
-
-    fileInput.addEventListener('change', function (event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          // Update the preview image
-          box.querySelector('img').src = reader.result;
-          // Save the Base64 data using the provided setter function
-          setPhoto(reader.result);
-          // Remove the file input from the DOM
-          document.body.removeChild(fileInput);
-        }
-        reader.readAsDataURL(file);
-      } else {
-        document.body.removeChild(fileInput);
-      }
-    });
-    // Open file picker
-    fileInput.click();
-  });
-}
-
-// Attach separate listeners for each image box
-addImageListener(imageBoxes[0], function (data) { photo1 = data; });
-addImageListener(imageBoxes[1], function (data) { photo2 = data; });
-addImageListener(imageBoxes[2], function (data) { photo3 = data; });
-
-// Get DOM element for Add button
-const addProductBtn = document.getElementById('addProduct');
-
-// When Add button is clicked, push data to Firebase Realtime Database
-addProductBtn.addEventListener('click', function () {
-  // Only retrieve productName now
-  const productName = productNameInput.value.trim();
-
-  if (!productName) {
-    alert('Please fill in the product name.');
-    return;
-  }
-
-  // Check if all three images are provided
-  if (!photo1 || !photo2 || !photo3) {
-    alert('Please upload all three images.');
-    return;
-  }
-
-
-  // Construct the album data object WITHOUT category
-  const albumData = {
-    productName: productName,
-    photo1: photo1,  // Data for first image
-    photo2: photo2,  // Data for second image
-    photo3: photo3,  // Data for third image
-    createdAt: new Date().toISOString()
-  };
-
-  // Push the albumData to "landpages" node in Realtime Database
-  database.ref('landpages').push(albumData)
-    .then(() => {
-      alert('Album added successfully!');
-      // Reset the form fields and image previews
-      productNameInput.value = '';
-      imageBoxes.forEach((box, idx) => {
-        box.querySelector('img').src = `photo${idx + 1}.jpg`;
-      });
-      photo1 = photo2 = photo3 = "";
-      fetchProducts(populateGallery);
-    })
-    .catch((error) => {
-      console.error('Error adding album:', error);
-      alert('There was an error adding the album. Please try again.');
-    });
-});
 
 
 
-// ------------------ Fetch Products from Firebase ------------------
-function fetchProducts(callback) {
-  firebase.database().ref('landpages').on('value', function (snapshot) {
-    let products = [];
-    snapshot.forEach(function (childSnapshot) {
-      let product = childSnapshot.val();
-      product.id = childSnapshot.key;
-      products.push(product);
-    });
-    callback(products);
-  }, function (error) {
-    console.error("Error fetching products:", error);
-  });
-}
-
-// ------------------ Populate Gallery Function ------------------
-function populateGallery(products) {
-  var galleryContainer = document.getElementById("galleryContainer");
-  galleryContainer.innerHTML = "";
-  products.forEach(function (product) {
-    var a = document.createElement("a");
-    a.href = "javascript:void(0);";
-    a.className = "image"; // Removed category reference
-    a.onclick = function () { openModal(product); };
-
-    var img = document.createElement("img");
-    // Use photo1 directly for the gallery image; fallback to placeholder if needed.
-    if (product.photo1 && product.photo1.trim() !== "") {
-      img.src = product.photo1;
-    } else if (product.imageUrl && product.imageUrl.trim() !== "") {
-      img.src = product.imageUrl;
-    } else {
-      img.src = "https://via.placeholder.com/300x200?text=No+Image";
+  // Utility function to display status messages
+  function updateMessage(text, duration = 3000) {
+    let messageEl = document.getElementById("message");
+    if (!messageEl) {
+      messageEl = document.createElement("div");
+      messageEl.id = "message";
+      messageEl.style.position = "fixed";
+      messageEl.style.bottom = "20px";
+      messageEl.style.right = "20px";
+      messageEl.style.background = "rgba(0,0,0,0.7)";
+      messageEl.style.color = "#fff";
+      messageEl.style.padding = "10px 15px";
+      messageEl.style.borderRadius = "4px";
+      messageEl.style.zIndex = 1000;
+      document.body.appendChild(messageEl);
     }
-    img.alt = product.productName || "Album Image";
-    a.appendChild(img);
+    messageEl.textContent = text;
+    messageEl.style.display = "block";
+    setTimeout(() => {
+      messageEl.style.display = "none";
+    }, duration);
+  }
 
-    // Add album name overlay at center
-    var nameOverlay = document.createElement("div");
-    nameOverlay.className = "view-name";
-    nameOverlay.textContent = product.productName || "";
-    a.appendChild(nameOverlay);
+  document.addEventListener("DOMContentLoaded", function () {
+    const imageBoxes = document.querySelectorAll(".image-box");
+    const saveBtn = document.querySelector(".btn-plus");
 
-    // Existing view button overlay
-    var viewDiv = document.createElement("div");
-    viewDiv.className = "view-item";
-    //   var viewBtn = document.createElement("button");
-    //   viewBtn.className = "bg-blue-500 text-white px-4 py-2 rounded";
-    //   viewBtn.textContent = "View";
-    //   viewDiv.appendChild(viewBtn);
-    a.appendChild(viewDiv);
-
-    galleryContainer.appendChild(a);
-  });
-}
-
-// ------------------ Update Modal Related Code (Category Removed) ------------------
-let currentProduct = null;
-let updatePhoto1 = "", updatePhoto2 = "", updatePhoto3 = "";
-
-function openUpdateModal(product) {
-  currentProduct = product;
-  document.getElementById('updateProductName').value = product.productName || "";
-  document.getElementById('updateBox1').querySelector('img').src = product.photo1 || 'photo1.jpg';
-  document.getElementById('updateBox2').querySelector('img').src = product.photo2 || 'photo2.jpg';
-  document.getElementById('updateBox3').querySelector('img').src = product.photo3 || 'photo3.jpg';
-  updatePhoto1 = product.photo1 || "";
-  updatePhoto2 = product.photo2 || "";
-  updatePhoto3 = product.photo3 || "";
-  document.getElementById('updateModal').style.display = 'block';
-}
-
-document.getElementById('updateModalClose').addEventListener('click', function () {
-  document.getElementById('updateModal').style.display = 'none';
-});
-
-function addUpdateImageListener(box, setPhoto) {
-  box.addEventListener('click', function () {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.style.display = 'none';
+    // Create a hidden file input for image selection
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.style.display = "none";
     document.body.appendChild(fileInput);
 
-    fileInput.addEventListener('change', function (event) {
+    // Track the clicked image box index
+    let currentIndex = null;
+
+    // Save images to Firebase Database as: Pages/image/photo1, photo2, photo3
+    function saveImagesData() {
+      const images = {};
+      imageBoxes.forEach((box, index) => {
+        // Build keys like "photo1", "photo2", etc.
+        const photoKey = "photo" + (index + 1);
+        images[photoKey] = box.querySelector("img").src;
+      });
+      database.ref("Pages/image")
+        .set(images)
+        .then(function () {
+          console.log("Data saved successfully!");
+          updateMessage("Images saved and updated successfully!");
+          // Optionally refresh the UI with the latest data
+          fetchImagesData();
+        })
+        .catch(function (error) {
+          console.error("Error saving data: ", error);
+          updateMessage("Error saving data: " + error.message, 5000);
+        });
+    }
+
+    // Fetch and update the UI from Firebase Database
+    function fetchImagesData() {
+      database.ref("Pages/image")
+        .once("value")
+        .then(function (snapshot) {
+          const imagesData = snapshot.val();
+          if (imagesData) {
+            imageBoxes.forEach((box, index) => {
+              const photoKey = "photo" + (index + 1);
+              if (imagesData[photoKey]) {
+                box.querySelector("img").src = imagesData[photoKey];
+              }
+            });
+            updateMessage("Images fetched successfully!");
+          }
+        })
+        .catch(function (error) {
+          console.error("Error fetching data: ", error);
+          updateMessage("Error fetching data: " + error.message, 5000);
+        });
+    }
+
+    // Listen for file selection changes and convert file to base64
+    fileInput.addEventListener("change", function (event) {
       const file = event.target.files[0];
-      if (file) {
+      if (file && currentIndex !== null) {
         const reader = new FileReader();
-        reader.onloadend = function () {
-          box.querySelector('img').src = reader.result;
-          setPhoto(reader.result);
-          document.body.removeChild(fileInput);
+        reader.onload = function (e) {
+          const base64String = e.target.result;
+          imageBoxes[currentIndex].querySelector("img").src = base64String;
+          // Save updated data to Firebase
+          saveImagesData();
+          // Reset
+          currentIndex = null;
+          fileInput.value = "";
         };
         reader.readAsDataURL(file);
-      } else {
-        document.body.removeChild(fileInput);
       }
     });
 
-    fileInput.click();
-  });
-}
-
-addUpdateImageListener(document.getElementById('updateBox1'), function (data) { updatePhoto1 = data; });
-addUpdateImageListener(document.getElementById('updateBox2'), function (data) { updatePhoto2 = data; });
-addUpdateImageListener(document.getElementById('updateBox3'), function (data) { updatePhoto3 = data; });
-
-document.getElementById('updateProductBtn').addEventListener('click', function () {
-  if (!currentProduct) return;
-  const updatedName = document.getElementById('updateProductName').value.trim();
-  if (!updatedName) {
-    alert("Please fill in the product name.");
-    return;
-  }
-  // Construct updatedData without the category field
-  const updatedData = {
-    productName: updatedName,
-    photo1: updatePhoto1,
-    photo2: updatePhoto2,
-    photo3: updatePhoto3,
-    updatedAt: new Date().toISOString()
-  };
-  firebase.database().ref('landpages/' + currentProduct.id).update(updatedData)
-    .then(function () {
-      alert("Album updated successfully!");
-      document.getElementById('updateModal').style.display = 'none';
-      // Refresh the gallery after update
-      fetchProducts(populateGallery);
-    })
-    .catch(function (error) {
-      console.error("Error updating album:", error);
-      alert("Error updating album. Please try again.");
-    });
-});
-
-document.getElementById('deleteProductBtn').addEventListener('click', function () {
-  if (!currentProduct) return;
-  // Confirm deletion
-  if (confirm("Are you sure you want to delete this album?")) {
-    firebase.database().ref('landpages/' + currentProduct.id).remove()
-      .then(function () {
-        alert("Album deleted successfully!");
-        document.getElementById('updateModal').style.display = 'none';
-        // Optionally refresh your gallery after deletion
-        fetchProducts(populateGallery);
-      })
-      .catch(function (error) {
-        console.error("Error deleting album:", error);
-        alert("Error deleting album. Please try again.");
+    // Trigger file picker when an image box is clicked
+    imageBoxes.forEach((box, index) => {
+      box.addEventListener("click", function () {
+        currentIndex = index;
+        fileInput.click();
       });
-  }
-});
+    });
 
+    // Save button also triggers saving of the images
+    saveBtn.addEventListener("click", function () {
+      saveImagesData();
+    });
 
-// ------------------ Alias openModal to openUpdateModal ------------------
-openModal = openUpdateModal;
+    // Fetch saved images on initial load
+    fetchImagesData();
+  });
 
-// ------------------ Populate the Gallery on Page Load ------------------
-document.addEventListener("DOMContentLoaded", function () {
-  fetchProducts(populateGallery);
-});
-
-
-document.addEventListener("DOMContentLoaded", function () {
-  const container = document.getElementById("galleryContainer");
-  // Using CSS Grid, set to 4 columns
-  container.style.display = "grid";
-  container.style.gridTemplateColumns = "repeat(4, 1fr)";
-  container.style.gap = "1rem";
-  container.style.padding = "1rem";
-});
+  
