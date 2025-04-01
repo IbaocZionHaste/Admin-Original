@@ -21,7 +21,6 @@
     <!-- this is a admin sidebar -->
 
 
-
     <!-- this all sidebar name include Dashboard etc... -->
     <ul class="side-menu top">
 
@@ -44,33 +43,24 @@
       </li>
       <div class="accommodation-section" style="display: none;">
         <li>
-            <a href="accommodation.html" class="arrowsss-link">
-                <i class='bx bxs-home-smile'></i>
-                <p class="income-text">Acommodation</p>
-            </a>
+          <a href="accommodation.html" class="arrowsss-link">
+            <i class='bx bxs-home-smile'></i>
+            <p class="income-text">Acommodation</p>
+          </a>
         </li>
         <li>
-            <a href="foodbeverage.html" class="arrowsss-link">
-                <i class='bx bx-food-tag'></i>
-                <p class="booking-text ">Food/Beverage</p>
-            </a>
+          <a href="foodbeverage.html" class="arrowsss-link">
+            <i class='bx bx-food-tag'></i>
+            <p class="booking-text ">Food/Beverage</p>
+          </a>
         </li>
         <li>
-            <a href="package.html" class="arrowsss-link">
-                <i class='bx bxs-package'></i>
-                <p class="booking-text ">Package</p>
-            </a>
+          <a href="package.html" class="arrowsss-link">
+            <i class='bx bxs-package'></i>
+            <p class="booking-text ">Package</p>
+          </a>
         </li>
-    </div>
-
-      <!-- <li class="active">
-                <a href="#">
-                    <i class='bx bxs-shopping-bag-alt'></i>
-                    <span class="text">Accommodations</span>
-                </a>
-            </li>
- -->
-
+      </div>
       <li>
         <a href="#" class="report-toggle">
           <i class='bx bxs-report'></i>
@@ -130,23 +120,12 @@
         </li>
       </div>
       <!-- Transaction -->
-
-
       <li>
         <a href="useraccount.html">
           <i class='bx bxs-user-rectangle'></i>
           <span class="text">User Account Manager</span>
         </a>
       </li>
-
-
-      <!-- <li>
-                <a href="walkintransaction.html">
-                    <i class='bx bxs-credit-card-alt'></i>
-                    <span class="text">Walk-in Transaction</span>
-                </a>
-            </li> -->
-
     </ul>
     <!-- this all sidebar name include Dashboard etc... -->
     <ul class="side-menu">
@@ -161,24 +140,12 @@
   </section>
   <!-- SIDEBAR -->
 
-  <!-- Logout Modal -->
-  <!-- <div id="logoutModal" class="logout-modal">
-        <div class="logout-modal-content">
-            <span class="close-btn" onclick="closeLogoutModal()">&times;</span>
-            <h2>Are you sure you want to log out?</h2>
-            <div class="logout-modal-actions">
-                <button id="confirmLogout" class="confirm-btn">Yes</button>
-                <button class="cancel-btn" onclick="closeLogoutModal()">No</button>
-            </div>
-        </div>
-    </div> -->
   <!-- CONTENT -->
   <section id="content">
     <!-- NAVBAR -->
     <nav>
       <!-- this a function is a search, switch-mode notification -->
       <i class='bx bx-menu'></i>
-      <!-- <a href="#" class="nav-link">Categories</a> -->
       <form action="#">
         <div class="form-input">
           <input type="search" placeholder="Search">
@@ -191,29 +158,12 @@
         <i class='bx bxs-bell'></i>
         <!-- <span class="num">8</span> -->
       </a>
-      <!-- this a function is a search, switch-mode notification -->
 
 
       <!-- this profile logout container -->
       <a href="#" class="profile" id="profileMenu">
         <img src="../img/admin.jpg" alt="Profile">
       </a>
-      <!-- Modal Structure for the logout function -->
-      <!-- <div id="profileModal" class="modal">
-                <div class="modal-content close-btn">
-                    <span class="close-btn">&times;</span>  
-                    <h2>Profile Options</h2>
-                    <div class="modal-options">
-                        <a href="#" class="modal-option" id="logout-link">
-                            <i class='bx bxs-left-arrow-circle'></i> Logout
-                        </a>
-                        <a href="#" class="modal-option" id="exit">
-                            <i class='bx bxs-exit'></i> Exit
-                        </a>
-                    </div>
-                </div>
-            </div> -->
-      <!-- this profile logout container -->
     </nav>
     <!-- NAVBAR -->
 
@@ -221,7 +171,6 @@
 
 
     <!-- MAIN -->
-    <!-- This is a container of a accommodation-->
     <main>
       <div class="container">
         <div class="head-title">
@@ -270,8 +219,6 @@
                 <tr class="accommodation-item" data-type="Alcohol">
 
                 </tr>
-
-
 
 
                 <!-- Modal for Announcement & Promo -->
@@ -378,14 +325,13 @@
                           </select>
                         </div>
                         <!-- Image Upload -->
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                           <label for="announcementImage">Upload Image</label>
                           <input type="file" id="announcementImage" accept="image/*" required
                             oninvalid="this.setCustomValidity('Please select an image file.')"
                             onchange="this.setCustomValidity('')">
-                        </div>
+                        </div> -->
                       </div>
-
                       <!-- Submit Button -->
                       <button type="submit">Submit</button>
                     </form>
@@ -393,6 +339,7 @@
                 </div>
 
                 <!-- End of Modal for Announcement & Promo -->
+
 
                 <!-- Update Modal -->
                 <div id="editModal" class="modal" style="display:none;">
@@ -491,30 +438,23 @@
                             <option value="Unavailable">Unavailable</option>
                           </select>
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                           <label for="announcementImages">Upload Image</label>
                           <input type="file" id="announcementImages" accept="image/*">
-                          <!-- The preview image (ID "updateImagePreview") will be appended here -->
-                        </div>
+                        </div> -->
                       </div>
-
                       <!-- Submit Button -->
                       <button type="submit">Submit</button>
                     </form>
                   </div>
                 </div>
-
                 <!-- End of Modal for Update and Delete -->
-
-
-                <!-- Add more rows as needed -->
               </tbody>
             </table>
           </div>
         </div>
       </div>
     </main>
-    <!-- This is a container of a accommodation-->
     <!-- MAIN -->
   </section>
 

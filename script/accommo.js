@@ -34,35 +34,6 @@ sidebarLinks.forEach(link => {
 });
 
 
-// // Get a reference to the auth service
-// var auth = firebase.auth();
-
-// // Show the modal when clicking the logout link
-// document.getElementById('logout-link').addEventListener('click', function (event) {
-//   event.preventDefault(); // Prevent the default link behavior
-//   openLogoutModal();
-// });
-
-// // Open the logout modal
-// function openLogoutModal() {
-//   document.getElementById('logoutModal').style.display = 'flex';
-// }
-
-// // Close the logout modal
-// function closeLogoutModal() {
-//   document.getElementById('logoutModal').style.display = 'none';
-// }
-
-// // Handle logout confirmation (directly logs out on "Yes")
-// document.getElementById('confirmLogout').addEventListener('click', function () {
-//   firebase.auth().signOut().then(function () {
-//     alert('Successfully logged out.');
-//     window.location.href = '../index.html'; // Redirect to login page or home
-//   }).catch(function (error) {
-//     console.error('Error during logout:', error);
-//     alert('Error logging out.');
-//   });
-// });
 
 var auth = firebase.auth();
 document.getElementById('logout-link').addEventListener('click', function (event) {
@@ -245,36 +216,6 @@ function toggleTransactionSection(event) {
 }
 
 
-
-// THIS IS THE ALERT BOX OF THE PROFILE INCLUDE SETTING AND LOGOUT                       This not use profile
-
-// const profileMenu = document.getElementById('profileMenu');
-// const profileModal = document.getElementById('profileModal');
-// const closeBtn = document.querySelector('.close-btn');
-// const exitBtn = document.getElementById('exit');
-
-// // Show the modal when profile image is clicked
-// profileMenu.addEventListener('click', function (e) {
-//     e.preventDefault();
-//     profileModal.style.display = 'block'; // Show modal
-// });
-
-// // Close the modal when 'X' or 'Exit' is clicked
-// closeBtn.addEventListener('click', function () {
-//     profileModal.style.display = 'none'; // Hide modal
-// });
-
-// exitBtn.addEventListener('click', function (e) {
-//     e.preventDefault();
-//     profileModal.style.display = 'none'; // Hide modal
-// });
-
-// // Close the modal when clicking outside the modal content
-// window.addEventListener('click', function (event) {
-//     if (event.target === profileModal) {
-//         profileModal.style.display = 'none'; // Hide modal
-//     }
-// });
 
 
 // Open modal function bx plus
@@ -467,124 +408,8 @@ function closeModal() {
 
  
  
-// function fetchProducts() {
-//   const tableBody = document.getElementById('accommodation-list');
 
-//   firebase.database().ref('products').on('value', (snapshot) => {
-//     tableBody.innerHTML = ''; // Clear existing rows
-
-//     snapshot.forEach((childSnapshot) => {
-//       const productKey = childSnapshot.key;
-//       const productData = childSnapshot.val();
-
-//       // Check if the product's category is either "Boat" or "Cottage"
-//       if (productData.category === 'Boat' || productData.category === 'Cottage') {
-//         const productRow = document.createElement('tr');
-//         productRow.classList.add('accommodation-item');
-//         productRow.setAttribute('data-type', productData.category);
-
-//         productRow.innerHTML = `
-//           <td>${productData.name}</td>
-//           <td>${productData.category}</td>
-//           <td>${productData.price}</td>
-//           <td>
-//             <span class="status ${productData.status === 'Available' ? 'completed' : 'unavailable'}">
-//               ${productData.status.charAt(0).toUpperCase() + productData.status.slice(1)}
-//             </span>
-//           </td>
-//           <td>
-//             <div class="actions" data-key="${productKey}">
-//               <i class="bx bx-pencil update-promo" data-key="${productKey}"></i>
-//               <i class="bx bx-trash delete-promo" data-key="${productKey}"></i>
-//             </div>
-//           </td>
-//         `;
-
-//         tableBody.appendChild(productRow);
-//       }
-//     });
-
-//     attachActionListeners();
-//   });
-// }
-
-
-// // Function to handle form submission and upload data to Firebase
-// document.getElementById('announcementForm').addEventListener('submit', function (e) {
-//   e.preventDefault();
-
-//   // Get form values
-//   const name = document.getElementById('announcementTitle').value;
-//   const description = document.getElementById('announcementDescription').value;
-//   const specification = document.getElementById('promoSpecification').value;
-//   const price = document.getElementById('promoPrice').value;
-//   const category = document.getElementById('promoCategory').value;
-//   const status = document.getElementById('promoAvailability').value;
-//   const imageFile = document.getElementById('announcementImage').files[0];
-
-//   // Create product data object
-//   const productData = {
-//     name,
-//     description,
-//     specification,
-//     price,
-//     category,
-//     capacity,
-//     design,
-//     location,
-//     status
-//     //createdAt: firebase.database.ServerValue.TIMESTAMP // Use server timestamp
-//   };
-
-//   // If an image is uploaded, convert it to Base64
-//   if (imageFile) {
-//     convertToBase64(imageFile).then((base64Image) => {
-//       productData.imageUrl = base64Image; // Add Base64 image to product data
-
-//       // Upload product data to Firebase Realtime Database
-//       const newProductRef = firebase.database().ref('products').push(); // Push to a new unique key
-//       newProductRef.set(productData)
-//         .then(() => {
-//           alert('Product added successfully!');
-//           // Optionally, reset the form after submission
-//           document.getElementById('announcementForm').reset();
-//         })
-//         .catch((error) => {
-//           console.error('Error adding product: ', error);
-//           alert('Error adding product');
-//         });
-//     });
-//   } else {
-//     // If no image, upload only product data
-//     const newProductRef = firebase.database().ref('products').push(); // Push to a new unique key
-//     newProductRef.set(productData)
-//       .then(() => {
-//         alert('Product added successfully!');
-//         // Optionally, reset the form after submission
-//         document.getElementById('announcementForm').reset();
-//       })
-//       .catch((error) => {
-//         console.error('Error adding product: ', error);
-//         alert('Error adding product');
-//       });
-//   }
-// });
-
-// // Function to convert image file to Base64 string
-// function convertToBase64(file) {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.onloadend = function () {
-//       resolve(reader.result); // The Base64 result
-//     };
-//     reader.onerror = function (error) {
-//       reject(error);
-//     };
-//     reader.readAsDataURL(file); // Convert the image file to Base64
-//   });
-// }
-
-//Submission
+//Submission Modal
 // Listen for changes on the Category dropdown to show/hide the Location field
 document.getElementById('promoCategory').addEventListener('change', function () {
   const category = this.value;
@@ -613,7 +438,7 @@ document.getElementById('announcementForm').addEventListener('submit', function 
   const capacity = document.getElementById('promoCapacity').value;
   const design = document.getElementById('promoDesign').value;
   const amenities = document.getElementById('amenitiesName').value;
-  const imageFile = document.getElementById('announcementImage').files[0];
+  // const imageFile = document.getElementById('announcementImage').files[0];
 
   // Build the product data object (location included only if Cottage)
   const productData = {
@@ -629,18 +454,20 @@ document.getElementById('announcementForm').addEventListener('submit', function 
   };
 
   // If an image is provided, convert it to Base64 before sending
-  if (imageFile) {
-    convertToBase64(imageFile).then(base64Image => {
-      productData.imageUrl = base64Image;
-      pushDataToFirebase(productData);
-    }).catch(error => {
-      console.error('Error converting image:', error);
-      alert('Error processing image file');
-    });
-  } else {
-    pushDataToFirebase(productData);
-  }
+  // if (imageFile) {
+  //   convertToBase64(imageFile).then(base64Image => {
+  //     productData.imageUrl = base64Image;
+  //     pushDataToFirebase(productData);
+  //   }).catch(error => {
+  //     console.error('Error converting image:', error);
+  //     alert('Error processing image file');
+  //   });
+  // } else {
+  //   pushDataToFirebase(productData);
+  // }
+  pushDataToFirebase(productData);
 });
+
 
 // Function to push data to Firebase Realtime Database
 function pushDataToFirebase(data) {
@@ -657,23 +484,23 @@ function pushDataToFirebase(data) {
 }
 
 // Utility function to convert an image file to a Base64 string using FileReader
-function convertToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = function () {
-      resolve(reader.result);
-    };
-    reader.onerror = function (error) {
-      reject(error);
-    };
-    reader.readAsDataURL(file);
-  });
-}
+// function convertToBase64(file) {
+//   return new Promise((resolve, reject) => {
+//     const reader = new FileReader();
+//     reader.onloadend = function () {
+//       resolve(reader.result);
+//     };
+//     reader.onerror = function (error) {
+//       reject(error);
+//     };
+//     reader.readAsDataURL(file);
+//   });
+// }
 
 
 
 
-//Update
+//Update Modal
 // Global variable to store the current product key being updated.
 let currentEditingId = null;
 
@@ -697,25 +524,25 @@ document.getElementById('promoCategorys').addEventListener('change', function ()
 });
 
 // Update the image preview when a new file is selected in the update modal.
-document.getElementById('announcementImages').addEventListener('change', function (e) {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (evt) {
-      let imgPreview = document.getElementById('updateImagePreview');
-      if (!imgPreview) {
-        imgPreview = document.createElement('img');
-        imgPreview.id = 'updateImagePreview';
-        imgPreview.style.maxWidth = '100px';
-        imgPreview.style.height = 'auto';
-        imgPreview.style.display = 'block';
-        document.getElementById('announcementImages').parentElement.appendChild(imgPreview);
-      }
-      imgPreview.src = evt.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-});
+// document.getElementById('announcementImages').addEventListener('change', function (e) {
+//   const file = e.target.files[0];
+//   if (file) {
+//     const reader = new FileReader();
+//     reader.onload = function (evt) {
+//       let imgPreview = document.getElementById('updateImagePreview');
+//       if (!imgPreview) {
+//         imgPreview = document.createElement('img');
+//         imgPreview.id = 'updateImagePreview';
+//         imgPreview.style.maxWidth = '100px';
+//         imgPreview.style.height = 'auto';
+//         imgPreview.style.display = 'block';
+//         document.getElementById('announcementImages').parentElement.appendChild(imgPreview);
+//       }
+//       imgPreview.src = evt.target.result;
+//     };
+//     reader.readAsDataURL(file);
+//   }
+// });
 
 // Event delegation: When the pencil (update) icon is clicked.
 document.addEventListener('click', function (e) {
@@ -750,22 +577,22 @@ document.addEventListener('click', function (e) {
       document.getElementById('promoAvailabilitys').value = productData.status || "";
       
       // Image preview: show a small preview if an imageUrl exists.
-      let imgPreview = document.getElementById('updateImagePreview');
-      if (!imgPreview) {
-        imgPreview = document.createElement('img');
-        imgPreview.id = 'updateImagePreview';
-        imgPreview.style.maxWidth = '100px';
-        imgPreview.style.height = 'auto';
-        imgPreview.style.display = 'block';
-        document.getElementById('announcementImages').parentElement.appendChild(imgPreview);
-      }
-      if (productData.imageUrl) {
-        imgPreview.src = productData.imageUrl;
-        imgPreview.style.display = 'block';
-      } else {
-        imgPreview.style.display = 'none';
-        imgPreview.src = "";
-      }
+      // let imgPreview = document.getElementById('updateImagePreview');
+      // if (!imgPreview) {
+      //   imgPreview = document.createElement('img');
+      //   imgPreview.id = 'updateImagePreview';
+      //   imgPreview.style.maxWidth = '100px';
+      //   imgPreview.style.height = 'auto';
+      //   imgPreview.style.display = 'block';
+      //   document.getElementById('announcementImages').parentElement.appendChild(imgPreview);
+      // }
+      // if (productData.imageUrl) {
+      //   imgPreview.src = productData.imageUrl;
+      //   imgPreview.style.display = 'block';
+      // } else {
+      //   imgPreview.style.display = 'none';
+      //   imgPreview.src = "";
+      // }
       
       // Set the global product key for update submission.
       currentEditingId = productKey;
@@ -808,7 +635,7 @@ document.getElementById('announcementForms').addEventListener('submit', function
   const capacity = document.getElementById('promoCapacitys').value;
   const design = document.getElementById('promoDesigns').value;
   const amenities = document.getElementById('amenitiesNames').value;
-  const imageFile = document.getElementById('announcementImages').files[0];
+  //const imageFile = document.getElementById('announcementImages').files[0];
 
   // Build the updated product data object.
   const updatedProductData = {
@@ -841,171 +668,21 @@ document.getElementById('announcementForms').addEventListener('submit', function
         alert('Error updating product');
       });
   }
-
+ 
   // If a new image is selected, convert it to Base64 before updating.
-  if (imageFile) {
-    convertToBase64(imageFile).then(base64Image => {
-      updatedProductData.imageUrl = base64Image;
-      updateProductData(updatedProductData);
-    }).catch(error => {
-      console.error('Error converting image:', error);
-      alert('Error processing image file');
-    });
-  } else {
-    updateProductData(updatedProductData);
-  }
+  // if (imageFile) {
+  //   convertToBase64(imageFile).then(base64Image => {
+  //     updatedProductData.imageUrl = base64Image;
+  //     updateProductData(updatedProductData);
+  //   }).catch(error => {
+  //     console.error('Error converting image:', error);
+  //     alert('Error processing image file');
+  //   });
+  // } else {
+  //   updateProductData(updatedProductData);
+  // }
+  updateProductData(updatedProductData);
 });
-
-
-// // Handle the update modal form submission.
-// document.getElementById('announcementForms').addEventListener('submit', function (e) {
-//   e.preventDefault();
-
-//   // Gather updated values including the new Amenities field.
-//   const name = document.getElementById('announcementTitles').value;
-//   const description = document.getElementById('announcementDescriptions').value;
-//   const price = document.getElementById('promoPrices').value;
-//   const category = document.getElementById('promoCategorys').value;
-//   const status = document.getElementById('promoAvailabilitys').value;
-//   const location = document.getElementById('promoLocations').value;
-//   const capacity = document.getElementById('promoCapacitys').value;
-//   const design = document.getElementById('promoDesigns').value;
-//   const amenities = document.getElementById('amenitiesNames').value;
-//   const imageFile = document.getElementById('announcementImages').files[0];
-
-//   // Build the updated product data object.
-//   const updatedProductData = {
-//     name,
-//     description,
-//     price,
-//     category,
-//     status,
-//     capacity,
-//     design,
-//     amenities,
-//     location: category === 'Cottage' ? location : ""
-//   };
-
-//   // Function to update the product data in Firebase.
-//   function updateProductData(data) {
-//     firebase.database().ref('products/' + currentEditingId).update(data)
-//       .then(() => {
-//         alert('Product updated successfully!');
-//         document.getElementById('announcementForms').reset();
-//         document.getElementById('editModal').style.display = 'none';
-//       })
-//       .catch(error => {
-//         console.error('Error updating product:', error);
-//         alert('Error updating product');
-//       });
-//   }
-
-//   // If a new image is selected, convert it to Base64 before updating.
-//   if (imageFile) {
-//     convertToBase64(imageFile).then(base64Image => {
-//       updatedProductData.imageUrl = base64Image;
-//       updateProductData(updatedProductData);
-//     }).catch(error => {
-//       console.error('Error converting image:', error);
-//       alert('Error processing image file');
-//     });
-//   } else {
-//     updateProductData(updatedProductData);
-//   }
-// });
-
-
-
-// // UPDATE MODAL FUNCTION
-// function attachActionListeners() {
-//   // Open the modal and fetch product data when the pencil icon is clicked
-//   document.querySelectorAll('.update-promo').forEach((button) => {
-//     button.addEventListener('click', (e) => {
-//       const productKey = e.target.getAttribute('data-key');
-
-//       // Fetch product data for the selected key
-//       firebase.database().ref(`products/${productKey}`).once('value', (snapshot) => {
-//         const productData = snapshot.val();
-
-//         // Log product data to check it's being retrieved correctly
-//         console.log('Product Data:', productData);
-
-//         if (productData) {
-//           // Populate form fields with product data for editing
-//           document.getElementById('announcementTitles').value = productData.name;
-//           document.getElementById('announcementDescriptions').value = productData.description || '';
-//           document.getElementById('promoSpecifications').value = productData.specification || '';
-//           document.getElementById('promoPrices').value = productData.price;
-//           document.getElementById('promoCategorys').value = productData.category;
-//           document.getElementById('promoAvailabilitys').value = productData.status;
-
-//           // Open the modal
-//           document.getElementById('editModal').style.display = 'block';
-//           sidebar.classList.add('hide'); // Hide the sidebar when modal is opened
-//         } else {
-//           console.error('Product not found');
-//         }
-
-//         // Close the modal on clicking the close button
-//         document.getElementById('closeModalBtn').addEventListener('click', () => {
-//           document.getElementById('editModal').style.display = 'none';
-//           document.getElementById('announcementForm').reset();  // Reset form if needed
-//         });
-
-//         // Handle form submit to update product
-//         const form = document.getElementById('announcementForms');
-
-//         // Remove any existing event listener to avoid duplication
-//         form.removeEventListener('submit', handleFormSubmit);
-
-//         // Define the event handler function
-//         function handleFormSubmit(e) {
-//           e.preventDefault();
-
-//           const updatedData = {
-//             name: document.getElementById('announcementTitles').value,
-//             description: document.getElementById('announcementDescriptions').value,
-//             specification: document.getElementById('promoSpecifications').value,
-//             price: document.getElementById('promoPrices').value,
-//             category: document.getElementById('promoCategorys').value,
-//             status: document.getElementById('promoAvailabilitys').value,
-//           };
-
-//           // Update the data in Firebase
-//           firebase.database().ref(`products/${productKey}`).update(updatedData)
-//             .then(() => {
-//               alert('Product updated successfully!');
-//               // Reset the form after successful update
-//               form.reset();
-//               // Reload the page after successful update
-//               location.reload();
-//               // Close the modal
-//               document.getElementById('editModal').style.display = 'none';
-//             })
-//             .catch((error) => console.error('Error updating product: ', error));
-//         }
-
-//         // Attach the event listener
-//         form.addEventListener('submit', handleFormSubmit);
-//       });
-//     });
-//   });
-
-//   // Delete button functionality
-//   document.querySelectorAll('.delete-promo').forEach((button) => {
-//     button.addEventListener('click', (e) => {
-//       const productKey = e.target.getAttribute('data-key');
-//       if (confirm('Are you sure you want to delete this product?')) {
-//         firebase.database().ref(`products/${productKey}`).remove()
-//           .then(() => alert('Product deleted successfully!'))
-//           .catch((error) => console.error('Error deleting product: ', error));
-//       }
-//     });
-//   });
-// }
-
-
-
 
 
 // Fetch products when the page loads
