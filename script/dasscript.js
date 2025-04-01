@@ -57,7 +57,7 @@ document.getElementById("announcementForm").addEventListener("submit", function 
     const discount = document.getElementById("promoDiscount").value;
     const startDate = document.getElementById("promoStartDate").value;
     const duration = document.getElementById("promoDuration").value;
-    const imageFile = document.getElementById("announcementImage").files[0];
+    //const imageFile = document.getElementById("announcementImage").files[0];
 
     const promoData = {
         title: title,
@@ -67,29 +67,37 @@ document.getElementById("announcementForm").addEventListener("submit", function 
         duration: duration
     };
 
-    if (imageFile) {
-        toBase64(imageFile).then((base64Image) => {
-            promoData.imageBase64 = base64Image;
+    // if (imageFile) {
+    //     toBase64(imageFile).then((base64Image) => {
+    //         promoData.imageBase64 = base64Image;
 
-            const promoRef = database.ref('promotions');
-            promoRef.push(promoData).then(() => {
-                alert("Promotion added successfully!");
-                resetForm();
-            }).catch((error) => {
-                alert("Error adding promotion: " + error.message);
-            });
-        }).catch((error) => {
-            alert("Error converting image to base64: " + error.message);
-        });
-    } else {
-        const promoRef = database.ref('promotions');
-        promoRef.push(promoData).then(() => {
-            alert("Promotion added successfully!");
-            resetForm();
-        }).catch((error) => {
-            alert("Error adding promotion: " + error.message);
-        });
-    }
+    //         const promoRef = database.ref('promotions');
+    //         promoRef.push(promoData).then(() => {
+    //             alert("Promotion added successfully!");
+    //             resetForm();
+    //         }).catch((error) => {
+    //             alert("Error adding promotion: " + error.message);
+    //         });
+    //     }).catch((error) => {
+    //         alert("Error converting image to base64: " + error.message);
+    //     });
+    // } else {
+    //     const promoRef = database.ref('promotions');
+    //     promoRef.push(promoData).then(() => {
+    //         alert("Promotion added successfully!");
+    //         resetForm();
+    //     }).catch((error) => {
+    //         alert("Error adding promotion: " + error.message);
+    //     });
+    // }
+
+    const promoRef = database.ref('promotions');
+    promoRef.push(promoData).then(() => {
+        alert("Promotion added successfully!");
+        resetForm();
+    }).catch((error) => {
+        alert("Error adding promotion: " + error.message);
+    });
 });
 
 // Add title to the todo list
@@ -115,7 +123,6 @@ function addToList(title, key) {
     `;
     todoList.appendChild(listItem);
 }
-
 
 
 // Reset the form after submission
@@ -246,6 +253,8 @@ window.addEventListener('click', function (event) {
     }
 });
 // THIS THE PROMO AND ANNOUCEMENT JS FUNCTION
+
+
 
 
 // Get a reference to the auth service
