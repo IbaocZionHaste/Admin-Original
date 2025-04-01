@@ -410,62 +410,6 @@ body {
 /* Profile Image function */
 
 
-/* Modal options Profile function logout              this not use */
-/* .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    align-content: center;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-    background-color: white;
-    margin: 15% auto;
-    padding: 20px;
-    border-radius: 10px;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    width: 300px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-}
-
-.modal-options {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.modal-option {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    background-color: var(--blue);
-    border-radius: 20px;
-    font-size: 18px;
-    margin-top: 15px;
-    color: black;
-    font-weight: bolder;
-    text-decoration: none;
-    cursor: pointer;
-    font-weight: bolder;
-}
-
-.modal-option i {
-    margin-right: 8px;
-}
-
-.modal-option:hover {
-    background-color: var(--red);
-} */
-
-/* Modal options Profile function logout */
-
 
 
 /* SWITCH MODE */
@@ -1205,9 +1149,6 @@ color: var(--blue);
 
 
 
-
-
-
 /* Initially hide the modal */
 #modalimage {
     display: none;
@@ -1254,11 +1195,7 @@ color: var(--blue);
 
 }
 
-/* Active state: a slightly different background on click */
-#modalcontentimage ul li:active {
-    background: var(--dark);
-    transform: translateY(0);
-}
+
 
 /* Class to display the modal */
 #modalimage.active {
