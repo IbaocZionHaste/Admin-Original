@@ -34,16 +34,19 @@ document.getElementById("login-form").addEventListener("submit", function (e) {
 
   auth.signInWithEmailAndPassword(email, password)
   .then((userCredential) => {
-    // Log the userCredential to see what it returns
+    // Log the userCredential to check its structure
     console.log('userCredential:', userCredential);
-    
+
+    // Access the user from the userCredential object
     const user = userCredential.user;
 
-    // Check if user is defined
+    // Log the user object to check if it is correctly retrieved
+    console.log('User object:', user);
+
     if (user) {
       console.log('User logged in successfully:', user);
 
-      // Force refresh of token
+      // Force refresh of the token
       user.getIdToken(true)
         .then(() => {
           user.getIdTokenResult()
@@ -75,7 +78,6 @@ document.getElementById("login-form").addEventListener("submit", function (e) {
           console.error("Error getting token:", error);
         });
     } else {
-      // If the user object is undefined, log the error
       console.error('No user returned in userCredential');
       messageElement.textContent = "Login Failed: No user returned!";
       messageElement.style.color = "red";
