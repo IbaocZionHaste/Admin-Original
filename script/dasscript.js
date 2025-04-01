@@ -871,7 +871,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
 //THIS BY DAY COUNT INCOME CHART
 let myChart;
 

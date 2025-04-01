@@ -300,6 +300,8 @@ function goToTransaction() {
 //   return html;
 // }
 
+
+
 function jsonToHtmlByCategory(orderItems) {
   if (!orderItems) return '';
 
@@ -379,151 +381,280 @@ function jsonToHtmlByCategory(orderItems) {
 
 
 
-// Helper function to determine if today is the last day of the month.
-function isMonthEnd() {
+//THIS CODE NO FUNCTION MONTH IS END THE MY HISTORY AND WALKIN NOT HIDE 
+// // Helper function to determine if today is the last day of the month.
+// function isMonthEnd() {
+//   const now = new Date();
+//   const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+//   return now.getDate() === lastDay;
+// }
+
+
+// function fetchAllBookings() {
+//   var tableBody = document.getElementById("accommodation-list");
+//   tableBody.innerHTML = ""; // Clear existing rows
+
+//   // Separate arrays for each booking type
+//   var myBookingRows = [];
+//   var myHistoryRows = [];
+//   var walkinRows = [];
+
+//   // Fetch user bookings (MyBooking and MyHistory)
+//   var usersRef = firebase.database().ref("users");
+//   usersRef.once("value").then(function (snapshot) {
+//     snapshot.forEach(function (userSnapshot) {
+//       var userData = userSnapshot.val();
+//       var accountName = ((userData.firstName || "") + " " + (userData.lastName || "")).trim() || "N/A";
+
+//       // Process MyBooking rows
+//       if (userData['MyBooking']) {
+//         for (var bookingId in userData['MyBooking']) {
+//           if (userData['MyBooking'].hasOwnProperty(bookingId)) {
+//             var booking = userData['MyBooking'][bookingId];
+//             var review = booking.bookingReview || {};
+//             var name = review.name || accountName;
+//             var rawDate = review.bookingDate || "N/A";
+//             var date = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
+//             var status = (review.statusReview || "pending").toLowerCase();
+
+//             var row = document.createElement("tr");
+//             row.innerHTML = `
+//               <td>${name}</td>
+//               <td>${date}</td>
+//               <td style="color: green;">Online</td>
+//               <td><span id="status-${userSnapshot.key}-${bookingId}-MyBooking" class="status ${status}">${status.toUpperCase()}</span></td>
+//               <td>
+//                 <div class="actions">
+//                   <i class="bx bx-pencil" onclick="viewBookingEdit('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
+//                   <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
+//                 </div>
+//               </td>
+//             `;
+//             row.dataset.bookingDate = date;
+//             row.dataset.bookingType = "MyBooking";
+//             myBookingRows.push(row);
+//           }
+//         }
+//       }
+
+
+//       // Process MyHistory rows
+//       if (userData['MyHistory']) {
+//         for (var bookingId in userData['MyHistory']) {
+//           if (userData['MyHistory'].hasOwnProperty(bookingId)) {
+//             var booking = userData['MyHistory'][bookingId];
+//             var review = booking.bookingReview || {};
+//             var name = review.name || accountName;
+//             var rawDate = review.bookingDate || "N/A";
+//             var date = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
+//             var status = (review.statusReview || "pending").toLowerCase();
+
+//             var row = document.createElement("tr");
+//             row.innerHTML = `
+//               <td>${name}</td>
+//               <td>${date}</td>
+//               <td style="color: red;">Online</td>
+//               <td><span id="status-${userSnapshot.key}-${bookingId}-MyHistory" class="status ${status}">${status.toUpperCase()}</span></td>
+//               <td>
+//                 <div class="actions">
+//                   <i class="bx bx-pencil disabled" style="opacity: 0.5; cursor: not-allowed;"></i>
+//                   <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyHistory')"></i>
+//                 </div>
+//               </td>
+//             `;
+//             row.dataset.bookingDate = date;
+//             row.dataset.bookingType = "MyHistory";
+//             myHistoryRows.push(row);
+//           }
+//         }
+//       }
+//     });
+
+
+
+//     // After processing user bookings, fetch Walkin orders.
+//     var walkinRef = firebase.database().ref("walkin");
+//     walkinRef.once("value").then(function (snapshot) {
+//       snapshot.forEach(function (childSnapshot) {
+//         var order = childSnapshot.val();
+//         var name = order.customerName || "N/A";
+//         var date = order.date || "N/A";
+//         var orderName = order.orderName || "Walkin";
+//         var status = (order.status || "approve").toUpperCase();
+
+//         var row = document.createElement("tr");
+//         row.innerHTML = `
+//           <td>${name}</td>
+//           <td>${date}</td>
+//           <td style="color: blue;">${orderName}</td>
+//           <td><span class="status approved">${status}</span></td>
+//           <td>
+//             <i class='bx bx-detail' onclick="viewWalkinBooking('${childSnapshot.key}')"></i>
+//           </td>
+//         `;
+//         row.dataset.bookingDate = date;
+//         row.dataset.bookingType = "Walkin";
+//         walkinRows.push(row);
+//       });
+
+//       // Sort rows within each category by booking date descending
+//       function sortRows(rows) {
+//         return rows.sort(function (a, b) {
+//           return new Date(b.dataset.bookingDate) - new Date(a.dataset.bookingDate);
+//         });
+//       }
+//       myBookingRows = sortRows(myBookingRows);
+//       myHistoryRows = sortRows(myHistoryRows);
+//       walkinRows = sortRows(walkinRows);
+
+//       // Append rows: MyBooking on top, then MyHistory, then Walkin orders.
+//       var allRows = myBookingRows.concat(walkinRows, myHistoryRows);
+//       allRows.forEach(function (row) {
+//         tableBody.appendChild(row);
+//       });
+//     }).catch(function (error) {
+//       console.error("Error fetching walkin orders:", error);
+//     });
+//   }).catch(function (error) {
+//     console.error("Error fetching user bookings:", error);
+//   });
+// }
+
+// document.addEventListener("DOMContentLoaded", function () {
+//   fetchAllBookings();
+// });
+
+
+
+// Helper function to check if a date's month has closed
+function isMonthClosed(date) {
+  const transDate = new Date(date);
+  const lastDay = new Date(
+    transDate.getFullYear(),
+    transDate.getMonth() + 1,
+    0
+  );
   const now = new Date();
-  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  return now.getDate() === lastDay;
+  return now > lastDay;
 }
 
-
-
-
 function fetchAllBookings() {
-  var tableBody = document.getElementById("accommodation-list");
-  tableBody.innerHTML = ""; // Clear existing rows
+  const tableBody = document.getElementById("accommodation-list");
+  tableBody.innerHTML = "";
 
-  // Separate arrays for each booking type
-  var myBookingRows = [];
-  var myHistoryRows = [];
-  var walkinRows = [];
+  const myBookingRows = [];
+  const myHistoryRows = [];
+  const walkinRows = [];
 
-  // Fetch user bookings (MyBooking and MyHistory)
-  var usersRef = firebase.database().ref("users");
-  usersRef.once("value").then(function (snapshot) {
-    snapshot.forEach(function (userSnapshot) {
-      var userData = userSnapshot.val();
-      var accountName = ((userData.firstName || "") + " " + (userData.lastName || "")).trim() || "N/A";
+  const usersRef = firebase.database().ref("users");
+  usersRef.once("value").then((snapshot) => {
+    snapshot.forEach((userSnapshot) => {
+      const userData = userSnapshot.val();
+      const accountName = ((userData.firstName || "") + " " + (userData.lastName || "")).trim() || "N/A";
 
-      // Process MyBooking rows
-      if (userData['MyBooking']) {
-        for (var bookingId in userData['MyBooking']) {
-          if (userData['MyBooking'].hasOwnProperty(bookingId)) {
-            var booking = userData['MyBooking'][bookingId];
-            var review = booking.bookingReview || {};
-            var name = review.name || accountName;
-            var rawDate = review.bookingDate || "N/A";
-            var date = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
-            var status = (review.statusReview || "pending").toLowerCase();
-
-            var row = document.createElement("tr");
-            row.innerHTML = `
-              <td>${name}</td>
-              <td>${date}</td>
-              <td style="color: green;">Online</td>
-              <td><span id="status-${userSnapshot.key}-${bookingId}-MyBooking" class="status ${status}">${status.toUpperCase()}</span></td>
-              <td>
-                <div class="actions">
-                  <i class="bx bx-pencil" onclick="viewBookingEdit('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
-                  <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
-                </div>
-              </td>
-            `;
-            row.dataset.bookingDate = date;
-            row.dataset.bookingType = "MyBooking";
-            myBookingRows.push(row);
-          }
-        }
+      // Process MyBooking (unchanged)
+      if (userData.MyBooking) {
+        Object.entries(userData.MyBooking).forEach(([bookingId, booking]) => {
+          const review = booking.bookingReview || {};
+          const rawDate = review.bookingDate || "N/A";
+          const date = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
+          
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${review.name || accountName}</td>
+            <td>${date}</td>
+            <td style="color: green;">Online</td>
+            <td><span class="status ${(review.statusReview || "pending").toLowerCase()}">
+              ${(review.statusReview || "pending").toUpperCase()}
+            </span></td>
+            <td>
+              <div class="actions">
+                <i class="bx bx-pencil" onclick="viewBookingEdit('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
+                <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
+              </div>
+            </td>
+          `;
+          row.dataset.bookingDate = date;
+          row.dataset.bookingType = "MyBooking";
+          myBookingRows.push(row);
+        });
       }
 
-      // Process MyHistory rows
-      if (userData['MyHistory']) {
-        for (var bookingId in userData['MyHistory']) {
-          if (userData['MyHistory'].hasOwnProperty(bookingId)) {
-            var booking = userData['MyHistory'][bookingId];
-            var review = booking.bookingReview || {};
-            var name = review.name || accountName;
-            var rawDate = review.bookingDate || "N/A";
-            var date = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
-            var status = (review.statusReview || "pending").toLowerCase();
+      // Process MyHistory with month check
+      if (userData.MyHistory) {
+        Object.entries(userData.MyHistory).forEach(([bookingId, booking]) => {
+          const review = booking.bookingReview || {};
+          const rawDate = review.bookingDate || "N/A";
+          const dateStr = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
+          
+          // Month-end check
+          const bookingDate = new Date(dateStr);
+          if (isNaN(bookingDate)) return;
+          if (isMonthClosed(bookingDate)) return;
 
-            var row = document.createElement("tr");
-            row.innerHTML = `
-              <td>${name}</td>
-              <td>${date}</td>
-              <td style="color: red;">Online</td>
-              <td><span id="status-${userSnapshot.key}-${bookingId}-MyHistory" class="status ${status}">${status.toUpperCase()}</span></td>
-              <td>
-                <div class="actions">
-                  <i class="bx bx-pencil disabled" style="opacity: 0.5; cursor: not-allowed;"></i>
-                  <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyHistory')"></i>
-                </div>
-              </td>
-            `;
-            row.dataset.bookingDate = date;
-            row.dataset.bookingType = "MyHistory";
-            myHistoryRows.push(row);
-          }
-        }
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${review.name || accountName}</td>
+            <td>${dateStr}</td>
+            <td style="color: red;">Online</td>
+            <td><span class="status ${(review.statusReview || "pending").toLowerCase()}">
+              ${(review.statusReview || "pending").toUpperCase()}
+            </span></td>
+            <td>
+              <div class="actions">
+                <i class="bx bx-pencil disabled" style="opacity: 0.5; cursor: not-allowed;"></i>
+                <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyHistory')"></i>
+              </div>
+            </td>
+          `;
+          row.dataset.bookingDate = dateStr;
+          row.dataset.bookingType = "MyHistory";
+          myHistoryRows.push(row);
+        });
       }
     });
 
+    // Process Walkin with month check
+    const walkinRef = firebase.database().ref("walkin");
+    walkinRef.once("value").then((snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const order = childSnapshot.val();
+        const dateStr = order.date || "N/A";
+        const bookingDate = new Date(dateStr);
+        
+        if (isNaN(bookingDate)) return;
+        if (isMonthClosed(bookingDate)) return;
 
-
-
-    // After processing user bookings, fetch Walkin orders.
-    var walkinRef = firebase.database().ref("walkin");
-    walkinRef.once("value").then(function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
-        var order = childSnapshot.val();
-        var name = order.customerName || "N/A";
-        var date = order.date || "N/A";
-        var orderName = order.orderName || "Walkin";
-        var status = (order.status || "approve").toUpperCase();
-
-        var row = document.createElement("tr");
+        const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${name}</td>
-          <td>${date}</td>
-          <td style="color: blue;">${orderName}</td>
-          <td><span class="status approved">${status}</span></td>
+          <td>${order.customerName || "N/A"}</td>
+          <td>${dateStr}</td>
+          <td style="color: blue;">${order.orderName || "Walkin"}</td>
+          <td><span class="status approved">${(order.status || "approve").toUpperCase()}</span></td>
           <td>
             <i class='bx bx-detail' onclick="viewWalkinBooking('${childSnapshot.key}')"></i>
           </td>
         `;
-        row.dataset.bookingDate = date;
+        row.dataset.bookingDate = dateStr;
         row.dataset.bookingType = "Walkin";
         walkinRows.push(row);
       });
 
-      // Sort rows within each category by booking date descending
-      function sortRows(rows) {
-        return rows.sort(function (a, b) {
-          return new Date(b.dataset.bookingDate) - new Date(a.dataset.bookingDate);
-        });
-      }
-      myBookingRows = sortRows(myBookingRows);
-      myHistoryRows = sortRows(myHistoryRows);
-      walkinRows = sortRows(walkinRows);
-
-      // Append rows: MyBooking on top, then MyHistory, then Walkin orders.
-      var allRows = myBookingRows.concat(walkinRows, myHistoryRows);
-      allRows.forEach(function (row) {
-        tableBody.appendChild(row);
-      });
-    }).catch(function (error) {
-      console.error("Error fetching walkin orders:", error);
-    });
-  }).catch(function (error) {
-    console.error("Error fetching user bookings:", error);
-  });
+      // Sort and combine all rows
+      const sortRows = (rows) => rows.sort((a, b) => 
+        new Date(b.dataset.bookingDate) - new Date(a.dataset.bookingDate)
+      );
+      
+      tableBody.append(
+        ...sortRows(myBookingRows),
+        ...sortRows(walkinRows),
+        ...sortRows(myHistoryRows)
+      );
+    }).catch(console.error);
+  }).catch(console.error);
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  fetchAllBookings();
-});
-
-
+document.addEventListener("DOMContentLoaded", fetchAllBookings);
 
 
 
@@ -568,6 +699,7 @@ function viewWalkinBooking(orderKey) {
 
 
 
+
 // Function to view booking details (read-only mode) for both MyBooking and MyHistory.
 function viewBooking(userId, bookingId, node) {
   var bookingRef = firebase.database().ref("users/" + userId + "/" + node + "/" + bookingId);
@@ -578,7 +710,7 @@ function viewBooking(userId, bookingId, node) {
 
     if (bookingData) {
       var review = bookingData.bookingReview || {};
-      var payment = bookingData.paymentTransaction || {};
+      //var payment = bookingData.paymentTransaction || {};
 
       modalContent.innerHTML += `<p><strong>Name:</strong> ${review.name || "N/A"}</p>`;
       modalContent.innerHTML += `<p><strong>Date:</strong> ${review.bookingDate || "N/A"}</p>`;
@@ -616,6 +748,7 @@ function centerModalContent(modalId) {
 }
 
 
+
 // New function to view booking details with an editable status dropdown.
 function viewBookingEdit(userId, bookingId, node) {
   var bookingRef = firebase.database().ref("users/" + userId + "/" + node + "/" + bookingId);
@@ -626,7 +759,7 @@ function viewBookingEdit(userId, bookingId, node) {
 
     if (bookingData) {
       var review = bookingData.bookingReview || {};
-      var payment = bookingData.paymentTransaction || {};
+      //var payment = bookingData.paymentTransaction || {};
 
       // Display booking details
       modalContent.innerHTML += `<p><strong>Name:</strong> ${review.name || "N/A"}</p>`;
@@ -662,8 +795,6 @@ function viewBookingEdit(userId, bookingId, node) {
 
 
 
-
-
 // Function to update the booking status.
 function updateBookingStatus(userId, bookingId, newStatus, node) {
   var bookingRef = firebase.database().ref("users/" + userId + "/" + node + "/" + bookingId + "/bookingReview");
@@ -693,6 +824,7 @@ document.getElementById("modalClose").addEventListener("click", function () {
   document.getElementById("bookingModal").style.display = "none";
 });
 
+
 // Close modal if clicking outside the modal content.
 window.onclick = function (event) {
   var modal = document.getElementById("bookingModal");
@@ -700,9 +832,6 @@ window.onclick = function (event) {
     modal.style.display = "none";
   }
 };
-
-
-
 
 
 

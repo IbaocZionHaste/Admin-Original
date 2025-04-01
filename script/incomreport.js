@@ -540,6 +540,7 @@ function printTable() {
   printWindow.close();
 }
 
+
 // Set default filters to the current date and update the Day dropdown.
 function setDefaultDateFilters() {
   const now = new Date();

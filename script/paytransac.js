@@ -328,13 +328,6 @@ function formatPHP(value) {
   return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(number);
 }
 
-// Helper function to check if today is the last day of the month.
-function isMonthEnd() {
-  const now = new Date();
-  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  return now.getDate() === lastDay;
-}
-
 /**
  * Function to fetch payment transactions from all users and update the table.
  * It checks both MyBooking and MyHistory nodes.
@@ -345,90 +338,201 @@ function isMonthEnd() {
 /**
  * Modified fetchPaymentTransactions function with new-to-old date sorting.
  */
-function fetchPaymentTransactions() {
-  var usersRef = firebase.database().ref("users");
-  usersRef.on("value", function(snapshot) {
-    var transactions = [];
+
+// Helper function to check if today is the last day of the month.
+// function isMonthEnd() {
+//   const now = new Date();
+//   const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+//   return now.getDate() === lastDay;
+// }
+
+
+//THIS CODE NO FUNCTION MONTH IS END THE MY HISTORY NOT HIDE 
+// function fetchPaymentTransactions() {
+//   var usersRef = firebase.database().ref("users");
+//   usersRef.on("value", function(snapshot) {
+//     var transactions = [];
     
-    snapshot.forEach(function(userSnapshot) {
-      var userId = userSnapshot.key;
-      var userData = userSnapshot.val();
+//     snapshot.forEach(function(userSnapshot) {
+//       var userId = userSnapshot.key;
+//       var userData = userSnapshot.val();
       
-      // Process MyBooking transactions
-      if (userData["MyBooking"]) {
-        for (var bookingId in userData["MyBooking"]) {
-          if (userData["MyBooking"].hasOwnProperty(bookingId)) {
-            var booking = userData["MyBooking"][bookingId];
-            if (booking.paymentTransaction) {
-              var payment = booking.paymentTransaction;
-              // Kunin ang PaymentDate o gamitin ang kasalukuyang date kung wala.
-              var date = payment.PaymentDate ? new Date(payment.PaymentDate) : new Date();
-              transactions.push({
-                type: "MyBooking",
-                userId: userId,
-                bookingId: bookingId,
-                name: payment.name || "N/A",
-                refNo: payment.refNo || "N/A",
-                amount: payment.amount || "N/A",
-                paymentStatus: (payment.paymentStatus || "pending").toLowerCase(),
-                date: date
-              });
-            }
+//       // Process MyBooking transactions
+//       if (userData["MyBooking"]) {
+//         for (var bookingId in userData["MyBooking"]) {
+//           if (userData["MyBooking"].hasOwnProperty(bookingId)) {
+//             var booking = userData["MyBooking"][bookingId];
+//             if (booking.paymentTransaction) {
+//               var payment = booking.paymentTransaction;
+//               // Kunin ang PaymentDate o gamitin ang kasalukuyang date kung wala.
+//               var date = payment.PaymentDate ? new Date(payment.PaymentDate) : new Date();
+//               transactions.push({
+//                 type: "MyBooking",
+//                 userId: userId,
+//                 bookingId: bookingId,
+//                 name: payment.name || "N/A",
+//                 refNo: payment.refNo || "N/A",
+//                 amount: payment.amount || "N/A",
+//                 paymentStatus: (payment.paymentStatus || "pending").toLowerCase(),
+//                 date: date
+//               });
+//             }
+//           }
+//         }
+//       }
+      
+//       // Process MyHistory transactions
+//       if ( userData["MyHistory"]) {
+//         for (var bookingId in userData["MyHistory"]) {
+//           if (userData["MyHistory"].hasOwnProperty(bookingId)) {
+//             var booking = userData["MyHistory"][bookingId];
+//             if (booking.paymentTransaction) {
+//               var payment = booking.paymentTransaction;
+//               var date = payment.PaymentDate ? new Date(payment.PaymentDate) : new Date();
+//               transactions.push({
+//                 type: "MyHistory",
+//                 userId: userId,
+//                 bookingId: bookingId,
+//                 name: payment.name || "N/A",
+//                 refNo: payment.refNo || "N/A",
+//                 amount: payment.amount || "N/A",
+//                 paymentStatus: (payment.paymentStatus || "pending").toLowerCase(),
+//                 date: date
+//               });
+//             }
+//           }
+//         }
+//       }
+//     });
+    
+//     // Sort transactions: bagong date sa itaas (new to old)
+//     transactions.sort((a, b) => b.date - a.date);
+    
+//     // Render sorted transactions sa table
+//     var tableBody = document.getElementById("accommodation-list");
+//     tableBody.innerHTML = "";
+//     transactions.forEach(function(tx) {
+//       var formattedAmount = tx.amount !== "N/A" ? formatPHP(tx.amount) : tx.amount;
+//       var status = tx.paymentStatus;
+//       var row = document.createElement("tr");
+//       row.innerHTML = `
+//         <td>${tx.name}</td>
+//         <td>${tx.refNo}</td>
+//         <td>${formattedAmount}</td>
+//         <td><span class="status ${status}">${status.toUpperCase()}</span></td>
+//         <td>
+//           <div class="actions">
+//             ${tx.type === "MyBooking" 
+//               ? `<i class="bx bx-pencil" onclick="viewPaymentTransactionEdit('${tx.userId}', '${tx.bookingId}', 'MyBooking')"></i>` 
+//               : `<i class="bx bx-pencil disabled" style="opacity:0.5; cursor:not-allowed;"></i>`}
+//             <i class="bx bx-detail" onclick="viewPaymentTransactionModal('${tx.userId}', '${tx.bookingId}', '${tx.type}')"></i>
+//           </div>
+//         </td>
+//       `;
+//       tableBody.appendChild(row);
+//     });
+//   }, function(error) {
+//     console.error("Error fetching users:", error);
+//   });
+// }
+
+
+// Helper function to check if a transaction's month has ended
+function isTransactionMonthEnd(transactionDate) {
+  const transDate = new Date(transactionDate);
+  const lastDayOfTransMonth = new Date(
+    transDate.getFullYear(),
+    transDate.getMonth() + 1,
+    0
+  );
+  const now = new Date();
+  return now > lastDayOfTransMonth;
+}
+
+/**
+ * Main function to fetch and display payment transactions
+ * with MyHistory month-end exclusion
+ */
+function fetchPaymentTransactions() {
+  const usersRef = firebase.database().ref("users");
+  usersRef.on("value", (snapshot) => {
+    const transactions = [];
+    
+    snapshot.forEach((userSnapshot) => {
+      const userId = userSnapshot.key;
+      const userData = userSnapshot.val();
+      
+      // Process MyBooking transactions (unchanged)
+      if (userData.MyBooking) {
+        Object.entries(userData.MyBooking).forEach(([bookingId, booking]) => {
+          if (booking.paymentTransaction) {
+            const payment = booking.paymentTransaction;
+            const date = payment.PaymentDate ? new Date(payment.PaymentDate) : new Date();
+            
+            transactions.push({
+              type: "MyBooking",
+              userId,
+              bookingId,
+              name: payment.name || "N/A",
+              refNo: payment.refNo || "N/A",
+              amount: payment.amount || "N/A",
+              paymentStatus: (payment.paymentStatus || "pending").toLowerCase(),
+              date
+            });
           }
-        }
+        });
       }
       
-      // Process MyHistory transactions
-      if (userData["MyHistory"]) {
-        for (var bookingId in userData["MyHistory"]) {
-          if (userData["MyHistory"].hasOwnProperty(bookingId)) {
-            var booking = userData["MyHistory"][bookingId];
-            if (booking.paymentTransaction) {
-              var payment = booking.paymentTransaction;
-              var date = payment.PaymentDate ? new Date(payment.PaymentDate) : new Date();
-              transactions.push({
-                type: "MyHistory",
-                userId: userId,
-                bookingId: bookingId,
-                name: payment.name || "N/A",
-                refNo: payment.refNo || "N/A",
-                amount: payment.amount || "N/A",
-                paymentStatus: (payment.paymentStatus || "pending").toLowerCase(),
-                date: date
-              });
-            }
+      // Process MyHistory with month-end check
+      if (userData.MyHistory) {
+        Object.entries(userData.MyHistory).forEach(([bookingId, booking]) => {
+          if (booking.paymentTransaction) {
+            const payment = booking.paymentTransaction;
+            const date = payment.PaymentDate ? new Date(payment.PaymentDate) : new Date();
+            
+            // Skip if transaction's month has ended
+            if (isTransactionMonthEnd(date)) return;
+            
+            transactions.push({
+              type: "MyHistory",
+              userId,
+              bookingId,
+              name: payment.name || "N/A",
+              refNo: payment.refNo || "N/A",
+              amount: payment.amount || "N/A",
+              paymentStatus: (payment.paymentStatus || "pending").toLowerCase(),
+              date
+            });
           }
-        }
+        });
       }
     });
     
-    // Sort transactions: bagong date sa itaas (new to old)
+    // Sort transactions new-to-old
     transactions.sort((a, b) => b.date - a.date);
     
-    // Render sorted transactions sa table
-    var tableBody = document.getElementById("accommodation-list");
-    tableBody.innerHTML = "";
-    transactions.forEach(function(tx) {
-      var formattedAmount = tx.amount !== "N/A" ? formatPHP(tx.amount) : tx.amount;
-      var status = tx.paymentStatus;
-      var row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${tx.name}</td>
-        <td>${tx.refNo}</td>
-        <td>${formattedAmount}</td>
-        <td><span class="status ${status}">${status.toUpperCase()}</span></td>
-        <td>
-          <div class="actions">
-            ${tx.type === "MyBooking" 
-              ? `<i class="bx bx-pencil" onclick="viewPaymentTransactionEdit('${tx.userId}', '${tx.bookingId}', 'MyBooking')"></i>` 
-              : `<i class="bx bx-pencil disabled" style="opacity:0.5; cursor:not-allowed;"></i>`}
-            <i class="bx bx-detail" onclick="viewPaymentTransactionModal('${tx.userId}', '${tx.bookingId}', '${tx.type}')"></i>
-          </div>
-        </td>
+    // Render table
+    const tableBody = document.getElementById("accommodation-list");
+    tableBody.innerHTML = transactions.map(tx => {
+      const formattedAmount = tx.amount !== "N/A" ? formatPHP(tx.amount) : tx.amount;
+      return `
+        <tr>
+          <td>${tx.name}</td>
+          <td>${tx.refNo}</td>
+          <td>${formattedAmount}</td>
+          <td><span class="status ${tx.paymentStatus}">${tx.paymentStatus.toUpperCase()}</span></td>
+          <td>
+            <div class="actions">
+              ${tx.type === "MyBooking" 
+                ? `<i class="bx bx-pencil" onclick="viewPaymentTransactionEdit('${tx.userId}', '${tx.bookingId}', 'MyBooking')"></i>` 
+                : `<i class="bx bx-pencil disabled" style="opacity:0.5; cursor:not-allowed;"></i>`}
+              <i class="bx bx-detail" onclick="viewPaymentTransactionModal('${tx.userId}', '${tx.bookingId}', '${tx.type}')"></i>
+            </div>
+          </td>
+        </tr>
       `;
-      tableBody.appendChild(row);
-    });
-  }, function(error) {
+    }).join("");
+  }, (error) => {
     console.error("Error fetching users:", error);
   });
 }
@@ -441,58 +545,6 @@ function fetchPaymentTransactions() {
  * Function to view payment transaction details in a modal (read-only view).
  * It dynamically fetches details from either MyBooking or MyHistory based on the provided type.
  */
-// function viewPaymentTransactionModal(userId, bookingId, type = 'MyBooking') {
-//   // Build the Firebase path dynamically using the 'type' parameter.
-//   var path = "users/" + userId + "/" + type + "/" + bookingId;
-//   console.log("Fetching read-only modal details from path:", path);
-  
-//   firebase.database().ref(path).once("value")
-//     .then(function(snapshot) {
-//       var bookingData = snapshot.val();
-//       console.log("Fetched booking data (detail view):", bookingData);
-//       var modalContent = document.getElementById("paymentModalContent");
-//       modalContent.innerHTML = ""; // Clear previous details
-
-//       if (bookingData) {
-//         // Payment Transaction Details
-//         if (bookingData.paymentTransaction) {
-//           var payment = bookingData.paymentTransaction;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Name:</strong> ${payment.name || "N/A"}</p>`;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Book Ref No:</strong> ${payment.refNo || "N/A"}</p>`;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${formatPHP(payment.amount || "N/A")}</p>`;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Down Payment:</strong> ${formatPHP(payment.downPayment || "N/A")}</p>`;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Payment Status:</strong> <span class="status ${(payment.paymentStatus || 'pending').toLowerCase()}">${(payment.paymentStatus || 'PENDING').toUpperCase()}</span></p>`;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Final Approved Status:</strong> <span class="status ${(payment.finalStatus || 'pending').toLowerCase()}">${(payment.finalStatus || 'PENDING').toUpperCase()}</span></p>`;
-//         } else {
-//           modalContent.innerHTML += "<p>No payment transaction details found.</p>";
-//         }
-        
-//         // Payment Method Details
-//         if (bookingData.paymentMethod) {
-//           var paymentMethod = bookingData.paymentMethod;
-//           modalContent.innerHTML += `<hr><h3>Payment Details</h3>`;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Payment Method:</strong> ${paymentMethod.Payment || "N/A"}</p>`;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Pay Ref No:</strong> ${paymentMethod.Reference || "N/A"}</p>`;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Firstname:</strong> ${paymentMethod.Firstname || "N/A"}</p>`;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Lastname:</strong> ${paymentMethod.Lastname || "N/A"}</p>`;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Phone:</strong> ${paymentMethod.Phone || "N/A"}</p>`;
-//           modalContent.innerHTML += `<p class="payment-detail"><strong>Amount:</strong> ${formatPHP(paymentMethod.Amount || "N/A")}</p>`;
-//         } else {
-//           modalContent.innerHTML += "<p>No payment method details found.</p>";
-//         }
-//       } else {
-//         modalContent.innerHTML = "<p>No booking details found.</p>";
-//       }
-      
-//       // Display the modal
-//       document.getElementById("paymentModal").style.display = "block";
-//     })
-//     .catch(function(error) {
-//       console.error("Error fetching payment transaction details (detail view):", error);
-//       alert("Error fetching payment transaction details: " + error.message);
-//     });
-// }
-
 
 function viewPaymentTransactionModal(userId, bookingId, type = 'MyBooking') {
   // Build the Firebase path dynamically using the 'type' parameter.
@@ -563,7 +615,6 @@ function viewPaymentTransactionModal(userId, bookingId, type = 'MyBooking') {
 }
 
 
-
 // Helper function to center modal content.
 function centerModalContent(modalId) {
   var modal = document.getElementById(modalId);
@@ -573,7 +624,6 @@ function centerModalContent(modalId) {
     modal.style.alignItems = "center";
   }
 }
-
 
 /**
  * Function to view (and edit) payment transaction details via the pencil icon.
@@ -717,9 +767,6 @@ function viewPaymentTransactionEdit(userId, bookingId) {
 
 
 
-
-
-
 /**
  * Function to update the payment status in Firebase.
  */
@@ -738,6 +785,7 @@ function updatePaymentStatus(userId, bookingId, newStatus) {
       alert("Error updating payment status: " + error.message);
     });
 }
+
 
 /**
  * Function to update the final status in Firebase.
@@ -765,6 +813,8 @@ document.getElementById("modalClose").addEventListener("click", function() {
 
 // Call the fetch function when the page loads.
 fetchPaymentTransactions();
+
+
 
 
 
