@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="../style/foodbeverage.css">
+  <title>Accommodations</title>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <!-- this is a admin sidebar -->
+  <section id="sidebar">
+    <a href="#" class="brand">
+      <i class='bx bxl-steam'></i>
+      <span class="text1">Admin</span>
+    </a>
+    <!-- this is a admin sidebar -->
+
+
+    <!-- this all sidebar name include Dashboard etc... -->
+    <ul class="side-menu top">
+
+      <li>
+        <a href="dashboard.html">
+          <i class='bx bxs-dashboard'></i>
+          <span class="text">Dashboard</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="#" class="report-toggle">
+          <i class='bx bxs-shopping-bag-alt'></i>
+          <span class="text">Setup Amenities</span>
+          <span class="arrow-toggle" onclick="toggleAccommodationSection(event)">
+            <i class="arrowsss-down">&#9660;</i>
+            <i class="arrowsss-up" style="display:none;">&#9650;</i>
+          </span>
+        </a>
+      </li>
+      <div class="accommodation-section" style="display: none;">
+        <li>
+          <a href="accommodation.html" class="arrowsss-link">
+            <i class='bx bxs-home-smile'></i>
+            <p class="income-text">Acommodation</p>
+          </a>
+        </li>
+        <li>
+          <a href="foodbeverage.html" class="arrowsss-link">
+            <i class='bx bx-food-tag'></i>
+            <p class="booking-text ">Food/Beverage</p>
+          </a>
+        </li>
+        <li>
+          <a href="package.html" class="arrowsss-link">
+            <i class='bx bxs-package'></i>
+            <p class="booking-text ">Package</p>
+          </a>
+        </li>
+      </div>
+      <li>
+        <a href="#" class="report-toggle">
+          <i class='bx bxs-report'></i>
+          <span class="text">Reports</span>
+          <span class="arrow-toggle" onclick="toggleReportSection(event)">
+            <i class="arrows-down">&#9660;</i>
+            <i class="arrows-up" style="display:none;">&#9650;</i>
+          </span>
+        </a>
+      </li>
+
+      <div class="report-section" style="display: none;">
+        <li>
+          <a href="incomereport.html" class="arrow-link">
+            <i class='bx bxs-wallet-alt'></i>
+            <p class="income-text">Income Report</p>
+          </a>
+        </li>
+        <li>
+          <a href="bookingreport.html" class="arrow-link">
+            <i class='bx bxs-calendar-exclamation'></i>
+            <p class="booking-text ">Booking Report</p>
+          </a>
+        </li>
+        <!-- <li>
+          <a href="feedback.html" class="arrow-link">
+            <i class='bx bxs-like'></i>
+            <p class="booking-text ">Review Report</p>
+          </a>
+        </li> -->
+      </div>
+
+      <!-- Transaction -->
+      <li>
+        <a href="#" class="transaction-toggle">
+          <i class='bx bx-transfer-alt'></i>
+          <span class="text">Transaction</span>
+          <span class="arrow-toggle" onclick="toggleTransactionSection(event)">
+            <i class="arrowss-down">&#9660;</i>
+            <i class="arrowss-up" style="display:none;">&#9650;</i>
+          </span>
+        </a>
+      </li>
+
+      <div class="transaction-section" style="display: none;">
+        <li>
+          <a href="bookingtransaction.html" class="arrow-link">
+            <i class='bx bxs-calendar'></i>
+            <p class="income-text">Booking Transaction</p>
+          </a>
+        </li>
+        <li>
+          <a href="paymenttransaction.html" class="arrow-link">
+            <i class='bx bxs-wallet'></i>
+            <p class="booking-text ">Payment Transaction</p>
+          </a>
+        </li>
+      </div>
+      <!-- Transaction -->
+      <li>
+        <a href="useraccount.html">
+          <i class='bx bxs-user-rectangle'></i>
+          <span class="text">User Account Manager</span>
+        </a>
+      </li>
+    </ul>
+    <!-- this all sidebar name include Dashboard etc... -->
+    <ul class="side-menu">
+      <li>
+        <a href="#" id="logout-link">
+          <i class='bx bxs-right-arrow-circle'></i>
+          <span class="log">Logout</span>
+        </a>
+      </li>
+    </ul>
+
+  </section>
+  <!-- SIDEBAR -->
+
+  <!-- CONTENT -->
+  <section id="content">
+    <!-- NAVBAR -->
+    <nav>
+      <!-- this a function is a search, switch-mode notification -->
+      <i class='bx bx-menu'></i>
+      <form action="#">
+        <div class="form-input">
+          <input type="search" placeholder="Search">
+          <button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
+        </div>
+      </form>
+      <input type="checkbox" id="switch-mode" hidden>
+      <label for="switch-mode" class="switch-mode"></label>
+      <a href="#" class="notification">
+        <i class='bx bxs-bell'></i>
+        <!-- <span class="num">8</span> -->
+      </a>
+
+
+      <!-- this profile logout container -->
+      <a href="#" class="profile" id="profileMenu">
+        <img src="../img/admin.jpg" alt="Profile">
+      </a>
+    </nav>
+    <!-- NAVBAR -->
+
+
+
+
+    <!-- MAIN -->
+    <main>
+      <div class="container">
+        <div class="head-title">
+          <div class="left">
+            <h1>Food & Beverage</h1>
+          </div>
+        </div>
+
+        <!-- Filter buttons -->
+        <div class="button-container">
+          <!-- <button class="styled-btn" onclick="filterAccommodation('All')">All</button> -->
+          <button class="styled-btn" onclick="filterAccommodation('Food')">Food</button>
+          <button class="styled-btn" onclick="filterAccommodation('Dessert')">Dessert</button>
+          <button class="styled-btn" onclick="filterAccommodation('Beverage')">Beverage</button>
+          <button class="styled-btn" onclick="filterAccommodation('Alcohol')">Alcohol</button>
+        </div>
+
+        <div class="table-data">
+          <div class="order">
+            <div class="head">
+              <h3>List of Accommodations</h3>
+              <i class='bx bx-plus' onclick="openModals()"></i>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Cotegory</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="accommodation-list">
+                <!-- Example accommodation rows with a data attribute for type -->
+
+                <tr class="accommodation-item" data-type="Food">
+
+                </tr>
+                <tr class="accommodation-item" data-type="Beverage">
+
+                </tr>
+                <tr class="accommodation-item" data-type="Dessert">
+
+                </tr>
+                <tr class="accommodation-item" data-type="Alcohol">
+
+                </tr>
+
+
+                <!-- Modal for Announcement & Promo -->
+                <div id="announcementModal" class="modal">
+                  <div class="modal-content">
+                    <!-- Close Button -->
+                    <span class="closse-btn" id="closeModal">&times;</span>
+
+                    <!-- Modal Title -->
+                    <h2>Create Product</h2>
+
+                    <!-- Form for Announcement -->
+                    <form id="announcementForm">
+                      <!-- Row 1: Title and Description -->
+                      <div class="form-row">
+                        <!-- Announcement Title -->
+                        <div class="form-group">
+                          <label for="announcementTitle">Name</label>
+                          <input type="text" id="announcementTitle" placeholder="Enter product name" required />
+                        </div>
+                        <!-- Announcement Description -->
+                        <div class="form-group">
+                          <label for="announcementDescription">Description</label>
+                          <textarea id="announcementDescription" placeholder="Enter product description"
+                            required></textarea>
+                        </div>
+                      </div>
+
+                      <!-- Row 2: Price and Category -->
+                      <div class="form-row">
+                        <!-- Promo Price -->
+                        <div class="form-group">
+                          <label for="promoPrice">Price</label>
+                          <input type="text" id="promoPrice" placeholder="Enter product price" required />
+                        </div>
+                        <!-- Category Dropdown -->
+                        <div class="form-group">
+                          <label for="promoCategory">Category</label>
+                          <select id="promoCategory" required>
+                            <option value="" disabled selected>Select a category</option>
+                            <option value="Food">Food</option>
+                            <option value="Dessert">Dessert</option>
+                            <option value="Beverage">Beverage</option>
+                            <option value="Alcohol">Alcohol</option>
+                            <!-- Add more options as needed -->
+                          </select>
+                        </div>
+                      </div>
+
+                      <!-- Row 3: Conditional Fields -->
+                      <!-- Food Container (default) -->
+                      <div class="form-row" id="foodContainer">
+                        <div class="form-group">
+                          <label for="food1">Size</label>
+                          <input type="text" id="food1" placeholder="Enter Food" required />
+                        </div>
+                        <div class="form-group">
+                          <label for="pieceNameFood">Serving</label>
+                          <input type="text" id="pieceNameFood" placeholder="Enter Piece Name" />
+                        </div>
+                      </div>
+
+                      <!-- Dessert Container -->
+                      <div class="form-row" id="dessertContainer" style="display: none;">
+                        <div class="form-group">
+                          <label for="flavorToppigs">Flavor Toppigs</label>
+                          <input type="text" id="flavorToppings" placeholder="Enter Flavor Toppigs" />
+                        </div>
+                        <div class="form-group">
+                          <label for="perfectFor">Perfect for:</label>
+                          <input type="text" id="perfectFor" placeholder="Enter Perfect for:" />
+                        </div>
+                        <div class="form-group">
+                          <label for="pieceNameDessert">Size</label>
+                          <input type="text" id="pieceNameDessert" placeholder="Enter Piece Name" />
+                        </div>
+                      </div>
+
+                      <!-- Beverage Container -->
+                      <div class="form-row" id="beverageContainer" style="display: none;">
+                        <div class="form-group">
+                          <label for="beverageSize">Size</label>
+                          <input type="text" id="beverageSize" placeholder="Enter Size" />
+                        </div>
+                      </div>
+
+                      <!-- Alcohol Container -->
+                      <div class="form-row" id="alcoholContainer" style="display: none;">
+                        <div class="form-group">
+                          <label for="alcoholSize">Size</label>
+                          <input type="text" id="alcoholSize" placeholder="Enter Size" />
+                        </div>
+                      </div>
+
+                      <!-- Row 4: Availability and Image Upload -->
+                      <div class="form-row">
+                        <!-- Availability Dropdown -->
+                        <div class="form-group">
+                          <label for="promoAvailability">Status</label>
+                          <select id="promoAvailability" required>
+                            <option value="" disabled selected>Select a status</option>
+                            <option value="Available">Available</option>
+                            <option value="Unavailable">Unavailable</option>
+                          </select>
+                        </div>
+                        <!-- Image Upload -->
+                        <!-- <div class="form-group">
+                          <label for="announcementImage">Upload Image</label>
+                          <input type="file" id="announcementImage" accept="image/*" required
+                            oninvalid="this.setCustomValidity('Please select an image file.')"
+                            onchange="this.setCustomValidity('')">
+                        </div> -->
+                      </div>
+                      <!-- Submit Button -->
+                      <button type="submit">Submit</button>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- End of Modal for Announcement & Promo -->
+
+
+                <!-- Update Modal -->
+                <div id="editModal" class="modal" style="display:none;">
+                  <div class="modal-content">
+                    <!-- Close Button -->
+                    <span class="close-btns" id="closeModalBtn">&times;</span>
+
+                    <!-- Modal Title -->
+                    <h2>Update Product</h2>
+
+                    <!-- Form for Announcement -->
+                    <form id="announcementForms">
+                      <!-- Row 1: Title and Description -->
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label for="announcementTitles">Name</label>
+                          <input type="text" id="announcementTitles" placeholder="Enter product name" required />
+                        </div>
+                        <div class="form-group">
+                          <label for="announcementDescriptions">Description</label>
+                          <textarea id="announcementDescriptions" placeholder="Enter product description"
+                            required></textarea>
+                        </div>
+                      </div>
+
+                      <!-- Row 2: Price and Category -->
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label for="promoPrices">Price</label>
+                          <input type="text" id="promoPrices" placeholder="Enter product price" required />
+                        </div>
+                        <div class="form-group">
+                          <label for="promoCategorys">Category</label>
+                          <select id="promoCategorys" required>
+                            <option value="" disabled selected>Select a category</option>
+                            <option value="Food">Food</option>
+                            <option value="Dessert">Dessert</option>
+                            <option value="Beverage">Beverage</option>
+                            <option value="Alcohol">Alcohol</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <!-- Row 3: Conditional Fields -->
+                      <!-- Food Container (default) -->
+                      <div class="form-row" id="foodContainers">
+                        <div class="form-group">
+                          <label for="food1s">Good For</label>
+                          <input type="text" id="food1s" placeholder="Enter Food" required />
+                        </div>
+                        <div class="form-group">
+                          <label for="pieceNameFoodUpdate">Serving</label>
+                          <input type="text" id="pieceNameFoodUpdate" placeholder="Enter Piece Name" />
+                        </div>
+                      </div>
+
+                      <!-- Dessert Container -->
+                      <div class="form-row" id="dessertContainers" style="display:none;">
+                        <div class="form-group">
+                          <label for="flavorToppigss">Flavor Toppings</label>
+                          <input type="text" id="flavorToppingss" placeholder="Enter Flavor Toppigs" required />
+                        </div>
+                        <div class="form-group">
+                          <label for="perfectFors">Perfect for:</label>
+                          <input type="text" id="perfectFors" placeholder="Enter Perfect for:" required />
+                        </div>
+                        <div class="form-group">
+                          <label for="pieceNameDessertUpdate">Size</label>
+                          <input type="text" id="pieceNameDessertUpdate" placeholder="Enter Piece Name" />
+                        </div>
+                      </div>
+
+                      <!-- Beverage Container -->
+                      <div class="form-row" id="beverageContainers" style="display:none;">
+                        <div class="form-group">
+                          <label for="beverageSizeUpdate">Size</label>
+                          <input type="text" id="beverageSizeUpdate" placeholder="Enter Size" required />
+                        </div>
+                      </div>
+
+                      <!-- Alcohol Container -->
+                      <div class="form-row" id="alcoholContainers" style="display:none;">
+                        <div class="form-group">
+                          <label for="alcoholSizeUpdate">Size</label>
+                          <input type="text" id="alcoholSizeUpdate" placeholder="Enter Size" required />
+                        </div>
+                      </div>
+
+                      <!-- Row 4: Availability and Image Upload -->
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label for="promoAvailabilitys">Status</label>
+                          <select id="promoAvailabilitys" required>
+                            <option value="" disabled selected>Select a status</option>
+                            <option value="Available">Available</option>
+                            <option value="Unavailable">Unavailable</option>
+                          </select>
+                        </div>
+                        <!-- <div class="form-group">
+                          <label for="announcementImages">Upload Image</label>
+                          <input type="file" id="announcementImages" accept="image/*">
+                        </div> -->
+                      </div>
+                      <!-- Submit Button -->
+                      <button type="submit">Submit</button>
+                    </form>
+                  </div>
+                </div>
+                <!-- End of Modal for Update and Delete -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- MAIN -->
+  </section>
+
+  <!-- script -->
+  <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-database.js"></script>
+  <script src="../script/foodbeverage.js"></script>
+  <!-- script -->
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+
+
+    <link rel="stylesheet" href="../style/gallerylandpage.css">
+    <title>Dashboard</title>
+    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <!-- this is a admin sidebar -->
+    <section id="sidebar">
+        <a href="#" class="brand">
+            <i class='bx bxl-steam'></i>
+            <span class="text1">Admin</span>
+        </a>
+        <!-- this is a admin sidebar -->
+
+        <!-- this all sidebar name include Dashboard etc... -->
+        <ul class="side-menu top">
+
+            <!-- Sidebar links with a data attribute -->
+            <li>
+                <a href="gallerymanagement.html">
+                    <i class='bx bxs-folder'></i>
+                    <span class="text">Accommodation Album</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="gallerylandpage.html">
+                    <i class='bx bxs-folder'></i>
+                    <span class="text">Landing Page Album</span>
+                </a>
+            </li>
+            <li>
+                <a href="gallerypromo.html">
+                    <i class='bx bxs-folder'></i>
+                    <span class="text">Promo Album</span>
+                </a>
+            </li>
+
+    </section>
+    <!-- SIDEBAR -->
+
+
+    <!-- CONTENT -->
+    <section id="content">
+        <!-- NAVBAR -->
+        <nav>
+            <!-- this a function is a search, switch-mode notification -->
+            <i class='bx bx-menu'></i>
+            <form action="#">
+                <div class="form-input">
+                    <input type="search" placeholder="Search">
+                    <button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
+                </div>
+            </form>
+            <input type="checkbox" id="switch-mode" hidden>
+            <label for="switch-mode" class="switch-mode"></label>
+        </nav>
+        <!-- NAVBAR -->
+
+
+
+
+
+        <!-- MAIN -->
+        <main>
+            <div class="container">
+              <div class="head-title">
+                <div class="left">
+                  <h1>Landpage Album</h1>
+                </div>
+              </div>
+            </div>
+          
+        
+            <div class="album-creation p-6">
+              <div class="image-container">
+                <div class="image-wrapper">
+                  <div class="image-box">
+                    <img src="photo1.jpg" alt="Photo 1">
+                    <div class="img-overlay">
+                      <i class="bx bx-plus"></i>
+                      <i class="bx bxs-trash delete-btn" data-index="0"></i>
+                    </div>
+                  </div>
+                  <div class="image-caption">Photo 1</div>
+                </div>
+                <div class="image-wrapper">
+                  <div class="image-box">
+                    <img src="photo2.jpg" alt="Photo 2">
+                    <div class="img-overlay">
+                      <i class="bx bx-plus"></i>
+                      <i class="bx bxs-trash delete-btn" data-index="0"></i>
+                    </div>
+                  </div>
+                  <div class="image-caption">Photo 2</div>
+                </div>
+                <div class="image-wrapper">
+                  <div class="image-box">
+                    <img src="photo3.jpg" alt="Photo 3">
+                    <div class="img-overlay">
+                      <i class="bx bx-plus"></i>
+                      <i class="bx bxs-trash delete-btn" data-index="0"></i>
+                    </div>
+                  </div>
+                  <div class="image-caption">Photo 3</div>
+                </div>
+              </div>
+            </div>
+            
+          </main>
+          
+        <!-- MAIN -->
+    </section>
+
+    <!-- script -->
+    <script src="../script/gallerylandpage.js"></script>
+    <!-- script -->
+</body>
+
+</html>

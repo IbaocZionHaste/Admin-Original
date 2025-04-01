@@ -109,71 +109,6 @@
       background: var(--grey);
     }
 
-    
-/* Action Icons Styling */
-.action-icons {
-  display: flex;
-  gap: 20px; /* Increased gap for more spacious layout */
-  justify-content: center;
-  align-items: center;
-}
-
-.action-icons i {
-  font-size: 1.2rem; /* Adjusted to 1.2rem as requested */
-  padding: 12px; /* Increased padding for better click area */
-  border-radius: 50%; /* Circular shape */
-  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow for a soft effect */
-}
-
-/* Detail Icon (Orange) */
-.action-icons .bx-detail {
-  background-color: transparent; /* Transparent background */
-  color: #ffa500; /* Orange icon color */
-
-}
-
-/* Pencil Icon (Edit) */
-.action-icons .bx-edit {
-  background-color: #e6f7ff; /* Light blue background */
-  color: #3399ff; /* Light blue icon color */
-}
-
-/* Trash Icon (Delete) */
-.action-icons .bx-trash {
-  background-color: #fff0f0; /* Light red background */
-  color: #e60000; /* Red icon color */
-}
-
-/* Hover Effects */
-.action-icons i:hover {
-  transform: scale(1.2); /* Increase size on hover */
-}
-
-.action-icons .bx-edit:hover {
-  background-color: #3399ff; /* Blue background on hover */
-  color: #fff; /* White icon color on hover */
-}
-
-.action-icons .bx-trash:hover {
-  background-color: #e60000; /* Red background on hover */
-  color: #fff; /* White icon color on hover */
-}
-
-.action-icons .bx-detail:hover {
-      background-color: #ffa500;
-      color: #fff;
-}
-
-/* Active State (when clicked) */
-.action-icons i:active {
-  transform: scale(1.1); /* Slightly shrink when clicked */
-  background-color: rgba(0, 0, 0, 0.1); /* Subtle darkening effect */
-}
-
-    
-
     /* Modal Styles */
     .modal {
       display: none;
@@ -255,7 +190,7 @@
       color: #fff;
       border-radius: 50px;
       cursor: pointer;
-      font-size: 10px;
+      font-size: 16px;
       margin-left: auto;
       transition: background 0.3s ease, transform 0.1s ease;
     }
@@ -266,23 +201,8 @@
       transform: scale(0.98);
     }
 
-    /* Password Container for Edit Modal */
-    .password-container {
-      display: flex;
-      align-items: center;
-      position: relative;
-    }
-    .password-container input {
-      width: 100%;
-      padding-right: 40px;
-    }
-    .password-container i {
-      position: absolute;
-      right: 10px;
-      cursor: pointer;
-    }
 
-
+    
   </style>
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -367,14 +287,6 @@
         <h2>Edit Permissions</h2>
         <form id="editForm">
           <input type="hidden" id="editUserId">
-          <!-- Password Field with Eye Toggle -->
-          <div class="form-group">
-            <label for="editPassword">Password</label>
-            <div class="password-container">
-              <input type="password" id="editPassword" name="editPassword" placeholder="Enter password" required>
-              <i class='bx bx-show' id="toggleEditPassword" title="Show/Hide Password"></i>
-            </div>
-          </div>
           <fieldset>
             <legend>Permissions</legend>
             <div class="permissions-list">
@@ -489,7 +401,6 @@
             <td class="action-icons">
               <i class='bx bx-detail' title="View Details"></i>
               <i class='bx bx-edit' title="Edit Permissions"></i>
-              <i class='bx bx-trash' title="Delete User"></i>
             </td>
           `;
           // Detail icon click: show full permissions in modal
@@ -497,10 +408,9 @@
             document.getElementById('detailContent').innerText = "Permissions: " + userData.permissions;
             detailModal.classList.add('active');
           });
-          // Edit icon click: open edit modal with checkboxes pre-set and fetch password
+          // Edit icon click: open edit modal with checkboxes pre-set
           tr.querySelector('.bx-edit').addEventListener('click', () => {
             document.getElementById('editUserId').value = uid;
-            document.getElementById('editPassword').value = userData.password || "";
             document.querySelectorAll('input[name="editPermissions"]').forEach(cb => cb.checked = false);
             const permsArray = userData.permissions.split(',').map(p => p.trim());
             document.querySelectorAll('input[name="editPermissions"]').forEach(cb => {
@@ -510,17 +420,6 @@
             });
             editModal.classList.add('active');
           });
-          // Delete icon click: delete user data
-          tr.querySelector('.bx-trash').addEventListener('click', () => {
-            if(confirm("Are you sure you want to delete this user?")){
-              firebase.database().ref('resortuser/' + uid).remove().then(() => {
-                console.log("User deleted");
-              }).catch((error) => {
-                console.error("Error deleting user:", error);
-                alert("Error: " + error.message);
-              });
-            }
-          });
           accountsTableBody.appendChild(tr);
         });
       });
@@ -529,40 +428,26 @@
     // Fetch users on load
     fetchUsers();
 
-    // Toggle password visibility in Edit Modal
-    const toggleEditPassword = document.getElementById('toggleEditPassword');
-    toggleEditPassword.addEventListener('click', () => {
-      const editPasswordInput = document.getElementById('editPassword');
-      if (editPasswordInput.type === "password") {
-        editPasswordInput.type = "text";
-        toggleEditPassword.classList.replace('bx-show', 'bx-hide');
-      } else {
-        editPasswordInput.type = "password";
-        toggleEditPassword.classList.replace('bx-hide', 'bx-show');
-      }
-    });
-
     // Handle edit form submission
     const editForm = document.getElementById('editForm');
     editForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const uid = document.getElementById('editUserId').value;
-      const updatedPassword = document.getElementById('editPassword').value;
       const updatedPermissions = Array.from(document.querySelectorAll('input[name="editPermissions"]:checked'))
         .map(input => input.value)
         .join(', ');
-      // Update permissions and password in Firebase under "resortuser"
+      // Update permissions in Firebase under "resortuser"
       firebase.database().ref('resortuser/' + uid).update({
-        permissions: updatedPermissions,
-        password: updatedPassword
+        permissions: updatedPermissions
       }).then(() => {
         editModal.classList.remove('active');
       }).catch((error) => {
-        console.error("Error updating user:", error);
+        console.error("Error updating permissions:", error);
         alert("Error: " + error.message);
       });
     });
 
   </script>
 </body>
+
 </html>
