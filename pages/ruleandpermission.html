@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Rules and Permission</title>
@@ -13,6 +14,7 @@
       margin: 0;
       font-family: var(--lato);
     }
+
     :root {
       --poppins: 'Poppins', sans-serif;
       --lato: 'Lato', sans-serif;
@@ -28,9 +30,11 @@
       --orange: #FD7238;
       --light-orange: #FFE0D3;
     }
+
     html {
       overflow-x: hidden;
     }
+
     .container {
       padding: 24px;
     }
@@ -42,12 +46,14 @@
       align-items: center;
       margin-bottom: 24px;
     }
+
     .head-title h1 {
       font-size: 28px;
       font-family: var(--poppins);
       font-weight: 600;
       margin: 0;
     }
+
     #openModalBtn {
       padding: 10px 20px;
       border: none;
@@ -59,9 +65,11 @@
       cursor: pointer;
       transition: background-color 0.3s ease, transform 0.1s ease;
     }
+
     #openModalBtn:hover {
       background-color: #2a78c5;
     }
+
     #openModalBtn:active {
       transform: scale(0.98);
     }
@@ -75,22 +83,26 @@
       width: 100%;
       color: var(--dark);
     }
-    .table-data > div {
+
+    .table-data>div {
       border-radius: 20px;
       background: var(--light);
       padding: 24px;
       overflow-x: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
+
     .order {
       flex-grow: 1;
       flex-basis: 500px;
     }
+
     .order table {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
     }
+
     .order table th {
       padding: 16px;
       font-size: 16px;
@@ -98,81 +110,100 @@
       text-align: center;
       border-bottom: 2px solid var(--grey);
     }
+
     .order table td {
       padding: 16px;
       font-size: 16px;
       text-align: center;
       word-wrap: break-word;
     }
-   
+
     .order table tbody tr:hover {
       background: var(--grey);
     }
 
-    
-/* Action Icons Styling */
-.action-icons {
-  display: flex;
-  gap: 20px; /* Increased gap for more spacious layout */
-  justify-content: center;
-  align-items: center;
-}
 
-.action-icons i {
-  font-size: 1.2rem; /* Adjusted to 1.2rem as requested */
-  padding: 12px; /* Increased padding for better click area */
-  border-radius: 50%; /* Circular shape */
-  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow for a soft effect */
-}
+    /* Action Icons Styling */
+    .action-icons {
+      display: flex;
+      gap: 20px;
+      /* Increased gap for more spacious layout */
+      justify-content: center;
+      align-items: center;
+    }
 
-/* Detail Icon (Orange) */
-.action-icons .bx-detail {
-  background-color: transparent; /* Transparent background */
-  color: #ffa500; /* Orange icon color */
+    .action-icons i {
+      font-size: 1.2rem;
+      /* Adjusted to 1.2rem as requested */
+      padding: 12px;
+      /* Increased padding for better click area */
+      border-radius: 50%;
+      /* Circular shape */
+      transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      /* Light shadow for a soft effect */
+    }
 
-}
+    /* Detail Icon (Orange) */
+    .action-icons .bx-detail {
+      background-color: transparent;
+      /* Transparent background */
+      color: #ffa500;
+      /* Orange icon color */
 
-/* Pencil Icon (Edit) */
-.action-icons .bx-edit {
-  background-color: #e6f7ff; /* Light blue background */
-  color: #3399ff; /* Light blue icon color */
-}
+    }
 
-/* Trash Icon (Delete) */
-.action-icons .bx-trash {
-  background-color: #fff0f0; /* Light red background */
-  color: #e60000; /* Red icon color */
-}
+    /* Pencil Icon (Edit) */
+    .action-icons .bx-edit {
+      background-color: #e6f7ff;
+      /* Light blue background */
+      color: #3399ff;
+      /* Light blue icon color */
+    }
 
-/* Hover Effects */
-.action-icons i:hover {
-  transform: scale(1.2); /* Increase size on hover */
-}
+    /* Trash Icon (Delete) */
+    .action-icons .bx-trash {
+      background-color: #fff0f0;
+      /* Light red background */
+      color: #e60000;
+      /* Red icon color */
+    }
 
-.action-icons .bx-edit:hover {
-  background-color: #3399ff; /* Blue background on hover */
-  color: #fff; /* White icon color on hover */
-}
+    /* Hover Effects */
+    .action-icons i:hover {
+      transform: scale(1.2);
+      /* Increase size on hover */
+    }
 
-.action-icons .bx-trash:hover {
-  background-color: #e60000; /* Red background on hover */
-  color: #fff; /* White icon color on hover */
-}
+    .action-icons .bx-edit:hover {
+      background-color: #3399ff;
+      /* Blue background on hover */
+      color: #fff;
+      /* White icon color on hover */
+    }
 
-.action-icons .bx-detail:hover {
+    .action-icons .bx-trash:hover {
+      background-color: #e60000;
+      /* Red background on hover */
+      color: #fff;
+      /* White icon color on hover */
+    }
+
+    .action-icons .bx-detail:hover {
       background-color: #ffa500;
       color: #fff;
-}
+    }
 
-/* Active State (when clicked) */
-.action-icons i:active {
-  transform: scale(1.1); /* Slightly shrink when clicked */
-  background-color: rgba(0, 0, 0, 0.1); /* Subtle darkening effect */
-}
+    /* Active State (when clicked) */
+    .action-icons i:active {
+      transform: scale(1.1);
+      /* Slightly shrink when clicked */
+      background-color: rgba(0, 0, 0, 0.1);
+      /* Subtle darkening effect */
+    }
 
-    
+
 
     /* Modal Styles */
     .modal {
@@ -188,9 +219,11 @@
       overflow: auto;
       padding: 20px;
     }
+
     .modal.active {
       display: flex;
     }
+
     .modal-content {
       background: #fff;
       border-radius: 8px;
@@ -203,21 +236,25 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
       animation: fadeIn 0.3s ease-in-out;
     }
+
     @keyframes fadeIn {
       from {
         opacity: 0;
         transform: translateY(-20px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
+
     .modal-content h2 {
       text-align: center;
       margin-bottom: 20px;
-      color: #444;
+      color: black;
     }
+
     .modal-content .close {
       position: absolute;
       right: 15px;
@@ -227,17 +264,21 @@
       color: #888;
       transition: color 0.3s;
     }
+
     .modal-content .close:hover {
       color: #333;
     }
+
     .form-group {
       margin-bottom: 15px;
     }
+
     .form-group label {
       display: block;
       margin-bottom: 6px;
       font-weight: bold;
     }
+
     .form-group input {
       width: 100%;
       padding: 10px;
@@ -246,22 +287,30 @@
       box-sizing: border-box;
       margin: 0 auto;
     }
+
     .modal-content form button {
       display: block;
-      width: 30%;
+      width: 20%;
       padding: 10px;
       background: #007bff;
       border: none;
       color: #fff;
       border-radius: 50px;
       cursor: pointer;
-      font-size: 10px;
+      font-size: 12px;
       margin-left: auto;
       transition: background 0.3s ease, transform 0.1s ease;
     }
+
+    /* Add top margin to the button */
+    .modal-content form button {
+      margin-top: 10px;
+    }
+
     .modal-content form button:hover {
       background: #0069d9;
     }
+
     .modal-content form button:active {
       transform: scale(0.98);
     }
@@ -272,23 +321,24 @@
       align-items: center;
       position: relative;
     }
+
     .password-container input {
       width: 100%;
       padding-right: 40px;
     }
+
     .password-container i {
       position: absolute;
       right: 10px;
       cursor: pointer;
     }
-
-
   </style>
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 </head>
+
 <body>
   <div class="container">
     <!-- Updated Head Title: Button now at right -->
@@ -343,7 +393,8 @@
               <label><input type="checkbox" name="permissions" value="Transaction"> Transaction</label>
               <label><input type="checkbox" name="permissions" value="Booking Transaction"> Booking Transaction</label>
               <label><input type="checkbox" name="permissions" value="Payment Transaction"> Payment Transaction</label>
-              <label><input type="checkbox" name="permissions" value="User Account Manager"> User Account Manager</label>
+              <label><input type="checkbox" name="permissions" value="User Account Manager"> User Account
+                Manager</label>
             </div>
           </fieldset>
           <button type="submit">Create Account</button>
@@ -387,9 +438,12 @@
               <label><input type="checkbox" name="editPermissions" value="Income Report"> Income Report</label>
               <label><input type="checkbox" name="editPermissions" value="Booking Report"> Booking Report</label>
               <label><input type="checkbox" name="editPermissions" value="Transaction"> Transaction</label>
-              <label><input type="checkbox" name="editPermissions" value="Booking Transaction"> Booking Transaction</label>
-              <label><input type="checkbox" name="editPermissions" value="Payment Transaction"> Payment Transaction</label>
-              <label><input type="checkbox" name="editPermissions" value="User Account Manager"> User Account Manager</label>
+              <label><input type="checkbox" name="editPermissions" value="Booking Transaction"> Booking
+                Transaction</label>
+              <label><input type="checkbox" name="editPermissions" value="Payment Transaction"> Payment
+                Transaction</label>
+              <label><input type="checkbox" name="editPermissions" value="User Account Manager"> User Account
+                Manager</label>
             </div>
           </fieldset>
           <button type="submit">Update</button>
@@ -512,7 +566,7 @@
           });
           // Delete icon click: delete user data
           tr.querySelector('.bx-trash').addEventListener('click', () => {
-            if(confirm("Are you sure you want to delete this user?")){
+            if (confirm("Are you sure you want to delete this user?")) {
               firebase.database().ref('resortuser/' + uid).remove().then(() => {
                 console.log("User deleted");
               }).catch((error) => {
@@ -565,4 +619,5 @@
 
   </script>
 </body>
+
 </html>
