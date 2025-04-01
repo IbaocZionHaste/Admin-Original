@@ -202,13 +202,57 @@
                 /* border-right: 1px solid #ccc; */
             }
 
+            /* 
             .modal-content .right-col {
                 width: 50%;
                 padding: 2rem;
-                /* border-left: 1px solid #ccc; */
+                border-left: 1px solid #ccc;
                 position: relative;
+            } */
+
+
+            /* Revised right column: vertical stack with overflow */
+            .modal-content .right-col {
+                width: 50%;
+                padding: 2rem;
+                position: relative;
+                max-height: 80vh;
+                overflow-y: auto;
+                scrollbar-width: none;
+                border-radius: 20px;
+            }
+
+            /* New grid container for vertical image stacking */
+            .modal-content .right-col .image-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                /* one column for vertical layout */
+                gap: 10px;
+            }
+
+            /* Each image item with fixed height, border, and proper alignment */
+            .modal-content .right-col .image-grid .image-item {
+                width: 100%;
+                height: 200px;
+                /* adjust height as needed */
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                border-radius: 20px;
+                justify-content: center;
+                border: 1px solid #ccc;
+                /* border added */
+            }
+
+            /* Image adjusts to fill the container while preserving aspect ratio */
+            .modal-content .right-col .image-grid .image-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
         }
+
+
 
 
 
@@ -291,7 +335,7 @@
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
-            font-size: 1rem;
+            font-size: 0.8rem;
             cursor: pointer;
         }
 
@@ -336,7 +380,7 @@
         }
 
         /* Swiper Arrow Navigation */
-        .swiper-button-prev,
+        /* .swiper-button-prev,
         .swiper-button-next {
             top: 50%;
             transform: translateY(-50%);
@@ -346,7 +390,7 @@
         .swiper-button-prev::after,
         .swiper-button-next::after {
             font-size: 2rem;
-        }
+        } */
 
 
 
@@ -1004,24 +1048,41 @@
                     </div>
                 </div>
                 <!-- Right Column: Image Swiper with Arrow Navigation -->
+
                 <div class="right-col">
-                    <div class="swiper-container">
-                        <div class="swiper-wrapper">
-                            <!-- Slides will be inserted dynamically -->
+                    <div class="image-grid">
+                        <div class="image-item">
+                            <img src="path/to/image1.jpg" alt="Image 1">
                         </div>
-                        <!-- Navigation Arrows -->
-                        <div class="swiper-button-prev"></div>
-                        <div class="swiper-button-next"></div>
-                        <!-- Pagination Dots -->
-                        <div class="swiper-pagination"></div>
+                        <div class="image-item">
+                            <img src="path/to/image2.jpg" alt="Image 2">
+                        </div>
+                        <div class="image-item">
+                            <img src="path/to/image3.jpg" alt="Image 3">
+                        </div>
                     </div>
                 </div>
+
             </div>
             <!-- Add to Cart Button -->
             <button id="addToCartBtn" class="add-to-cart" onclick="addToCart()">Add to Cart</button>
         </div>
     </div>
 
+
+
+    <!-- <div class="right-col">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                         
+                        </div>
+                       
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                      
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div> -->
 
 
 
@@ -1160,6 +1221,7 @@
     <!-- Include Swiper JS -->
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
+
         // ----------------------- Firebase Initialization -----------------------
         var firebaseConfig = {
             apiKey: "AIzaSyCiSJrKhSII8vLTsmMh8rKlJERFNpG9plU",
@@ -1199,6 +1261,7 @@
             updateCartStorage();
             updateCartCount();
         }
+
 
 
         // Update the cart count in the header (summing quantities)
@@ -1256,16 +1319,114 @@
             return specs;
         }
 
-        // Open the product modal and populate with product details
+
+
+
+        // function openModal(product) {
+        //     // Set basic product details
+        //     document.getElementById("modalTitle").textContent = product.name;
+        //     document.getElementById("modalPrice").textContent = "₱" + product.price;
+        //     document.getElementById("modalDescription").textContent = product.description;
+
+        //     // Build and display specifications
+        //     var specsStr = buildSpecs(product);
+        //     var specsContainer = document.getElementById("modalSpecs");
+        //     specsContainer.innerHTML = "";
+        //     var specsArray = specsStr.includes("<br>") ? specsStr.split("<br>") : [specsStr];
+        //     specsArray.forEach(function (item) {
+        //         var li = document.createElement("li");
+        //         li.innerHTML = item;
+        //         specsContainer.appendChild(li);
+        //     });
+
+        //     // Set availability status and modal category data attribute
+        //     var status = product.status || "Available";
+        //     var availabilityElem = document.getElementById("modalAvailability");
+        //     availabilityElem.textContent = status;
+        //     availabilityElem.style.color = (status.toLowerCase() === "unavailable") ? "red" : "";
+        //     document.getElementById("itemModal").dataset.category = product.category.toLowerCase();
+
+        //     // Define a function to update the image container with a given images array
+        //     function updateImageContainer(images, product) {
+        //         // Select the existing container in your HTML design
+        //         var container = document.querySelector(".right-col .image-grid");
+        //         container.innerHTML = ""; // Clear previous images
+
+        //         images.forEach(function (imgUrl, index) {
+        //             var imageItem = document.createElement("div");
+        //             imageItem.className = "image-item"; // Preserve your design class
+
+        //             if (imgUrl && imgUrl.trim() !== "") {
+        //                 var img = document.createElement("img");
+        //                 img.src = imgUrl;
+        //                 img.alt = product.name + " Image " + (index + 1);
+        //                 imageItem.appendChild(img);
+        //             } else {
+        //                 imageItem.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; font-size:1.5rem; color:#ccc;">No Image</div>';
+        //             }
+
+        //             container.appendChild(imageItem);
+        //         });
+
+        //         // Display the modal
+        //         document.getElementById("itemModal").style.display = "flex";
+        //     }
+
+
+
+
+        //     firebase.database().ref("albums")
+        //         .orderByChild("productName")
+        //         .equalTo(product.name)
+        //         .once("value")
+        //         .then(function (snapshot) {
+        //             var albumImages = [];
+        //             snapshot.forEach(function (childSnapshot) {
+        //                 var album = childSnapshot.val();
+        //                 if (album.category && album.category.toLowerCase() === product.category.toLowerCase()) {
+        //                     albumImages = [album.photo1, album.photo2, album.photo3];
+        //                 }
+        //             });
+        //             if (albumImages.length > 0) {
+        //                 updateImageContainer(albumImages, product);
+        //             } else {
+        //                 var fallbackImages = [];
+        //                 if (product.images && product.images.length > 0) {
+        //                     fallbackImages = product.images;
+        //                 } else if (product.imageUrl && product.imageUrl.trim() !== "") {
+        //                     fallbackImages = [product.imageUrl];
+        //                 } else {
+        //                     fallbackImages = ["", "", ""];
+        //                 }
+        //                 updateImageContainer(fallbackImages, product);
+        //             }
+        //         })
+        //         .catch(function (error) {
+        //             console.error("Error fetching album:", error);
+        //             var fallbackImages = [];
+        //             if (product.images && product.images.length > 0) {
+        //                 fallbackImages = product.images;
+        //             } else if (product.imageUrl && product.imageUrl.trim() !== "") {
+        //                 fallbackImages = [product.imageUrl];
+        //             } else {
+        //                 fallbackImages = ["", "", ""];
+        //             }
+        //             updateImageContainer(fallbackImages, product);
+        //         });
+        // }
+
+
+
         function openModal(product) {
+            // Set basic product details
             document.getElementById("modalTitle").textContent = product.name;
             document.getElementById("modalPrice").textContent = "₱" + product.price;
             document.getElementById("modalDescription").textContent = product.description;
 
-            // Build specifications
+            // Build and display specifications
             var specsStr = buildSpecs(product);
             var specsContainer = document.getElementById("modalSpecs");
-            specsContainer.innerHTML = "";
+            specsContainer.innerHTML = ""; // Clear previous specifications
             var specsArray = specsStr.includes("<br>") ? specsStr.split("<br>") : [specsStr];
             specsArray.forEach(function (item) {
                 var li = document.createElement("li");
@@ -1273,70 +1434,86 @@
                 specsContainer.appendChild(li);
             });
 
-            // document.getElementById("modalRating").textContent = "4.5";
-            // Set and style the availability status
+            // Set availability status and modal category data attribute
             var status = product.status || "Available";
             var availabilityElem = document.getElementById("modalAvailability");
             availabilityElem.textContent = status;
-            if (status.toLowerCase() === "unavailable") {
-                availabilityElem.style.color = "red";
-            } else {
-                availabilityElem.style.color = ""; // resets to default if needed
-            }
-            // Set the modal category for use in addToCart()
+            availabilityElem.style.color = (status.toLowerCase() === "unavailable") ? "red" : "";
             document.getElementById("itemModal").dataset.category = product.category.toLowerCase();
 
+            // Select the existing container in your HTML design
+            var container = document.querySelector(".right-col .image-grid");
+            container.innerHTML = ""; // Clear previous images
 
-            // Setup Swiper for images in the modal
-            var swiperContainer = document.querySelector(".swiper-container");
-            if (swiperContainer) {
-                var swiperWrapper = swiperContainer.querySelector(".swiper-wrapper");
-                swiperWrapper.innerHTML = "";
-
-                // Determine images: if product.images exists use that; else product.imageUrl; otherwise, three blank slides
-                var images = [];
-                if (product.images && product.images.length > 0) {
-                    images = product.images;
-                } else if (product.imageUrl && product.imageUrl.trim() !== "") {
-                    images = [product.imageUrl];
-                } else {
-                    images = ["", "", ""];
-                }
-                images.forEach(function (imgUrl) {
-                    var slideDiv = document.createElement("div");
-                    slideDiv.className = "swiper-slide";
-                    if (imgUrl && imgUrl.trim() !== "") {
-                        var img = document.createElement("img");
-                        img.src = imgUrl;
-                        img.alt = product.name;
-                        img.className = "modal-image";
-                        slideDiv.appendChild(img);
+            // Query Firebase for the album associated with the product
+            firebase.database().ref("albums")
+                .orderByChild("productName")
+                .equalTo(product.name)
+                .once("value")
+                .then(function (snapshot) {
+                    var albumImages = [];
+                    snapshot.forEach(function (childSnapshot) {
+                        var album = childSnapshot.val();
+                        if (album.category && album.category.toLowerCase() === product.category.toLowerCase()) {
+                            albumImages = [album.photo1, album.photo2, album.photo3].filter(url => url && url.trim() !== "");
+                        }
+                    });
+                    if (albumImages.length > 0) {
+                        updateImageContainer(albumImages, product);
                     } else {
-                        slideDiv.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; font-size:1.5rem; color:#ccc;">No Image</div>';
+                        var fallbackImages = [];
+                        if (product.images && product.images.length > 0) {
+                            fallbackImages = product.images;
+                        } else if (product.imageUrl && product.imageUrl.trim() !== "") {
+                            fallbackImages = [product.imageUrl];
+                        } else {
+                            fallbackImages = ["", "", ""];
+                        }
+                        updateImageContainer(fallbackImages, product);
                     }
-                    swiperWrapper.appendChild(slideDiv);
+                })
+                .catch(function (error) {
+                    console.error("Error fetching album:", error);
+                    var fallbackImages = [];
+                    if (product.images && product.images.length > 0) {
+                        fallbackImages = product.images;
+                    } else if (product.imageUrl && product.imageUrl.trim() !== "") {
+                        fallbackImages = [product.imageUrl];
+                    } else {
+                        fallbackImages = ["", "", ""];
+                    }
+                    updateImageContainer(fallbackImages, product);
                 });
 
-                if (window.mySwiper) {
-                    window.mySwiper.update();
-                } else {
-                    window.mySwiper = new Swiper('.swiper-container', {
-                        navigation: {
-                            nextEl: '.swiper-button-next',
-                            prevEl: '.swiper-button-prev'
-                        },
-                        pagination: {
-                            el: '.swiper-pagination',
-                            clickable: true,
-                        },
-                        loop: true,
-                        spaceBetween: 10,
-                        slidesPerView: 1,
-                    });
-                }
-            }
+            // Display the modal
             document.getElementById("itemModal").style.display = "flex";
         }
+
+        function updateImageContainer(images, product) {
+            var container = document.querySelector(".right-col .image-grid");
+            container.innerHTML = ""; // Clear previous images
+
+            images.forEach(function (imgUrl, index) {
+                var imageItem = document.createElement("div");
+                imageItem.className = "image-item"; // Preserve your design class
+
+                if (imgUrl && imgUrl.trim() !== "") {
+                    var img = document.createElement("img");
+                    img.src = imgUrl;
+                    img.alt = product.name + " Image " + (index + 1);
+                    imageItem.appendChild(img);
+                } else {
+                    imageItem.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; font-size:1.5rem; color:#ccc;">No Image</div>';
+                }
+
+                container.appendChild(imageItem);
+            });
+        }
+
+
+
+
+
 
         // Close the product modal
         function closeModal() {
@@ -1344,26 +1521,6 @@
         }
 
         // ----------------------- Add to Cart Functions -----------------------
-
-        // Updated addToCart: if the item exists, increase its quantity; otherwise, add a new entry.
-        // function addToCart() {
-        //     var name = document.getElementById("modalTitle").textContent;
-        //     var priceStr = document.getElementById("modalPrice").textContent;
-        //     var price = parseFloat(priceStr.replace("₱", ""));
-
-        //     // Check for an existing item by name
-        //     var existingIndex = cart.findIndex(function (item) { return item.name === name; });
-        //     if (existingIndex !== -1) {
-        //         cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
-        //     } else {
-        //         cart.push({ name: name, price: price, quantity: 1 });
-        //     }
-        //     updateCartStorage();
-        //     updateCartCount();
-        //     alert("Added to cart: " + name + " (" + priceStr + ")");
-        //     closeModal();
-        //     // We no longer redirect; the user can click the cart icon to view the cart modal.
-        // }
 
         function addToCart() {
             // Check availability from the modal
@@ -1530,27 +1687,56 @@
 
 
 
-        // Populate the gallery with product items
+        // Revised populateGallery function
         function populateGallery(products) {
             var galleryContainer = document.getElementById("galleryContainer");
             galleryContainer.innerHTML = "";
+
             products.forEach(function (product) {
                 var a = document.createElement("a");
                 a.href = "javascript:void(0);";
                 a.className = "image " + product.category.toLowerCase();
                 a.onclick = function () { openModal(product); };
+
                 var img = document.createElement("img");
-                img.src = product.imageUrl && product.imageUrl.trim() !== "" ? product.imageUrl : "https://via.placeholder.com/300x200?text=No+Image";
-                img.alt = product.name;
-                a.appendChild(img);
-                var viewDiv = document.createElement("div");
-                viewDiv.className = "view-item";
-                var viewBtn = document.createElement("button");
-                viewBtn.className = "bg-blue-500 text-white px-4 py-2 rounded";
-                viewBtn.textContent = "View";
-                viewDiv.appendChild(viewBtn);
-                a.appendChild(viewDiv);
-                galleryContainer.appendChild(a);
+                // Set default image to "No Image Available" placeholder
+                var imageUrl = "https://via.placeholder.com/300x200?text=No+Image+Available";
+
+                // Query Firebase for an album with matching product name and category
+                firebase.database().ref("albums")
+                    .orderByChild("productName")
+                    .equalTo(product.name)
+                    .once("value")
+                    .then(function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+                            var album = childSnapshot.val();
+                            if (album.category && album.category.toLowerCase() === product.category.toLowerCase()) {
+                                // Use album photo1 if available
+                                if (album.photo1 && album.photo1.trim() !== "") {
+                                    imageUrl = album.photo1;
+                                }
+                            }
+                        });
+                    })
+                    .catch(function (error) {
+                        console.error("Error fetching album for", product.name, error);
+                    })
+                    .finally(function () {
+                        // Set the img element with the found album image or the default placeholder
+                        img.src = imageUrl;
+                        img.alt = product.name;
+                        a.appendChild(img);
+
+                        var viewDiv = document.createElement("div");
+                        viewDiv.className = "view-item";
+                        var viewBtn = document.createElement("button");
+                        viewBtn.className = "bg-blue-500 text-white px-4 py-2 rounded";
+                        viewBtn.textContent = "View";
+                        viewDiv.appendChild(viewBtn);
+                        a.appendChild(viewDiv);
+
+                        galleryContainer.appendChild(a);
+                    });
             });
         }
 
@@ -1704,6 +1890,7 @@
 
 
 
+
             // Push order data into Firebase
             firebase.database().ref('walkin').push(orderData)
                 .then(function () {
@@ -1796,6 +1983,7 @@
             }
             return result;
         }
+
 
 
         // Replace the URL with the new query parameter 'generate' set to a random key

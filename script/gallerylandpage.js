@@ -152,7 +152,6 @@ history.replaceState({}, document.title, "" + '?key=' + randomKey);
 
 
 
-
   // Utility function to display status messages
   function updateMessage(text, duration = 3000) {
     let messageEl = document.getElementById("message");
