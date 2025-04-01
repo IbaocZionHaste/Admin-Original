@@ -152,120 +152,106 @@ history.replaceState({}, document.title, "" + '?key=' + randomKey);
 
 
 
-  // Utility function to display status messages
-  function updateMessage(text, duration = 3000) {
-    let messageEl = document.getElementById("message");
-    if (!messageEl) {
-      messageEl = document.createElement("div");
-      messageEl.id = "message";
-      messageEl.style.position = "fixed";
-      messageEl.style.bottom = "20px";
-      messageEl.style.right = "20px";
-      messageEl.style.background = "rgba(0,0,0,0.7)";
-      messageEl.style.color = "#fff";
-      messageEl.style.padding = "10px 15px";
-      messageEl.style.borderRadius = "4px";
-      messageEl.style.zIndex = 1000;
-      document.body.appendChild(messageEl);
-    }
-    messageEl.textContent = text;
-    messageEl.style.display = "block";
-    setTimeout(() => {
-      messageEl.style.display = "none";
-    }, duration);
+
+// Utility function to display status messages
+function updateMessage(text, duration = 3000) {
+  let messageEl = document.getElementById("message");
+  if (!messageEl) {
+    messageEl = document.createElement("div");
+    messageEl.id = "message";
+    messageEl.style.position = "fixed";
+    messageEl.style.bottom = "20px";
+    messageEl.style.right = "20px";
+    messageEl.style.background = "rgba(0,0,0,0.7)";
+    messageEl.style.color = "#fff";
+    messageEl.style.padding = "10px 15px";
+    messageEl.style.borderRadius = "4px";
+    messageEl.style.zIndex = 1000;
+    document.body.appendChild(messageEl);
+  }
+  messageEl.textContent = text;
+  messageEl.style.display = "block";
+  setTimeout(() => {
+    messageEl.style.display = "none";
+  }, duration);
+}
+
+// Modified JavaScript
+document.addEventListener("DOMContentLoaded", function () {
+  const imageBoxes = document.querySelectorAll(".image-box");
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "image/*";
+  fileInput.style.display = "none";
+  document.body.appendChild(fileInput);
+
+  // Delete handler for individual images using index parameter
+  function handleDelete(index) {
+    const photoKey = `photo${index + 1}`;
+    
+    if (!confirm(`Delete ${photoKey} permanently?`)) return;
+    
+    database.ref(`Pages/image/${photoKey}`).remove()
+      .then(() => {
+        imageBoxes[index].querySelector("img").src = "default.jpg";
+        updateMessage(`${photoKey} deleted successfully`);
+      })
+      .catch(error => {
+        updateMessage(`Delete failed: ${error.message}`, 5000);
+      });
+  }
+  
+  // Upload handler
+  function handleUpload(index, file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target.result;
+      const photoKey = `photo${index + 1}`;
+      
+      database.ref(`Pages/image/${photoKey}`)
+        .set(base64)
+        .then(() => {
+          imageBoxes[index].querySelector("img").src = base64;
+          updateMessage(`${photoKey} uploaded successfully`);
+        })
+        .catch(error => {
+          updateMessage(`Upload failed: ${error.message}`, 5000);
+        });
+    };
+    reader.readAsDataURL(file);
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const imageBoxes = document.querySelectorAll(".image-box");
-    const saveBtn = document.querySelector(".btn-plus");
-
-    // Create a hidden file input for image selection
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    fileInput.style.display = "none";
-    document.body.appendChild(fileInput);
-
-    // Track the clicked image box index
-    let currentIndex = null;
-
-    // Save images to Firebase Database as: Pages/image/photo1, photo2, photo3
-    function saveImagesData() {
-      const images = {};
-      imageBoxes.forEach((box, index) => {
-        // Build keys like "photo1", "photo2", etc.
-        const photoKey = "photo" + (index + 1);
-        images[photoKey] = box.querySelector("img").src;
-      });
-      database.ref("Pages/image")
-        .set(images)
-        .then(function () {
-          console.log("Data saved successfully!");
-          updateMessage("Images saved and updated successfully!");
-          // Optionally refresh the UI with the latest data
-          fetchImagesData();
-        })
-        .catch(function (error) {
-          console.error("Error saving data: ", error);
-          updateMessage("Error saving data: " + error.message, 5000);
-        });
-    }
-
-    // Fetch and update the UI from Firebase Database
-    function fetchImagesData() {
-      database.ref("Pages/image")
-        .once("value")
-        .then(function (snapshot) {
-          const imagesData = snapshot.val();
-          if (imagesData) {
-            imageBoxes.forEach((box, index) => {
-              const photoKey = "photo" + (index + 1);
-              if (imagesData[photoKey]) {
-                box.querySelector("img").src = imagesData[photoKey];
-              }
-            });
-            updateMessage("Images fetched successfully!");
-          }
-        })
-        .catch(function (error) {
-          console.error("Error fetching data: ", error);
-          updateMessage("Error fetching data: " + error.message, 5000);
-        });
-    }
-
-    // Listen for file selection changes and convert file to base64
-    fileInput.addEventListener("change", function (event) {
-      const file = event.target.files[0];
-      if (file && currentIndex !== null) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const base64String = e.target.result;
-          imageBoxes[currentIndex].querySelector("img").src = base64String;
-          // Save updated data to Firebase
-          saveImagesData();
-          // Reset
-          currentIndex = null;
-          fileInput.value = "";
-        };
-        reader.readAsDataURL(file);
-      }
+  // Add event listeners
+  imageBoxes.forEach((box, index) => {
+    // Click handler for image upload
+    box.addEventListener("click", (e) => {
+      // Prevent triggering file input when delete button is clicked
+      if (e.target.classList.contains("delete-btn")) return;
+      fileInput.click();
+      fileInput.onchange = (event) => {
+        const file = event.target.files[0];
+        if (file) handleUpload(index, file);
+        fileInput.value = "";
+      };
     });
 
-    // Trigger file picker when an image box is clicked
-    imageBoxes.forEach((box, index) => {
-      box.addEventListener("click", function () {
-        currentIndex = index;
-        fileInput.click();
-      });
+    // Delete button handler: use the loop index directly
+    const deleteBtn = box.querySelector(".delete-btn");
+    deleteBtn.addEventListener("click", (event) => {
+      // Stop the event from bubbling up to the box click handler
+      event.stopPropagation();
+      handleDelete(index);
     });
-
-    // Save button also triggers saving of the images
-    saveBtn.addEventListener("click", function () {
-      saveImagesData();
-    });
-
-    // Fetch saved images on initial load
-    fetchImagesData();
   });
 
-  
+  // Real-time updates
+  database.ref("Pages/image").on("value", (snapshot) => {
+    const images = snapshot.val() || {};
+    imageBoxes.forEach((box, index) => {
+      const key = `photo${index + 1}`;
+      if (images[key]) {
+        box.querySelector("img").src = images[key];
+      }
+    });
+  });
+});

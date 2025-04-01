@@ -546,6 +546,7 @@ input[type="text"] {
     background-color: #ddd;
     overflow: hidden;
     border-radius: 4px;
+    border: 1px dashed black;
 }
 
 .image-box img {

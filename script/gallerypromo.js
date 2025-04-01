@@ -168,6 +168,9 @@ const firebaseConfig = {
     }
   });
   
+
+
+  
   
   // Remove the category retrieval and validation
   // const categorySelect = document.getElementById('categorySelect');
