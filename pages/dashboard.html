@@ -14,6 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
+
 <body>
 
     <!-- SIDEBAR -->
@@ -158,11 +159,23 @@
             <input type="checkbox" id="switch-mode" hidden>
             <label for="switch-mode" class="switch-mode"></label>
 
-            <a href="#" class="notification">
-                <i class='bx bxs-bell'></i>
-                <span class="num">0</span>
-            </a>
-    
+            <div class="notification-container">
+                <!-- Notification Icon -->
+                <a href="#" class="notification" id="notificationIcon">
+                    <i class='bx bxs-bell'></i>
+                    <span class="num" id="notificationCount">0</span>
+                </a>
+            
+                <!-- Notification Message (Initially hidden) -->
+                <div id="notificationMessage" class="notification-message">
+                    <div id="notificationMessageContent">
+                        <ul id="notificationList">
+                            <!-- Notifications will be dynamically inserted here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Profile image trigger -->
             <a href="#" class="profile" id="profileMenu">
                 <img src="../img/admin.jpg" alt="Profile">

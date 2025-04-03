@@ -1,4 +1,5 @@
 
+
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCiSJrKhSII8vLTsmMh8rKlJERFNpG9plU",
@@ -316,6 +317,8 @@ searchButton.addEventListener('click', function (e) {
     }
 });
 
+
+
 // HANDLE RESIZE
 if (window.innerWidth < 768) {
     sidebar.classList.add('hide');
@@ -341,6 +344,7 @@ switchMode.addEventListener('change', function () {
         document.body.classList.remove('dark');
     }
 });
+
 
 
 document.querySelectorAll('.side-menu a').forEach(link => {
@@ -877,7 +881,11 @@ document.addEventListener('DOMContentLoaded', function () {
     countVacancies();
 });
 
+function filterIncome() {
+    countProductCategories();
+}
 
+window.filterIncome = filterIncome;
 
 
 //THIS BY DAY COUNT INCOME CHART
@@ -1134,40 +1142,119 @@ document.getElementById('profileMenu').addEventListener('click', function(e) {
 
 
 
- // ✅ Fetch Bookings
- function fetchBookings() {
-    database.ref("users").once("value").then(snapshot => {
-        if (snapshot.exists()) {
-            let users = snapshot.val();
-            let totalBookings = 0;
-            let bookingHTML = "";
 
-            Object.entries(users).forEach(([userId, userData]) => {
-                if (userData.MyBooking) {
-                    Object.entries(userData.MyBooking).forEach(([bookingID, booking]) => {
-                        bookingHTML += `<p>🔹 <strong>${booking.name}</strong> (${booking.bookingDate})</p>`;
-                        totalBookings++;
-                    });
-                }
+
+// Get elements
+const notificationIcon = document.getElementById('notificationIcon');
+const notificationCount = document.getElementById('notificationCount');
+const notificationMessage = document.getElementById('notificationMessage');
+const notificationList = document.getElementById('notificationList');
+
+// Function to fetch notifications from Firebase
+function fetchNotifications() {
+    const bookingRequestRef = database.ref('bookingRequest');
+    const paymentSentRef = database.ref('paymentSent');
+
+    Promise.all([
+        bookingRequestRef.once('value'),
+        paymentSentRef.once('value')
+    ]).then(([bookingSnapshot, paymentSnapshot]) => {
+        let notifications = [];
+
+        // Fetch booking requests
+        bookingSnapshot.forEach(childSnapshot => {
+            const notification = childSnapshot.val();
+            notifications.push({
+                id: childSnapshot.key,
+                message: notification.message,
+                date: notification.date,
+                type: 'bookingRequest',
+                status: notification.status || 'unread'
             });
+        });
 
-            // ✅ Update notification count
-            document.querySelector(".notification .num").innerText = totalBookings;
+        // Fetch payment sent requests
+        paymentSnapshot.forEach(childSnapshot => {
+            const notification = childSnapshot.val();
+            notifications.push({
+                id: childSnapshot.key,
+                message: notification.message,
+                date: notification.date,
+                type: 'paymentSent',
+                status: notification.status || 'unread'
+            });
+        });
 
-            // ✅ Update modal content
-            document.getElementById("bookingList").innerHTML = bookingHTML || "<p>No bookings available.</p>";
+        // Update notification count
+        const unreadNotifications = notifications.filter(notification => notification.status === 'unread');
+        notificationCount.textContent = unreadNotifications.length;
 
-            console.log("🔥 Total Bookings:", totalBookings);
-        } else {
-            console.warn("⚠️ No bookings found!");
-        }
+        // Display notifications
+        notificationList.innerHTML = ''; // Clear previous notifications
+        notifications.forEach(notification => {
+            const li = document.createElement('li');
+            li.textContent = `${notification.message} - ${notification.date}`;
+            li.dataset.id = notification.id;
+            li.dataset.type = notification.type;
+            li.classList.add(notification.status === 'unread' ? 'unread' : 'read');
+            notificationList.appendChild(li);
+        });
     }).catch(error => {
-      
+        console.error('Error fetching notifications:', error);
     });
 }
 
-// ✅ Fetch on Load
-fetchBookings();
+// Mark notification as read in Firebase
+function markAsRead(notificationId, notificationType) {
+    const notificationRef = database.ref(`${notificationType}/${notificationId}`);
+    notificationRef.update({
+        status: 'read'
+    }).then(() => {
+        // Update the notification UI immediately
+        const notificationItems = document.querySelectorAll('#notificationList li');
+        notificationItems.forEach(item => {
+            if (item.dataset.id === notificationId) {
+                item.classList.remove('unread');
+                item.classList.add('read');
+            }
+        });
+
+        // Update notification count immediately
+        const unreadNotifications = document.querySelectorAll('#notificationList li.unread');
+        notificationCount.textContent = unreadNotifications.length;
+    }).catch(error => {
+        console.error('Error marking notification as read:', error);
+    });
+}
+
+// Event listener for clicking on notification items
+notificationList.addEventListener('click', function (event) {
+    const notificationItem = event.target;
+
+    if (notificationItem.tagName === 'LI') {
+        const notificationId = notificationItem.dataset.id;
+        const notificationType = notificationItem.dataset.type;
+
+        // Mark the notification as read in Firebase
+        markAsRead(notificationId, notificationType);
+
+        // Optionally, close the notification panel
+        notificationMessage.classList.remove('active');
+    }
+});
+
+// Event listener for opening the notification panel
+notificationIcon.addEventListener('click', function (e) {
+    e.preventDefault();  // Prevent the default link behavior
+    notificationMessage.classList.toggle('active');
+});
+
+// Fetch notifications initially
+fetchNotifications();
+
+// Optional: Listen to real-time updates from Firebase
+database.ref('bookingRequest').on('child_added', fetchNotifications);
+database.ref('paymentSent').on('child_added', fetchNotifications);
 
 
 // //THIS CODE FOR THE INCOME CHART BUT NOT WORK

@@ -549,6 +549,7 @@ function isMonthClosed(date) {
   return now > lastDay;
 }
 
+
 // function fetchAllBookings() {
 //   const tableBody = document.getElementById("accommodation-list");
 //   tableBody.innerHTML = "";
@@ -671,6 +672,7 @@ function isMonthClosed(date) {
 // });
 
 
+//THIS ACCURATE REALTIME UPDATES
 
 // Using .on("value") for real-time updates
 const usersRef = firebase.database().ref("users");

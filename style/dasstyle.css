@@ -223,8 +223,6 @@ body {
 
 
 
-
-
 /* NAVBAR */
 #content nav {
     height: 56px;
@@ -357,7 +355,7 @@ body {
 /* setting function */
 
 /* notification function */
-#content nav .notification {
+/* #content nav .notification {
     font-size: larger;
     position: relative;
     height: 36px;
@@ -376,43 +374,82 @@ body {
     font-size: 12px;
     border-radius: 50%;
     padding: 2px 6px;
-}
+} */
 /* notification function */
 
-
-
- /* 📌 Modal Styling */
- .modal {
+/* Initially hide the notification message */
+.notification-message {
     display: none;
     position: absolute;
-    top: 40px; /* Adjusted to appear below bell */
-    right: 10px;
-    width: 250px;
-    background: white;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    top: calc(100% + 10px);  /* Position below the notification icon */
+    right: 0;  /* Align it with the right side of the screen */
+    z-index: 1000;  /* Bring it to the front */
+    background-color: #f0f0f0;  /* Light background */
     padding: 10px;
-    border-radius: 5px;
-    z-index: 100;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  /* Subtle shadow */
+    width: 250px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
 }
 
-.modal h3 {
+/* Notification Icon Styling */
+.notification {
+    font-size: larger;
+    size: 10px;
+    height: 36px;
+    width: 36px; 
+    position: relative;  /* To position the number bubble inside the notification icon */
+    display: flex;
+    justify-content: center;  /* Center the bell icon */
+    align-items: center;  /* Center the bell icon */
+    cursor: pointer;  /* Change cursor to pointer for clickability */
+}
+
+/* Notification Count Bubble */
+.notification .num {
+    position: absolute;  /* Position it relative to the notification icon */
+    top: -4px;  /* Position the bubble above the icon */
+    right: -4px;  /* Position the bubble to the right of the icon */
+    background: red;  /* Red background for the notification count */
+    color: white;  /* White text color */
+    font-size: 12px;  /* Smaller font size */
+    border-radius: 50%;  /* Circular shape */
+    padding: 2px 6px;  /* Padding inside the bubble */
+}
+
+/* List inside the notification */
+.notification-message ul {
+    list-style: none;
+    padding: 0;
     margin: 0;
-    font-size: 16px;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 5px;
 }
 
-.modal p {
-    font-size: 14px;
-    margin: 5px 0;
-}
-
-.modal .close {
-    text-align: right;
+/* Design for each list item */
+.notification-message ul li {
+    background: #f0f0f0;
+    margin: 8px 0;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s ease, transform 0.2s ease;
     cursor: pointer;
-    font-size: 14px;
-    color: red;
 }
+
+/* Hover effect: Change background and lift the item */
+.notification-message ul li:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+/* Class to display the notification message */
+.notification-message.active {
+    display: block;
+}
+
 
 
 

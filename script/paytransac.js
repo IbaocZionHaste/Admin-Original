@@ -437,6 +437,7 @@ function formatPHP(value) {
 // }
 
 
+//THIS ACCURATE FILTERING DATE MONTH END
 
 // Helper function to check if the transaction month has ended relative to the local date
 function isTransactionMonthEnded(transactionDate) {
