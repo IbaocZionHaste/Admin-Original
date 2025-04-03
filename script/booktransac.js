@@ -1,5 +1,12 @@
 // Firebase configuration
 const firebaseConfig = {
+  //  apiKey: "AIzaSyCxEDSw_13164JHIPhdCZbUycf7peWMP3s",
+  // authDomain: "resortbookingapp-1a2b5.firebaseapp.com",
+  // databaseURL: "https://resortbookingapp-1a2b5-default-rtdb.firebaseio.com",
+  // projectId: "resortbookingapp-1a2b5",
+  // storageBucket: "resortbookingapp-1a2b5.firebasestorage.app",
+  // messagingSenderId: "672228962058",
+  // appId: "1:672228962058:web:81930d7e2dfa49add114f3"
   apiKey: "AIzaSyCiSJrKhSII8vLTsmMh8rKlJERFNpG9plU",
   authDomain: "resort-admin-b8411.firebaseapp.com",
   databaseURL: "https://resort-admin-b8411-default-rtdb.firebaseio.com",
@@ -379,8 +386,6 @@ function jsonToHtmlByCategory(orderItems) {
 }
 
 
-
-
 //THIS CODE NO FUNCTION MONTH IS END THE MY HISTORY AND WALKIN NOT HIDE 
 // // Helper function to determine if today is the last day of the month.
 // function isMonthEnd() {
@@ -524,6 +529,12 @@ function jsonToHtmlByCategory(orderItems) {
 //   fetchAllBookings();
 // });
 
+// document.addEventListener("DOMContentLoaded", fetchAllBookings);
+
+
+
+
+
 
 
 // Helper function to check if a date's month has closed
@@ -538,123 +549,243 @@ function isMonthClosed(date) {
   return now > lastDay;
 }
 
-function fetchAllBookings() {
+// function fetchAllBookings() {
+//   const tableBody = document.getElementById("accommodation-list");
+//   tableBody.innerHTML = "";
+
+//   const myBookingRows = [];
+//   const myHistoryRows = [];
+//   const walkinRows = [];
+
+//   const usersRef = firebase.database().ref("users");
+//   usersRef.once("value").then((snapshot) => {
+//     snapshot.forEach((userSnapshot) => {
+//       const userData = userSnapshot.val();
+//       const accountName = ((userData.firstName || "") + " " + (userData.lastName || "")).trim() || "N/A";
+
+//       // Process MyBooking (unchanged)
+//       if (userData.MyBooking) {
+//         Object.entries(userData.MyBooking).forEach(([bookingId, booking]) => {
+//           const review = booking.bookingReview || {};
+//           const rawDate = review.bookingDate || "N/A";
+//           const date = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
+          
+//           const row = document.createElement("tr");
+//           row.innerHTML = `
+//             <td>${review.name || accountName}</td>
+//             <td>${date}</td>
+//             <td style="color: green;">Online</td>
+//             <td><span class="status ${(review.statusReview || "pending").toLowerCase()}">
+//               ${(review.statusReview || "pending").toUpperCase()}
+//             </span></td>
+//             <td>
+//               <div class="actions">
+//                 <i class="bx bx-pencil" onclick="viewBookingEdit('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
+//                 <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
+//               </div>
+//             </td>
+//           `;
+//           row.dataset.bookingDate = date;
+//           row.dataset.bookingType = "MyBooking";
+//           myBookingRows.push(row);
+//         });
+//       }
+
+//       // Process MyHistory with month check
+//       if (userData.MyHistory) {
+//         Object.entries(userData.MyHistory).forEach(([bookingId, booking]) => {
+//           const review = booking.bookingReview || {};
+//           const rawDate = review.bookingDate || "N/A";
+//           const dateStr = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
+          
+//           // Month-end check
+//           const bookingDate = new Date(dateStr);
+//           if (isNaN(bookingDate)) return;
+//           if (isMonthClosed(bookingDate)) return;
+
+//           const row = document.createElement("tr");
+//           row.innerHTML = `
+//             <td>${review.name || accountName}</td>
+//             <td>${dateStr}</td>
+//             <td style="color: red;">Online</td>
+//             <td><span class="status ${(review.statusReview || "pending").toLowerCase()}">
+//               ${(review.statusReview || "pending").toUpperCase()}
+//             </span></td>
+//             <td>
+//               <div class="actions">
+//                 <i class="bx bx-pencil disabled" style="opacity: 0.5; cursor: not-allowed;"></i>
+//                 <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyHistory')"></i>
+//               </div>
+//             </td>
+//           `;
+//           row.dataset.bookingDate = dateStr;
+//           row.dataset.bookingType = "MyHistory";
+//           myHistoryRows.push(row);
+//         });
+//       }
+//     });
+
+//     // Process Walkin with month check
+//     const walkinRef = firebase.database().ref("walkin");
+//     walkinRef.once("value").then((snapshot) => {
+//       snapshot.forEach((childSnapshot) => {
+//         const order = childSnapshot.val();
+//         const dateStr = order.date || "N/A";
+//         const bookingDate = new Date(dateStr);
+        
+//         if (isNaN(bookingDate)) return;
+//         if (isMonthClosed(bookingDate)) return;
+
+//         const row = document.createElement("tr");
+//         row.innerHTML = `
+//           <td>${order.customerName || "N/A"}</td>
+//           <td>${dateStr}</td>
+//           <td style="color: blue;">${order.orderName || "Walkin"}</td>
+//           <td><span class="status approved">${(order.status || "approve").toUpperCase()}</span></td>
+//           <td>
+//             <i class='bx bx-detail' onclick="viewWalkinBooking('${childSnapshot.key}')"></i>
+//           </td>
+//         `;
+//         row.dataset.bookingDate = dateStr;
+//         row.dataset.bookingType = "Walkin";
+//         walkinRows.push(row);
+//       });
+
+//       // Sort and combine all rows
+//       const sortRows = (rows) => rows.sort((a, b) => 
+//         new Date(b.dataset.bookingDate) - new Date(a.dataset.bookingDate)
+//       );
+      
+//       tableBody.append(
+//         ...sortRows(myBookingRows),
+//         ...sortRows(walkinRows),
+//         ...sortRows(myHistoryRows)
+//       );
+//     }).catch(console.error);
+//   }).catch(console.error);
+// }
+ 
+
+// document.addEventListener("DOMContentLoaded", function () {
+//   fetchAllBookings();
+// });
+
+
+
+// Using .on("value") for real-time updates
+const usersRef = firebase.database().ref("users");
+usersRef.on("value", (snapshot) => {
   const tableBody = document.getElementById("accommodation-list");
-  tableBody.innerHTML = "";
+  tableBody.innerHTML = ""; // Clear previous content
 
   const myBookingRows = [];
   const myHistoryRows = [];
   const walkinRows = [];
 
-  const usersRef = firebase.database().ref("users");
-  usersRef.once("value").then((snapshot) => {
-    snapshot.forEach((userSnapshot) => {
-      const userData = userSnapshot.val();
-      const accountName = ((userData.firstName || "") + " " + (userData.lastName || "")).trim() || "N/A";
+  snapshot.forEach((userSnapshot) => {
+    const userData = userSnapshot.val();
+    const accountName = ((userData.firstName || "") + " " + (userData.lastName || "")).trim() || "N/A";
 
-      // Process MyBooking (unchanged)
-      if (userData.MyBooking) {
-        Object.entries(userData.MyBooking).forEach(([bookingId, booking]) => {
-          const review = booking.bookingReview || {};
-          const rawDate = review.bookingDate || "N/A";
-          const date = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
-          
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${review.name || accountName}</td>
-            <td>${date}</td>
-            <td style="color: green;">Online</td>
-            <td><span class="status ${(review.statusReview || "pending").toLowerCase()}">
-              ${(review.statusReview || "pending").toUpperCase()}
-            </span></td>
-            <td>
-              <div class="actions">
-                <i class="bx bx-pencil" onclick="viewBookingEdit('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
-                <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
-              </div>
-            </td>
-          `;
-          row.dataset.bookingDate = date;
-          row.dataset.bookingType = "MyBooking";
-          myBookingRows.push(row);
-        });
-      }
-
-      // Process MyHistory with month check
-      if (userData.MyHistory) {
-        Object.entries(userData.MyHistory).forEach(([bookingId, booking]) => {
-          const review = booking.bookingReview || {};
-          const rawDate = review.bookingDate || "N/A";
-          const dateStr = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
-          
-          // Month-end check
-          const bookingDate = new Date(dateStr);
-          if (isNaN(bookingDate)) return;
-          if (isMonthClosed(bookingDate)) return;
-
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${review.name || accountName}</td>
-            <td>${dateStr}</td>
-            <td style="color: red;">Online</td>
-            <td><span class="status ${(review.statusReview || "pending").toLowerCase()}">
-              ${(review.statusReview || "pending").toUpperCase()}
-            </span></td>
-            <td>
-              <div class="actions">
-                <i class="bx bx-pencil disabled" style="opacity: 0.5; cursor: not-allowed;"></i>
-                <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyHistory')"></i>
-              </div>
-            </td>
-          `;
-          row.dataset.bookingDate = dateStr;
-          row.dataset.bookingType = "MyHistory";
-          myHistoryRows.push(row);
-        });
-      }
-    });
-
-    // Process Walkin with month check
-    const walkinRef = firebase.database().ref("walkin");
-    walkinRef.once("value").then((snapshot) => {
-      snapshot.forEach((childSnapshot) => {
-        const order = childSnapshot.val();
-        const dateStr = order.date || "N/A";
-        const bookingDate = new Date(dateStr);
+    // Process MyBooking
+    if (userData.MyBooking) {
+      Object.entries(userData.MyBooking).forEach(([bookingId, booking]) => {
+        const review = booking.bookingReview || {};
+        const rawDate = review.bookingDate || "N/A";
+        const date = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
         
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${review.name || accountName}</td>
+          <td>${date}</td>
+          <td style="color: green;">Online</td>
+          <td><span class="status ${(review.statusReview || "pending").toLowerCase()}">
+            ${(review.statusReview || "pending").toUpperCase()}
+          </span></td>
+          <td>
+            <div class="actions">
+              <i class="bx bx-pencil" onclick="viewBookingEdit('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
+              <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyBooking')"></i>
+            </div>
+          </td>
+        `;
+        row.dataset.bookingDate = date;
+        row.dataset.bookingType = "MyBooking";
+        myBookingRows.push(row);
+      });
+    }
+
+    // Process MyHistory with month check
+    if (userData.MyHistory) {
+      Object.entries(userData.MyHistory).forEach(([bookingId, booking]) => {
+        const review = booking.bookingReview || {};
+        const rawDate = review.bookingDate || "N/A";
+        const dateStr = rawDate.replace(/Date:\s*/i, "").replace(/\(.*\)/, "").trim();
+        
+        const bookingDate = new Date(dateStr);
         if (isNaN(bookingDate)) return;
         if (isMonthClosed(bookingDate)) return;
 
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${order.customerName || "N/A"}</td>
+          <td>${review.name || accountName}</td>
           <td>${dateStr}</td>
-          <td style="color: blue;">${order.orderName || "Walkin"}</td>
-          <td><span class="status approved">${(order.status || "approve").toUpperCase()}</span></td>
+          <td style="color: red;">Online</td>
+          <td><span class="status ${(review.statusReview || "pending").toLowerCase()}">
+            ${(review.statusReview || "pending").toUpperCase()}
+          </span></td>
           <td>
-            <i class='bx bx-detail' onclick="viewWalkinBooking('${childSnapshot.key}')"></i>
+            <div class="actions">
+              <i class="bx bx-pencil disabled" style="opacity: 0.5; cursor: not-allowed;"></i>
+              <i class="bx bx-detail" onclick="viewBooking('${userSnapshot.key}', '${bookingId}', 'MyHistory')"></i>
+            </div>
           </td>
         `;
         row.dataset.bookingDate = dateStr;
-        row.dataset.bookingType = "Walkin";
-        walkinRows.push(row);
+        row.dataset.bookingType = "MyHistory";
+        myHistoryRows.push(row);
       });
+    }
+  });
 
-      // Sort and combine all rows
-      const sortRows = (rows) => rows.sort((a, b) => 
-        new Date(b.dataset.bookingDate) - new Date(a.dataset.bookingDate)
-      );
+  // Process Walkin with month check
+  const walkinRef = firebase.database().ref("walkin");
+  walkinRef.on("value", (snapshot) => {
+    const walkinRows = [];
+    snapshot.forEach((childSnapshot) => {
+      const order = childSnapshot.val();
+      const dateStr = order.date || "N/A";
+      const bookingDate = new Date(dateStr);
       
-      tableBody.append(
-        ...sortRows(myBookingRows),
-        ...sortRows(walkinRows),
-        ...sortRows(myHistoryRows)
-      );
-    }).catch(console.error);
-  }).catch(console.error);
-}
+      if (isNaN(bookingDate)) return;
+      if (isMonthClosed(bookingDate)) return;
 
-document.addEventListener("DOMContentLoaded", fetchAllBookings);
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${order.customerName || "N/A"}</td>
+        <td>${dateStr}</td>
+        <td style="color: blue;">${order.orderName || "Walkin"}</td>
+        <td><span class="status approved">${(order.status || "approve").toUpperCase()}</span></td>
+        <td>
+          <i class='bx bx-detail' onclick="viewWalkinBooking('${childSnapshot.key}')"></i>
+        </td>
+      `;
+      row.dataset.bookingDate = dateStr;
+      row.dataset.bookingType = "Walkin";
+      walkinRows.push(row);
+    });
+
+    // Combine and sort rows before appending to the table
+    const sortRows = (rows) => rows.sort((a, b) => 
+      new Date(b.dataset.bookingDate) - new Date(a.dataset.bookingDate)
+    );
+    
+    tableBody.append(
+      ...sortRows(myBookingRows),
+      ...sortRows(walkinRows),
+      ...sortRows(myHistoryRows)
+    );
+  });
+});
 
 
 
@@ -696,8 +827,6 @@ function viewWalkinBooking(orderKey) {
     alert("Error fetching order details.");
   });
 }
-
-
 
 
 // Function to view booking details (read-only mode) for both MyBooking and MyHistory.
@@ -749,6 +878,7 @@ function centerModalContent(modalId) {
 
 
 
+
 // New function to view booking details with an editable status dropdown.
 function viewBookingEdit(userId, bookingId, node) {
   var bookingRef = firebase.database().ref("users/" + userId + "/" + node + "/" + bookingId);
@@ -794,7 +924,6 @@ function viewBookingEdit(userId, bookingId, node) {
 }
 
 
-
 // Function to update the booking status.
 function updateBookingStatus(userId, bookingId, newStatus, node) {
   var bookingRef = firebase.database().ref("users/" + userId + "/" + node + "/" + bookingId + "/bookingReview");
@@ -819,6 +948,8 @@ function updateBookingStatus(userId, bookingId, newStatus, node) {
     });
 }
 
+
+
 // Modal close functionality.
 document.getElementById("modalClose").addEventListener("click", function () {
   document.getElementById("bookingModal").style.display = "none";
@@ -832,8 +963,6 @@ window.onclick = function (event) {
     modal.style.display = "none";
   }
 };
-
-
 
 
 // Function to fetch user bookings and history, then update the table.

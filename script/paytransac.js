@@ -437,21 +437,25 @@ function formatPHP(value) {
 // }
 
 
-// Helper function to check if a transaction's month has ended
-function isTransactionMonthEnd(transactionDate) {
+
+// Helper function to check if the transaction month has ended relative to the local date
+function isTransactionMonthEnded(transactionDate) {
   const transDate = new Date(transactionDate);
-  const lastDayOfTransMonth = new Date(
-    transDate.getFullYear(),
-    transDate.getMonth() + 1,
-    0
-  );
   const now = new Date();
-  return now > lastDayOfTransMonth;
+  
+  // If the current year is greater than the transaction's year, the month is ended
+  if (now.getFullYear() > transDate.getFullYear()) return true;
+  
+  // If the years are the same but the current month is greater than the transaction's month, it's ended
+  if (now.getFullYear() === transDate.getFullYear() && now.getMonth() > transDate.getMonth()) return true;
+  
+  return false;
 }
+
 
 /**
  * Main function to fetch and display payment transactions
- * with MyHistory month-end exclusion
+ * excluding those where the transaction month has ended (based on the local date)
  */
 function fetchPaymentTransactions() {
   const usersRef = firebase.database().ref("users");
@@ -462,7 +466,7 @@ function fetchPaymentTransactions() {
       const userId = userSnapshot.key;
       const userData = userSnapshot.val();
       
-      // Process MyBooking transactions (unchanged)
+      // Process MyBooking transactions (always included)
       if (userData.MyBooking) {
         Object.entries(userData.MyBooking).forEach(([bookingId, booking]) => {
           if (booking.paymentTransaction) {
@@ -483,15 +487,15 @@ function fetchPaymentTransactions() {
         });
       }
       
-      // Process MyHistory with month-end check
+      // Process MyHistory transactions with month-end check
       if (userData.MyHistory) {
         Object.entries(userData.MyHistory).forEach(([bookingId, booking]) => {
           if (booking.paymentTransaction) {
             const payment = booking.paymentTransaction;
             const date = payment.PaymentDate ? new Date(payment.PaymentDate) : new Date();
             
-            // Skip if transaction's month has ended
-            if (isTransactionMonthEnd(date)) return;
+            // Skip if the transaction's month has ended based on the local date
+            if (isTransactionMonthEnded(date)) return;
             
             transactions.push({
               type: "MyHistory",
@@ -508,10 +512,10 @@ function fetchPaymentTransactions() {
       }
     });
     
-    // Sort transactions new-to-old
+    // Sort transactions from newest to oldest
     transactions.sort((a, b) => b.date - a.date);
     
-    // Render table
+    // Render the transactions in the table
     const tableBody = document.getElementById("accommodation-list");
     tableBody.innerHTML = transactions.map(tx => {
       const formattedAmount = tx.amount !== "N/A" ? formatPHP(tx.amount) : tx.amount;
@@ -523,9 +527,11 @@ function fetchPaymentTransactions() {
           <td><span class="status ${tx.paymentStatus}">${tx.paymentStatus.toUpperCase()}</span></td>
           <td>
             <div class="actions">
-              ${tx.type === "MyBooking" 
-                ? `<i class="bx bx-pencil" onclick="viewPaymentTransactionEdit('${tx.userId}', '${tx.bookingId}', 'MyBooking')"></i>` 
-                : `<i class="bx bx-pencil disabled" style="opacity:0.5; cursor:not-allowed;"></i>`}
+              ${
+                tx.type === "MyBooking"
+                  ? `<i class="bx bx-pencil" onclick="viewPaymentTransactionEdit('${tx.userId}', '${tx.bookingId}', 'MyBooking')"></i>`
+                  : `<i class="bx bx-pencil disabled" style="opacity:0.5; cursor:not-allowed;"></i>`
+              }
               <i class="bx bx-detail" onclick="viewPaymentTransactionModal('${tx.userId}', '${tx.bookingId}', '${tx.type}')"></i>
             </div>
           </td>
@@ -536,6 +542,107 @@ function fetchPaymentTransactions() {
     console.error("Error fetching users:", error);
   });
 }
+
+//THIS WORK GOOD
+// // Helper function to check if a transaction's month has ended
+// function isTransactionMonthEnd(transactionDate) {
+//   const transDate = new Date(transactionDate);
+//   const lastDayOfTransMonth = new Date(
+//     transDate.getFullYear(),
+//     transDate.getMonth() + 1,
+//     0
+//   );
+//   const now = new Date();
+//   return now > lastDayOfTransMonth;
+// }
+
+// /**
+//  * Main function to fetch and display payment transactions
+//  * with MyHistory month-end exclusion
+//  */
+// function fetchPaymentTransactions() {
+//   const usersRef = firebase.database().ref("users");
+//   usersRef.on("value", (snapshot) => {
+//     const transactions = [];
+    
+//     snapshot.forEach((userSnapshot) => {
+//       const userId = userSnapshot.key;
+//       const userData = userSnapshot.val();
+      
+//       // Process MyBooking transactions (unchanged)
+//       if (userData.MyBooking) {
+//         Object.entries(userData.MyBooking).forEach(([bookingId, booking]) => {
+//           if (booking.paymentTransaction) {
+//             const payment = booking.paymentTransaction;
+//             const date = payment.PaymentDate ? new Date(payment.PaymentDate) : new Date();
+            
+//             transactions.push({
+//               type: "MyBooking",
+//               userId,
+//               bookingId,
+//               name: payment.name || "N/A",
+//               refNo: payment.refNo || "N/A",
+//               amount: payment.amount || "N/A",
+//               paymentStatus: (payment.paymentStatus || "pending").toLowerCase(),
+//               date
+//             });
+//           }
+//         });
+//       }
+      
+//       // Process MyHistory with month-end check
+//       if (userData.MyHistory) {
+//         Object.entries(userData.MyHistory).forEach(([bookingId, booking]) => {
+//           if (booking.paymentTransaction) {
+//             const payment = booking.paymentTransaction;
+//             const date = payment.PaymentDate ? new Date(payment.PaymentDate) : new Date();
+            
+//             // Skip if transaction's month has ended
+//             if (isTransactionMonthEnd(date)) return;
+            
+//             transactions.push({
+//               type: "MyHistory",
+//               userId,
+//               bookingId,
+//               name: payment.name || "N/A",
+//               refNo: payment.refNo || "N/A",
+//               amount: payment.amount || "N/A",
+//               paymentStatus: (payment.paymentStatus || "pending").toLowerCase(),
+//               date
+//             });
+//           }
+//         });
+//       }
+//     });
+    
+//     // Sort transactions new-to-old
+//     transactions.sort((a, b) => b.date - a.date);
+    
+//     // Render table
+//     const tableBody = document.getElementById("accommodation-list");
+//     tableBody.innerHTML = transactions.map(tx => {
+//       const formattedAmount = tx.amount !== "N/A" ? formatPHP(tx.amount) : tx.amount;
+//       return `
+//         <tr>
+//           <td>${tx.name}</td>
+//           <td>${tx.refNo}</td>
+//           <td>${formattedAmount}</td>
+//           <td><span class="status ${tx.paymentStatus}">${tx.paymentStatus.toUpperCase()}</span></td>
+//           <td>
+//             <div class="actions">
+//               ${tx.type === "MyBooking" 
+//                 ? `<i class="bx bx-pencil" onclick="viewPaymentTransactionEdit('${tx.userId}', '${tx.bookingId}', 'MyBooking')"></i>` 
+//                 : `<i class="bx bx-pencil disabled" style="opacity:0.5; cursor:not-allowed;"></i>`}
+//               <i class="bx bx-detail" onclick="viewPaymentTransactionModal('${tx.userId}', '${tx.bookingId}', '${tx.type}')"></i>
+//             </div>
+//           </td>
+//         </tr>
+//       `;
+//     }).join("");
+//   }, (error) => {
+//     console.error("Error fetching users:", error);
+//   });
+// }
 
 
 

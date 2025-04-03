@@ -1,14 +1,13 @@
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCiSJrKhSII8vLTsmMh8rKlJERFNpG9plU",
-  authDomain: "resort-admin-b8411.firebaseapp.com",
-  databaseURL: "https://resort-admin-b8411-default-rtdb.firebaseio.com",
-  projectId: "resort-admin-b8411",
-  storageBucket: "resort-admin-b8411.appspot.com",
-  messagingSenderId: "865886329874",
-  appId: "1:865886329874:web:2c5e61e88e733fb00a4ccb",
-  measurementId: "G-P59Y09ZVT4"
+  apiKey: "AIzaSyCxEDSw_13164JHIPhdCZbUycf7peWMP3s",
+  authDomain: "resortbookingapp-1a2b5.firebaseapp.com",
+  databaseURL: "https://resortbookingapp-1a2b5-default-rtdb.firebaseio.com",
+  projectId: "resortbookingapp-1a2b5",
+  storageBucket: "resortbookingapp-1a2b5.firebasestorage.app",
+  messagingSenderId: "672228962058",
+  appId: "1:672228962058:web:81930d7e2dfa49add114f3"
 };
 
 // Initialize Firebase

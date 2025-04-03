@@ -1132,7 +1132,49 @@ document.getElementById('profileMenu').addEventListener('click', function(e) {
 });
 
 
+
+
+ // ✅ Fetch Bookings
+ function fetchBookings() {
+    database.ref("users").once("value").then(snapshot => {
+        if (snapshot.exists()) {
+            let users = snapshot.val();
+            let totalBookings = 0;
+            let bookingHTML = "";
+
+            Object.entries(users).forEach(([userId, userData]) => {
+                if (userData.MyBooking) {
+                    Object.entries(userData.MyBooking).forEach(([bookingID, booking]) => {
+                        bookingHTML += `<p>🔹 <strong>${booking.name}</strong> (${booking.bookingDate})</p>`;
+                        totalBookings++;
+                    });
+                }
+            });
+
+            // ✅ Update notification count
+            document.querySelector(".notification .num").innerText = totalBookings;
+
+            // ✅ Update modal content
+            document.getElementById("bookingList").innerHTML = bookingHTML || "<p>No bookings available.</p>";
+
+            console.log("🔥 Total Bookings:", totalBookings);
+        } else {
+            console.warn("⚠️ No bookings found!");
+        }
+    }).catch(error => {
+      
+    });
+}
+
+// ✅ Fetch on Load
+fetchBookings();
+
+
+// //THIS CODE FOR THE INCOME CHART BUT NOT WORK
+
+
 // Hide modal if clicking outside of modal and profileMenu
+
 // document.addEventListener('click', function(e) {
 //     const modal = document.getElementById('modalimage');
 //     const profileMenu = document.getElementById('profileMenu');
@@ -1144,9 +1186,6 @@ document.getElementById('profileMenu').addEventListener('click', function(e) {
 // });
 
 
-
-
-// //THIS CODE FOR THE INCOME CHART BUT NOT WORK
 //  let myChart;
 // // Initialize Chart.js
 // function initializeChart() {
